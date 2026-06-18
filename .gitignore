@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*:Zone.Identifier
+.DS_Store
+
+# material de cátedra (no se redistribuye en este repo)
+*.pdf
+fonts.ipynb
+
+# andamiaje de trabajo interno (no son entregables)
+PROGRESO.md
+RESUMEN.md
