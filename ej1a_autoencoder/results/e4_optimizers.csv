@@ -1,0 +1,4 @@
+optimizer,px_max,px_mean,perfectas,leq1,loss_final
+SGD(0.5),5,1.375,10,17,0.1368
+Momentum(0.1),1,0.062,30,32,0.06836
+Adam(0.01),0,0.0,32,32,0.00056

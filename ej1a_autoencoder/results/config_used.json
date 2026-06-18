@@ -1,0 +1,6 @@
+{
+  "seed": 0,
+  "epochs": 6000,
+  "batch_size": 32,
+  "champion": "35-20-2-20-35 | tanh/identity/sigmoid | BCE | Adam(0.01)"
+}

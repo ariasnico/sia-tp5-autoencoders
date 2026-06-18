@@ -1,0 +1,4 @@
+modelo,px_max,px_mean,perfectas,leq1
+"AE no-lineal (tanh,BCE)",0,0.0,32,32
+"AE lineal (identity,MSE)",15,7.188,0,0
+PCA (2 comp),15,7.188,0,0

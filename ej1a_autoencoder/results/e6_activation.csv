@@ -1,0 +1,4 @@
+act_hidden,px_max,px_mean,perfectas,leq1
+tanh,0,0.0,32,32
+relu,0,0.0,32,32
+sigmoid,0,0.0,32,32
