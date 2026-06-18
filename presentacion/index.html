@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TP5 — Autoencoders</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css">
+  <style>
+    :root { --azul:#1E3A5F; --naranja:#C2410C; }
+    .reveal h1,.reveal h2,.reveal h3 { color:var(--azul); text-transform:none; letter-spacing:normal; }
+    .reveal section img { border:none; box-shadow:0 3px 14px rgba(0,0,0,.18); max-height:60vh; background:#fff; }
+    .reveal .row { display:flex; gap:2.5%; justify-content:center; align-items:center; }
+    .reveal .row img { max-height:54vh; }
+    .reveal ul { font-size:0.66em; width:90%; margin:0.3em auto; }
+    .reveal li { margin:0.18em 0; }
+    .reveal .accent { color:var(--naranja); font-weight:bold; }
+    .reveal .sub { color:#64748B; font-size:0.7em; }
+    .reveal .tag { color:var(--naranja); font-weight:bold; letter-spacing:2px; font-size:0.5em; }
+    .reveal section h2 { margin-bottom:0.25em; font-size:1.25em; }
+    .reveal .cover h1 { font-size:1.9em; }
+    .reveal .big { font-size:1.1em; }
+  </style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+  <!-- 1 · Portada -->
+  <section class="cover">
+    <h1>Autoencoders</h1>
+    <h3>TP5 — Deep Learning</h3>
+    <p class="sub">Sistemas de Inteligencia Artificial · ITBA · 1Q 2026</p>
+    <p class="sub">[Integrantes del grupo]</p>
+    <aside class="notes">Todo en numpy from scratch sobre la librería MLP de TP3. Tres partes: 1a autoencoder, 1b denoising, 2 VAE.</aside>
+  </section>
+
+  <!-- 2 · Qué es -->
+  <section>
+    <h2>¿Qué es un autoencoder?</h2>
+    <p class="big">Una red que aprende a <strong>copiar su entrada a su salida</strong>, pero forzada a pasar por un <span class="accent">cuello angosto</span> (el espacio latente).</p>
+    <ul>
+      <li>Como no puede copiar bit a bit, tiene que <strong>comprimir</strong>.</li>
+      <li><strong>1a:</strong> ¿se comprime a 2D sin perder nada? · <strong>1b:</strong> ¿sirve para limpiar ruido? · <strong>2:</strong> ¿se puede <em>generar</em>?</li>
+    </ul>
+    <aside class="notes">Target = input. El cuello obliga a aprender una representación chica. Las 3 partes son 3 preguntas sobre ese cuello.</aside>
+  </section>
+
+  <!-- 3 · Dataset -->
+  <section>
+    <span class="tag">EXPLORACIÓN · E0</span>
+    <h2>El dataset: font.h</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
+    <ul><li>32 caracteres de 7×5 (35 píxeles). Comprimir a 2D es 17:1, con pares casi idénticos (Hamming mín 2).</li></ul>
+    <aside class="notes">Problema no trivial: hay letras que difieren en solo 2 píxeles. Eso motiva estudiar arquitectura y optimización.</aside>
+  </section>
+
+  <!-- 4 · 1a setup config -->
+  <section>
+    <span class="tag">1a · SETUP</span>
+    <h2>Cómo lo corrimos — configuración</h2>
+    <img src="../tablas/tabla_1a_config.png" alt="config 1a">
+    <aside class="notes">Esta es la RECETA del campeón: un valor fijo por fila, todos a la vez. No son alternativas. La arquitectura 35-20-2-20-35 es una sola red; las 3 activaciones conviven (una por capa).</aside>
+  </section>
+
+  <!-- 5 · 1a setup barridos -->
+  <section>
+    <span class="tag">1a · SETUP</span>
+    <h2>Qué variamos — barridos</h2>
+    <img src="../tablas/tabla_1a_resultados.png" alt="barridos 1a">
+    <aside class="notes">Acá SÍ variamos: cada fila es un experimento donde cambiamos UNA cosa de la receta. Probamos todos esos valores, uno por vez.</aside>
+  </section>
+
+  <!-- 6 · E1 -->
+  <section>
+    <span class="tag">E1</span>
+    <h2>¿Hace falta no-linealidad?</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="E1">
+    <ul><li>AE lineal ≡ PCA = <span class="accent">7.19 px</span>; el no-lineal llega a <span class="accent">0 px</span>.</li>
+        <li>Un autoencoder lineal <em>es</em> PCA → la no-linealidad es lo que habilita el ≤1px. <span class="sub">(conexión con TP4)</span></li></ul>
+    <aside class="notes">El AE lineal y PCA dan EXACTAMENTE el mismo error: no es casualidad, son equivalentes. Solo el no-lineal rompe esa barrera.</aside>
+  </section>
+
+  <!-- 7 · E2 -->
+  <section>
+    <span class="tag">E2</span>
+    <h2>El codo: dimensión latente</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e2_latent_elbow.png" alt="E2">
+    <ul><li>Latente=1 solo aprende 18/32 (caso "subconjunto"); desde <span class="accent">2D → 0 px</span>.</li></ul>
+    <aside class="notes">Con 1 dimensión las letras colapsan sobre una recta y se pisan. 2D es el mínimo viable; más no mejora.</aside>
+  </section>
+
+  <!-- 8 · E3 -->
+  <section>
+    <span class="tag">E3</span>
+    <h2>Capacidad del encoder</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="E3">
+    <ul><li>Sin capa oculta el encoder es lineal (≈PCA, 14 px); con <span class="accent">≥20 unidades → 0 px</span>.</li></ul>
+    <aside class="notes">Ojo defensa: el "14 px" de E3 es el MÁXIMO; el "7.19" de E1 es el PROMEDIO. Son la misma barrera de PCA, no que uno sea peor.</aside>
+  </section>
+
+  <!-- 9 · E4 -->
+  <section>
+    <span class="tag">E4</span>
+    <h2>Optimizadores</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="E4">
+    <ul><li><span class="accent">Adam</span> converge ~100× más bajo que SGD (0 vs 5 px).</li></ul>
+    <aside class="notes">Adam adapta el paso por parámetro y escapa de la meseta donde SGD se estanca.</aside>
+  </section>
+
+  <!-- 10 · E5/E6 (opcional) -->
+  <section>
+    <span class="tag">E5 · E6 — opcionales</span>
+    <h2>Learning rate y activación</h2>
+    <div class="row">
+      <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
+      <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
+    </div>
+    <ul><li>lr=0.3 <span class="accent">no aprende</span> (33 px); las 3 activaciones llegan a 0 px pero a distinta velocidad.</li></ul>
+    <aside class="notes">Slides opcionales (recortar si falta tiempo). E5 muestra una config que falla. E6: todas convergen, difieren en velocidad.</aside>
+  </section>
+
+  <!-- 11 · E7 -->
+  <section>
+    <span class="tag">E7</span>
+    <h2>Función de pérdida: BCE vs MSE</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="E7">
+    <ul><li>Para píxeles binarios, <span class="accent">BCE</span> reconstruye perfecto (0 px); MSE deja 2 px.</li></ul>
+    <aside class="notes">Los píxeles son Bernoulli; BCE es su log-verosimilitud natural y castiga el error confiado. MSE los trata como continuos.</aside>
+  </section>
+
+  <!-- 12 · E8 recon -->
+  <section>
+    <span class="tag">E8 · CAMPEÓN</span>
+    <h2>Reconstrucción: 0 px de error</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="E8a">
+    <ul><li>35-20-2-20-35 → <span class="accent">32/32 letras perfectas</span> en 2D. Original (sup.) vs reconstrucción (inf.).</li></ul>
+    <aside class="notes">Cumple el objetivo del enunciado con margen. Original y reconstrucción son indistinguibles.</aside>
+  </section>
+
+  <!-- 13 · E8 latente -->
+  <section>
+    <span class="tag">E8 · CAMPEÓN</span>
+    <h2>El espacio latente 2D (req. 1a-3)</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="E8b">
+    <ul><li>Las 32 letras ubicadas en 2D; el inset hace legible el cluster central.</li></ul>
+    <aside class="notes">Cada punto es una letra en el latente. El zoom de la derecha despeja el centro apiñado.</aside>
+  </section>
+
+  <!-- 14 · E8 generación -->
+  <section>
+    <span class="tag">E8 · CAMPEÓN</span>
+    <h2>Generación de letras nuevas (req. 1a-4)</h2>
+    <div class="row">
+      <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="E8c">
+      <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="E8d">
+    </div>
+    <ul><li>Barriendo el latente salen glifos que no están en el set; interpolación a→o.</li></ul>
+    <aside class="notes">Los puntos intermedios decodifican letras inventadas. El latente es continuo y navegable.</aside>
+  </section>
+
+  <!-- 15 · 1b setup config -->
+  <section>
+    <span class="tag">1b · SETUP</span>
+    <h2>Denoising — configuración</h2>
+    <img src="../tablas/tabla_1b_config.png" alt="config 1b">
+    <aside class="notes">La clave: entrada con bit-flip (ruido fresco cada época) y target limpio. La red aprende "sucio → limpio". Cuello 10, no 2.</aside>
+  </section>
+
+  <!-- 16 · 1b setup barridos -->
+  <section>
+    <span class="tag">1b · SETUP</span>
+    <h2>Denoising — barridos</h2>
+    <img src="../tablas/tabla_1b_resultados.png" alt="barridos 1b">
+    <aside class="notes">E9 varía el cuello; E10 varía el ruido de entrenamiento. La fila "campeón" es el modelo final reforzado.</aside>
+  </section>
+
+  <!-- 17 · E9 -->
+  <section>
+    <span class="tag">E9</span>
+    <h2>¿Por qué ensanchar el cuello?</h2>
+    <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="E9">
+    <ul><li>Cuello 2 recupera 48 %; <span class="accent">10 → 59 %</span>; 20 ya no mejora.</li></ul>
+    <aside class="notes">El cuello 2D de 1a era para comprimir, no para limpiar. Limpiar ruido necesita más capacidad latente.</aside>
+  </section>
+
+  <!-- 18 · E10 -->
+  <section>
+    <span class="tag">E10</span>
+    <h2>Trade-off del ruido de entrenamiento</h2>
+    <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="E10">
+    <ul><li>Las curvas <span class="accent">se cruzan</span>: poco ruido = frágil; mucho ruido = peor en limpio.</li></ul>
+    <aside class="notes">No hay un único "mejor": depende del ruido esperado. 15 % es buen compromiso.</aside>
+  </section>
+
+  <!-- 19 · campeón + E11 -->
+  <section>
+    <span class="tag">1b · CAMPEÓN</span>
+    <h2>Resultado del denoiser</h2>
+    <div class="row">
+      <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="champion">
+      <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="E11">
+    </div>
+    <ul><li><span class="accent">81 % de letras con ≤1px a 15 % de ruido</span> (92 % a 10 %). Tripletes: limpio / ruidoso / recuperado.</li></ul>
+    <aside class="notes">El campeón reforzado a 15000 épocas. Los tripletes son la prueba visual; se degrada recién a 30 %.</aside>
+  </section>
+
+  <!-- 20 · VAE setup config -->
+  <section>
+    <span class="tag">VAE · SETUP</span>
+    <h2>VAE — configuración</h2>
+    <img src="../tablas/tabla_vae_config.png" alt="config vae">
+    <aside class="notes">El encoder ahora da una DISTRIBUCIÓN (μ, logσ²), no un punto. La pérdida suma recon + β·KL. Backprop verificado (grad check 5e-08).</aside>
+  </section>
+
+  <!-- 21 · VAE setup barrido -->
+  <section>
+    <span class="tag">VAE · SETUP</span>
+    <h2>VAE — barrido de β</h2>
+    <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
+    <aside class="notes">El único barrido es β (peso del KL). Las filas con "—" no son experimentos nuevos: son la misma corrida mirada por recon y por std del latente.</aside>
+  </section>
+
+  <!-- 22 · dataset emojis -->
+  <section>
+    <span class="tag">VAE · DATASET</span>
+    <h2>Dataset nuevo: emojis</h2>
+    <img src="../ej2_vae/figs/contact_sheet.png" alt="contact sheet">
+    <ul><li>OpenMoji <em>black</em> (contornos) se confundía → usamos el <span class="accent">canal alpha de color</span> (siluetas, acc 0.95).</li></ul>
+    <aside class="notes">Lo verificamos antes de seguir con un clasificador 1-NN: 0.45 con contornos, 0.95 con siluetas rellenas. 5 emojis distintos.</aside>
+  </section>
+
+  <!-- 23 · E12 -->
+  <section>
+    <span class="tag">E12</span>
+    <h2>Barrido de β: el KL importa</h2>
+    <img src="../ej2_vae/figs/fig_e12_beta_sampling.png" alt="E12">
+    <ul><li>β=0 (sin KL) → <span class="accent">ruido</span>; β≥0.5 → emojis válidos; β=4 sobre-suaviza.</li></ul>
+    <aside class="notes">Muestreamos z~N(0,I) y decodificamos. Sin KL el latente no es N(0,I), así que el muestreo cae en zona muerta.</aside>
+  </section>
+
+  <!-- 24 · E16 -->
+  <section>
+    <span class="tag">E16</span>
+    <h2>Por qué el VAE genera y el AE no</h2>
+    <img src="../ej2_vae/figs/fig_e16_ae_vs_vae.png" alt="E16">
+    <ul><li>β=0: latente disperso (±30) → N(0,I) cae afuera. β=1: <span class="accent">compacto ~N(0,I)</span>.</li></ul>
+    <aside class="notes">Esta es la figura clave. El KL es lo que hace que muestrear N(0,I) caiga en zona entrenada. Responde el "problema de la representación" (2b).</aside>
+  </section>
+
+  <!-- 25 · E13 -->
+  <section>
+    <span class="tag">E13</span>
+    <h2>El latente del VAE (β=1)</h2>
+    <img src="../ej2_vae/figs/fig_e13_latent.png" alt="E13">
+    <ul><li>Las 5 clases quedan agrupadas <span class="accent">dentro de N(0,I)</span>.</li></ul>
+    <aside class="notes">Cada emoji ocupa su región. Los círculos punteados son N(0,I) de referencia.</aside>
+  </section>
+
+  <!-- 26 · E14 -->
+  <section>
+    <span class="tag">E14</span>
+    <h2>Generación de emojis nuevos (req. 2c)</h2>
+    <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="E14">
+    <ul><li>Reconstrucción fiel + <span class="accent">muestras nuevas desde N(0,I)</span>.</li></ul>
+    <aside class="notes">Semilla 26, elegida por cubrir las 5 clases (el latente no es uniforme: corazón/luna ocupan más área).</aside>
+  </section>
+
+  <!-- 27 · E17 atlas -->
+  <section>
+    <span class="tag">E17</span>
+    <h2>Atlas del latente: cobertura continua</h2>
+    <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="E17">
+    <ul><li>Transiciones suaves entre clases → genera <span class="accent">blends nuevos</span>, no copias.</li></ul>
+    <aside class="notes">Barremos una grilla del latente y decodificamos cada celda. Espejo del fig_e8c de 1a.</aside>
+  </section>
+
+  <!-- 28 · E15 (opcional) -->
+  <section>
+    <span class="tag">E15 — opcional</span>
+    <h2>Curvas: recon vs KL</h2>
+    <img src="../ej2_vae/figs/fig_e15_recon_kl.png" alt="E15">
+    <ul><li>A más β: menor KL (latente más N(0,I)) y mayor recon-loss → trade-off explícito.</li></ul>
+    <aside class="notes">Slide opcional. β=1 es el punto de equilibrio.</aside>
+  </section>
+
+  <!-- 29 · Conclusiones -->
+  <section>
+    <h2>Conclusiones</h2>
+    <ul class="big" style="font-size:0.78em">
+      <li><strong>1a:</strong> no-linealidad + 2D + BCE + Adam → compresión perfecta (0 px); PCA no puede.</li>
+      <li><strong>1b:</strong> limpiar ruido necesita más cuello, y el ruido de train es un trade-off.</li>
+      <li><strong>VAE:</strong> el término KL convierte un compresor en un generador (latente ~N(0,I)).</li>
+      <li class="sub">Todo numpy from scratch, semillas fijas, reproducible. Repo: github.com/ariasnico/sia-tp5-autoencoders</li>
+    </ul>
+    <aside class="notes">Cerrar con la frase por parte. Preguntas de defensa preparadas en DEFENSA.md.</aside>
+  </section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({ hash:true, slideNumber:'c/t', width:1280, height:720, margin:0.04, plugins:[RevealNotes] });
+</script>
+</body>
+</html>
