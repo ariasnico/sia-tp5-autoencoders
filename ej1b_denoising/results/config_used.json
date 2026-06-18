@@ -1,0 +1,16 @@
+{
+  "seed": 0,
+  "epochs_sweep": 6000,
+  "epochs_champion": 15000,
+  "dae": "35-25-{cuello}-25-35 | tanh/identity/sigmoid | BCE | Adam(0.01)",
+  "champion": "cuello=10, p_train=0.15",
+  "test_levels": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.3,
+    0.4
+  ]
+}
