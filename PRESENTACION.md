@@ -16,6 +16,10 @@
 - **Mensaje:** 32 caracteres de 7×5 (35D). Comprimir a 2D es 17:1; hay pares casi idénticos (Hamming mín 2 px).
 - **Conclusión:** problema no trivial → motiva estudiar arquitectura y optimización.
 
+## · 1a — Setup experimental (cómo lo corrimos)
+- **Tablas:** `tablas/tabla_1a_config.png` (arquitectura, optimizador, épocas, seeds…) · `tablas/tabla_1a_resultados.png` (qué barrimos en cada experimento + resultado).
+- **Mensaje:** dejamos explícitos los hiperparámetros y el porqué de cada elección, no solo los gráficos.
+
 ## 3 · ¿Hace falta no-linealidad? AE lineal vs PCA (E1)
 - **Figura:** `fig_e1_linear_vs_pca.png`.
 - **Mensaje:** el AE lineal y PCA(2) dan el **mismo** error (prom 7.19 px); el AE no-lineal llega a 0.
@@ -53,6 +57,10 @@
 - **Mensaje:** barriendo el latente y decodificando salen letras que **no** están en el set; interpolación a→o.
 - **Conclusión:** ✅ generación (req. 1a-4) — el latente es continuo y navegable.
 
+## · 1b — Setup experimental
+- **Tablas:** `tablas/tabla_1b_config.png` · `tablas/tabla_1b_resultados.png`.
+- **Mensaje:** el entrenamiento denoising (entrada ruidosa → target limpio), las épocas, y qué se barrió (cuello, ruido de train).
+
 ## 10 · Denoising: ¿por qué ensanchar el cuello? (E9)
 - **Figura:** `fig_e9_bottleneck.png`.
 - **Mensaje:** cuello 2 recupera 48 % de letras; 10 → 59 %; 20 ya no mejora.
@@ -68,6 +76,10 @@
 - **Figura:** `fig_e11_triplets.png`.
 - **Mensaje:** limpio / ruidoso / recuperado para varias letras y niveles.
 - **Conclusión:** el denoiser reconstruye el patrón limpio desde la versión corrupta.
+
+## · VAE — Setup experimental
+- **Tablas:** `tablas/tabla_vae_config.png` · `tablas/tabla_vae_resultados.png`.
+- **Mensaje:** arquitectura del VAE, dataset de emojis y augmentaciones, y el barrido de β.
 
 ## 13 · VAE: dataset de emojis + la decisión
 - **Figura:** `ej2_vae/figs/contact_sheet.png`.
