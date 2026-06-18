@@ -1,0 +1,19 @@
+{
+  "seed": 0,
+  "SZ": 20,
+  "dims": {
+    "D": 400,
+    "He": 128,
+    "Z": 2,
+    "Hd": 128
+  },
+  "epochs": 3500,
+  "batch": 128,
+  "dataset": "OpenMoji color-alpha, 5 clases (corazon/estrella/gota/luna/rayo), augment seedeado",
+  "betas": [
+    0.0,
+    0.5,
+    1.0,
+    4.0
+  ]
+}
