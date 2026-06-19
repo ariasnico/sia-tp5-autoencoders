@@ -9,7 +9,6 @@
   <style>
     :root { --azul:#1E3A5F; --naranja:#C2410C; }
     .reveal h1,.reveal h2,.reveal h3 { color:var(--azul); text-transform:none; letter-spacing:normal; }
-    /* imagen a media pantalla -> siempre queda lugar para titulo + bullet (nada se corta) */
     .reveal section img { border:none; box-shadow:0 3px 14px rgba(0,0,0,.18); max-height:50vh; max-width:88%; background:#fff; margin:0.2em auto; }
     .reveal ul { font-size:0.55em; width:88%; margin:0.25em auto; }
     .reveal li { margin:0.12em 0; }
@@ -24,291 +23,290 @@
 <body>
 <div class="reveal"><div class="slides">
 
-  <!-- 1 · Portada -->
+  <!-- 1 -->
   <section class="cover">
     <h1>Autoencoders</h1>
     <h3>TP5 — Deep Learning</h3>
     <p class="sub">Sistemas de Inteligencia Artificial · ITBA · 1Q 2026</p>
     <p class="sub">Nicolás Valentín Arias · Tomás Pinausig · Mateo Pirola · Katia Menshikoff</p>
-    <aside class="notes">Todo en numpy from scratch sobre la librería MLP de TP3. Tres partes: 1a autoencoder, 1b denoising, 2 VAE.</aside>
+    <aside class="notes">Presentamos el TP5. La idea es enseñarle a una red a resumir imágenes y después a inventar imágenes nuevas. Lo hicimos todo a mano, sin librerías de redes. Son tres partes.</aside>
   </section>
 
-  <!-- 2 · Qué es -->
+  <!-- 2 -->
   <section>
     <h2>¿Qué es un autoencoder?</h2>
-    <p class="big">Una red que aprende a <strong>copiar su entrada a su salida</strong>, pero forzada a pasar por un <span class="accent">cuello angosto</span> (el espacio latente).</p>
+    <p class="big">Una red que <strong>copia la entrada en la salida</strong>, pero obligada a pasar por un <span class="accent">cuello angosto</span>.</p>
     <ul>
-      <li>Como no puede copiar bit a bit, tiene que <strong>comprimir</strong>.</li>
-      <li><strong>1a:</strong> ¿se comprime a 2D sin perder nada? · <strong>1b:</strong> ¿sirve para limpiar ruido? · <strong>2:</strong> ¿se puede <em>generar</em>?</li>
+      <li>Como por el cuello no entra todo, la red tiene que <strong>resumir</strong> la imagen.</li>
+      <li><strong>1a:</strong> ¿se puede resumir muchísimo? · <strong>1b:</strong> ¿sirve para limpiar manchas? · <strong>2:</strong> ¿se puede inventar?</li>
     </ul>
-    <aside class="notes">Target = input. El cuello obliga a aprender una representación chica. Las 3 partes son 3 preguntas sobre ese cuello.</aside>
+    <aside class="notes">Le pedimos a la red que devuelva la misma imagen que le entra, pero la hacemos pasar por un cuello chiquito. Así está forzada a guardar solo lo importante. Cada parte del TP es una de esas tres preguntas.</aside>
   </section>
 
-  <!-- 3 · Dataset -->
+  <!-- 3 -->
   <section>
     <span class="tag">EXPLORACIÓN · E0</span>
-    <h2>El dataset: font.h</h2>
+    <h2>El dataset: 32 letras</h2>
     <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
-    <ul><li>32 caracteres de 7×5 (35 píxeles). Comprimir a 2D es 17:1, con pares casi idénticos (Hamming mín 2).</li></ul>
-    <aside class="notes">Problema no trivial: hay letras que difieren en solo 2 píxeles. Eso motiva estudiar arquitectura y optimización.</aside>
+    <ul><li>32 letras chiquitas de 7×5. Queremos guardar cada una con <span class="accent">solo 2 números</span>.</li></ul>
+    <aside class="notes">Son 32 letras de 7 por 5, en blanco y negro. La meta es guardarlas usando apenas 2 números por letra. Es difícil porque hay letras muy parecidas entre sí.</aside>
   </section>
 
-  <!-- 4 · 1a setup config -->
+  <!-- 4 -->
   <section>
-    <span class="tag">1a · SETUP</span>
-    <h2>Cómo lo corrimos — configuración</h2>
+    <span class="tag">1a · CÓMO LO CORRIMOS</span>
+    <h2>La receta del mejor modelo</h2>
     <img src="../tablas/tabla_1a_config.png" alt="config 1a">
-    <aside class="notes">Esta es la RECETA del campeón: un valor fijo por fila, todos a la vez. No son alternativas. La arquitectura 35-20-2-20-35 es una sola red; las 3 activaciones conviven (una por capa).</aside>
+    <aside class="notes">Esta tabla es la receta del modelo ganador: un valor por fila, todos funcionando juntos. Ojo, no es lo que probamos, es lo que quedó como mejor. La parte de "probar" está en la tabla siguiente.</aside>
   </section>
 
-  <!-- 5 · 1a setup barridos -->
+  <!-- 5 -->
   <section>
-    <span class="tag">1a · SETUP</span>
-    <h2>Qué variamos — barridos</h2>
+    <span class="tag">1a · QUÉ PROBAMOS</span>
+    <h2>Los experimentos</h2>
     <img src="../tablas/tabla_1a_resultados.png" alt="barridos 1a">
-    <aside class="notes">Acá SÍ variamos: cada fila es un experimento donde cambiamos UNA cosa de la receta. Probamos todos esos valores, uno por vez.</aside>
+    <aside class="notes">Acá sí están las pruebas. En cada fila cambiamos una sola cosa y miramos qué pasaba. La columna "para qué" dice la pregunta que respondía cada experimento.</aside>
   </section>
 
-  <!-- 6 · E1 -->
+  <!-- 6 -->
   <section>
     <span class="tag">E1</span>
-    <h2>¿Hace falta no-linealidad?</h2>
+    <h2>¿Hacen falta las curvas?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="E1">
-    <ul><li>AE lineal ≡ PCA = <span class="accent">7.19 px</span>; el no-lineal llega a <span class="accent">0 px</span>.</li>
-        <li>Un autoencoder lineal <em>es</em> PCA → la no-linealidad es lo que habilita el ≤1px. <span class="sub">(conexión con TP4)</span></li></ul>
-    <aside class="notes">El AE lineal y PCA dan EXACTAMENTE el mismo error: no es casualidad, son equivalentes. Solo el no-lineal rompe esa barrera.</aside>
+    <ul><li>Modelo recto = un método clásico (PCA): se equivoca en <span class="accent">7 píxeles</span>. Con curvas: <span class="accent">0</span>.</li></ul>
+    <aside class="notes">Probamos un modelo "recto" y uno "con curvas". El recto da igual que un método viejo y conocido, y se equivoca en 7 puntitos por letra. El que tiene curvas no se equivoca en ninguno. O sea: las curvas son lo que hace la diferencia.</aside>
   </section>
 
-  <!-- 7 · E2 -->
+  <!-- 7 -->
   <section>
     <span class="tag">E2</span>
-    <h2>El codo: dimensión latente</h2>
+    <h2>¿Cuántos números por letra?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e2_latent_elbow.png" alt="E2">
-    <ul><li>Latente=1 solo aprende 18/32 (caso "subconjunto"); desde <span class="accent">2D → 0 px</span>.</li></ul>
-    <aside class="notes">Con 1 dimensión las letras colapsan sobre una recta y se pisan. 2D es el mínimo viable; más no mejora.</aside>
+    <ul><li>Con 1 no alcanza; <span class="accent">con 2 ya salen perfectas</span>.</li></ul>
+    <aside class="notes">Probamos guardar cada letra con 1, 2, 3, 5 u 8 números. Con 1 solo no entran todas. Con 2 ya salen todas perfectas, y agregar más no mejora. Por eso usamos 2.</aside>
   </section>
 
-  <!-- 8 · E3 -->
+  <!-- 8 -->
   <section>
     <span class="tag">E3</span>
-    <h2>Capacidad del encoder</h2>
+    <h2>¿Qué tan grande la red?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="E3">
-    <ul><li>Sin capa oculta el encoder es lineal (≈PCA, 14 px); con <span class="accent">≥20 unidades → 0 px</span>.</li></ul>
-    <aside class="notes">Ojo defensa: el "14 px" de E3 es el MÁXIMO; el "7.19" de E1 es el PROMEDIO. Son la misma barrera de PCA, no que uno sea peor. — Los picos abruptos en las curvas son inestabilidad transitoria de Adam (ver E4); la red se recupera sola.</aside>
+    <ul><li>Red muy chica falla; con <span class="accent">20 neuronas</span> ya sale perfecto.</li></ul>
+    <aside class="notes">Probamos redes de distintos tamaños. Si es muy chica, falla. Con 20 neuronas ya sale perfecto y más no agrega. Si en las curvas ves algún salto, es algo normal del entrenamiento: la red se acomoda sola enseguida.</aside>
   </section>
 
-  <!-- 9 · E4 -->
+  <!-- 9 -->
   <section>
     <span class="tag">E4</span>
-    <h2>Optimizadores</h2>
+    <h2>¿Cómo entrenar?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="E4">
-    <ul><li><span class="accent">Adam</span> converge ~100× más bajo que SGD (0 vs 5 px).</li></ul>
-    <aside class="notes">Adam adapta el paso por parámetro y escapa de la meseta donde SGD se estanca. — Sobre los picos abruptos que aparecen en varias curvas: son inestabilidad transitoria de Adam. En una meseta el segundo momento (promedio del gradiente²) se hace minúsculo; si aparece un gradiente algo mayor, el paso lr·m/√v se dispara y la loss salta de golpe. La red se recupera en pocas épocas. Es típico con full-batch sobre 32 muestras.</aside>
+    <ul><li>Adam es el que <span class="accent">llega más abajo</span>; los otros se quedan a mitad de camino.</li></ul>
+    <aside class="notes">Probamos tres maneras de entrenar la red. La llamada Adam es la que aprende mejor y llega más abajo. Las otras dos se quedan más arriba. Los saltos que se ven a veces son normales y la red se recupera en seguida.</aside>
   </section>
 
-  <!-- 10a · E5 (opcional) -->
+  <!-- 10 -->
   <section>
     <span class="tag">E5 — opcional</span>
-    <h2>Learning rate</h2>
+    <h2>¿Qué tan grande el paso?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
-    <ul><li>Muy bajo = lento; muy alto (<span class="accent">0.3 no aprende</span>, 33 px); 0.01 es el justo.</li></ul>
-    <aside class="notes">Opcional. Muestra una config que falla: el lr alto queda atascado arriba. — Los picos en las curvas son inestabilidad transitoria de Adam (ver E4); se recupera solo.</aside>
+    <ul><li>Paso muy chico tarda; muy grande <span class="accent">no aprende</span>; el del medio anda.</li></ul>
+    <aside class="notes">El "paso" es cuánto corrige la red en cada vuelta. Probamos chico, justo y grande. Muy chico tarda muchísimo; muy grande no aprende nada; el del medio es el bueno.</aside>
   </section>
 
-  <!-- 10b · E6 (opcional) -->
+  <!-- 11 -->
   <section>
     <span class="tag">E6 — opcional</span>
-    <h2>Activación oculta</h2>
+    <h2>¿Qué tipo de neurona?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
-    <ul><li>tanh / relu / sigmoid llegan <span class="accent">todas a 0 px</span>, difieren en velocidad de convergencia.</li></ul>
-    <aside class="notes">Opcional. Por eso es una figura de curvas: el resultado final es el mismo, cambia la velocidad. relu se estabilizó subiendo el ε de Adam (evita el dying-relu); los picos chicos de tanh/sigmoid son inestabilidad transitoria de Adam y se recuperan. Las 3 llegan a 0 px.</aside>
+    <ul><li>Las tres terminan perfectas; solo cambia <span class="accent">qué tan rápido</span> llegan.</li></ul>
+    <aside class="notes">Probamos tres tipos de neurona. Las tres terminan sin errores; lo único que cambia es cuál llega más rápido. Conclusión simple: cualquiera sirve.</aside>
   </section>
 
-  <!-- 11 · E7 -->
+  <!-- 12 -->
   <section>
     <span class="tag">E7</span>
-    <h2>Función de pérdida: BCE vs MSE</h2>
+    <h2>¿Cómo medir el error?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="E7">
-    <ul><li>Para píxeles binarios, <span class="accent">BCE</span> reconstruye perfecto (0 px); MSE deja 2 px.</li></ul>
-    <aside class="notes">Los píxeles son Bernoulli; BCE es su log-verosimilitud natural y castiga el error confiado. MSE los trata como continuos. — El pico en la curva BCE es inestabilidad transitoria de Adam (ver E4); se recupera solo.</aside>
+    <ul><li>Una forma (BCE) queda <span class="accent">perfecta</span> para blanco y negro; la otra deja 2 errores.</li></ul>
+    <aside class="notes">Probamos dos maneras de medir cuánto se equivoca la red. Una le queda mejor a las imágenes en blanco y negro y termina perfecta. La otra deja 2 puntitos mal. Por eso usamos la primera.</aside>
   </section>
 
-  <!-- 12 · E8 recon -->
+  <!-- 13 -->
   <section>
-    <span class="tag">E8 · CAMPEÓN</span>
-    <h2>Reconstrucción: 0 px de error</h2>
+    <span class="tag">E8 · GANADOR</span>
+    <h2>Reconstrucción: sin errores</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="E8a">
-    <ul><li>35-20-2-20-35 → <span class="accent">32/32 letras perfectas</span> en 2D. Original (sup.) vs reconstrucción (inf.).</li></ul>
-    <aside class="notes">Cumple el objetivo del enunciado con margen. Original y reconstrucción son indistinguibles.</aside>
+    <ul><li>Arriba la letra real, abajo la de la red: <span class="accent">iguales, 0 errores</span>.</li></ul>
+    <aside class="notes">Este es el modelo ganador. En cada par, arriba está la letra original y abajo lo que devuelve la red. Son iguales: cero errores en las 32 letras.</aside>
   </section>
 
-  <!-- 13 · E8 latente -->
+  <!-- 14 -->
   <section>
-    <span class="tag">E8 · CAMPEÓN</span>
-    <h2>El espacio latente 2D (req. 1a-3)</h2>
+    <span class="tag">E8 · GANADOR</span>
+    <h2>El mapa de 2 números</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="E8b">
-    <ul><li>Las 32 letras ubicadas en 2D; el inset hace legible el cluster central.</li></ul>
-    <aside class="notes">Cada punto es una letra en el latente. El zoom de la derecha despeja el centro apiñado.</aside>
+    <ul><li>Las 32 letras ubicadas en el mapa; el recuadro de la derecha es un <span class="accent">zoom</span> del centro.</li></ul>
+    <aside class="notes">Acá están las 32 letras puestas en el mapa de 2 números: cada punto es una letra. El recuadro de la derecha hace un zoom para poder leer las del centro, que estaban amontonadas.</aside>
   </section>
 
-  <!-- 14a · E8 generación grilla -->
+  <!-- 15 -->
   <section>
-    <span class="tag">E8 · CAMPEÓN</span>
-    <h2>Generación: barrido del latente (req. 1a-4)</h2>
+    <span class="tag">E8 · GANADOR</span>
+    <h2>Inventar letras nuevas</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="E8c">
-    <ul><li>Cada celda es un punto del latente decodificado → salen glifos que <span class="accent">no están en el set</span>.</li></ul>
-    <aside class="notes">El latente es continuo: decodificar puntos intermedios da letras nuevas.</aside>
+    <ul><li>Recorriendo el mapa aparecen <span class="accent">letras que no estaban</span> en el conjunto.</li></ul>
+    <aside class="notes">Si recorremos el mapa y miramos qué dibuja la red en cada punto, aparecen letras que no le habíamos enseñado. O sea, la red puede inventar.</aside>
   </section>
 
-  <!-- 14b · E8 interpolación -->
+  <!-- 16 -->
   <section>
-    <span class="tag">E8 · CAMPEÓN</span>
-    <h2>Interpolación en el latente: a → o</h2>
+    <span class="tag">E8 · GANADOR</span>
+    <h2>De la 'a' a la 'o'</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="E8d">
-    <ul><li>Los intermedios son <span class="accent">letras inventadas</span> (no están en el dataset).</li></ul>
-    <aside class="notes">Caminamos en línea recta del punto 'a' al 'o'; el decoder genera transiciones suaves.</aside>
+    <ul><li>Caminamos en el mapa de la 'a' a la 'o': los pasos del medio son <span class="accent">mezclas continuas</span>.</li></ul>
+    <aside class="notes">Vamos caminando en el mapa desde la 'a' hasta la 'o'. Los pasos del medio son mezclas de las dos: muestran que el mapa es continuo, sin huecos.</aside>
   </section>
 
-  <!-- 15 · 1b setup config -->
+  <!-- 17 -->
   <section>
-    <span class="tag">1b · SETUP</span>
-    <h2>Denoising — configuración</h2>
+    <span class="tag">1b · CÓMO LO CORRIMOS</span>
+    <h2>Limpiar ruido — la receta</h2>
     <img src="../tablas/tabla_1b_config.png" alt="config 1b">
-    <aside class="notes">La clave: entrada con bit-flip (ruido fresco cada época) y target limpio. La red aprende "sucio → limpio". Cuello 10, no 2.</aside>
+    <aside class="notes">Receta del modelo que limpia ruido. Lo clave: le mostramos la imagen sucia y le pedimos la limpia. Así aprende a sacar las manchas.</aside>
   </section>
 
-  <!-- 16 · 1b setup barridos -->
+  <!-- 18 -->
   <section>
-    <span class="tag">1b · SETUP</span>
-    <h2>Denoising — barridos</h2>
+    <span class="tag">1b · QUÉ PROBAMOS</span>
+    <h2>Los experimentos</h2>
     <img src="../tablas/tabla_1b_resultados.png" alt="barridos 1b">
-    <aside class="notes">E9 varía el cuello; E10 varía el ruido de entrenamiento. La fila "campeón" es el modelo final reforzado.</aside>
+    <aside class="notes">Las pruebas del limpiador: qué tan ancho conviene el cuello, y cuánto ruido usar al entrenar.</aside>
   </section>
 
-  <!-- 17 · E9 -->
+  <!-- 19 -->
   <section>
     <span class="tag">E9</span>
-    <h2>¿Por qué ensanchar el cuello?</h2>
+    <h2>¿Por qué un cuello más ancho?</h2>
     <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="E9">
-    <ul><li>Cuello 2 recupera 48 %; <span class="accent">10 → 59 %</span>; 20 ya no mejora.</li></ul>
-    <aside class="notes">El cuello 2D de 1a era para comprimir, no para limpiar. Limpiar ruido necesita más capacidad latente.</aside>
+    <ul><li>Cuello 2 limpia mal; <span class="accent">cuello 10</span> limpia bien; más de 10 no suma.</li></ul>
+    <aside class="notes">El cuello de 2 (el de la primera parte) limpia mal. Si lo agrandamos a 10, limpia mucho mejor. Más de 10 ya no cambia nada. Por eso para limpiar usamos 10.</aside>
   </section>
 
-  <!-- 18 · E10 -->
+  <!-- 20 -->
   <section>
     <span class="tag">E10</span>
-    <h2>Trade-off del ruido de entrenamiento</h2>
+    <h2>¿Cuánto ruido al entrenar?</h2>
     <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="E10">
-    <ul><li>Las curvas <span class="accent">se cruzan</span>: poco ruido = frágil; mucho ruido = peor en limpio.</li></ul>
-    <aside class="notes">No hay un único "mejor": depende del ruido esperado. 15 % es buen compromiso.</aside>
+    <ul><li>Poco ruido: bien con poco, mal con mucho. Mucho: al revés. <span class="accent">No hay un único mejor</span>.</li></ul>
+    <aside class="notes">Si entrenamos con poco ruido, después limpia bien lo poco sucio pero mal lo muy sucio. Si entrenamos con mucho, al revés. Las líneas se cruzan: depende de cuánta suciedad esperás. Un punto intermedio es buen equilibrio.</aside>
   </section>
 
-  <!-- 19a · campeón -->
+  <!-- 21 -->
   <section>
-    <span class="tag">1b · CAMPEÓN</span>
-    <h2>Resultado del denoiser</h2>
+    <span class="tag">1b · GANADOR</span>
+    <h2>Resultado del limpiador</h2>
     <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="champion">
-    <ul><li><span class="accent">81 % de letras con ≤1px a 15 % de ruido</span> (92 % a 10 %, 64 % a 20 %).</li></ul>
-    <aside class="notes">El campeón reforzado a 15000 épocas, cuello 10.</aside>
+    <ul><li>Recupera <span class="accent">la mayoría de las letras</span>, incluso con bastante ruido.</li></ul>
+    <aside class="notes">El limpiador final recupera bien la mayoría de las letras: casi todas con poco ruido, y todavía muchas con bastante ruido.</aside>
   </section>
 
-  <!-- 19b · E11 tripletes -->
+  <!-- 22 -->
   <section>
     <span class="tag">E11</span>
-    <h2>Denoising: limpio / ruidoso / recuperado</h2>
+    <h2>Limpio / sucio / recuperado</h2>
     <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="E11">
-    <ul><li>Prueba visual: recupera bien a 10–20 %, se degrada recién a 30 %.</li></ul>
-    <aside class="notes">Cada bloque: original arriba, versión con ruido en el medio, recuperado abajo.</aside>
+    <ul><li>Se ve la letra <span class="accent">limpia, la sucia y la que recupera</span> la red.</li></ul>
+    <aside class="notes">Acá se ve con ejemplos: arriba la letra limpia, en el medio la ensuciada, y abajo la que recupera la red. Anda bien hasta bastante ruido.</aside>
   </section>
 
-  <!-- 20 · VAE setup config -->
+  <!-- 23 -->
   <section>
-    <span class="tag">VAE · SETUP</span>
-    <h2>VAE — configuración</h2>
+    <span class="tag">VAE · CÓMO LO CORRIMOS</span>
+    <h2>El generador — la receta</h2>
     <img src="../tablas/tabla_vae_config.png" alt="config vae">
-    <aside class="notes">El encoder ahora da una DISTRIBUCIÓN (μ, logσ²), no un punto. La pérdida suma recon + β·KL. Backprop verificado (grad check 5e-08).</aside>
+    <aside class="notes">Receta del modelo que genera, el VAE. La diferencia con antes: en vez de guardar un punto por imagen, guarda una zona. Eso es lo que después le deja inventar.</aside>
   </section>
 
-  <!-- 21 · VAE setup barrido -->
+  <!-- 24 -->
   <section>
-    <span class="tag">VAE · SETUP</span>
-    <h2>VAE — barrido de β</h2>
+    <span class="tag">VAE · QUÉ PROBAMOS</span>
+    <h2>El experimento</h2>
     <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
-    <aside class="notes">El único barrido es β (peso del KL). Las filas con "—" no son experimentos nuevos: son la misma corrida mirada por recon y por std del latente.</aside>
+    <aside class="notes">Lo único que cambiamos es un número (beta) que dice cuánta importancia le damos a mantener el mapa ordenado.</aside>
   </section>
 
-  <!-- 22 · dataset emojis -->
+  <!-- 25 -->
   <section>
-    <span class="tag">VAE · DATASET</span>
-    <h2>Dataset nuevo: emojis</h2>
+    <span class="tag">VAE · DATOS</span>
+    <h2>Datos nuevos: emojis</h2>
     <img src="../ej2_vae/figs/contact_sheet.png" alt="contact sheet">
-    <ul><li>OpenMoji <em>black</em> (contornos) se confundía → usamos el <span class="accent">canal alpha de color</span> (siluetas, acc 0.95).</li></ul>
-    <aside class="notes">Lo verificamos antes de seguir con un clasificador 1-NN: 0.45 con contornos, 0.95 con siluetas rellenas. 5 emojis distintos.</aside>
+    <ul><li>Probamos una versión que se confundía y la cambiamos por <span class="accent">siluetas claras</span>.</li></ul>
+    <aside class="notes">Para esta parte usamos emojis. La primera versión (de contorno) se confundía a tamaño chico, así que la cambiamos por siluetas rellenas, que se ven claras. Elegimos 5 bien distintos.</aside>
   </section>
 
-  <!-- 23 · E12 -->
+  <!-- 26 -->
   <section>
     <span class="tag">E12</span>
-    <h2>Barrido de β: el KL importa</h2>
+    <h2>El ingrediente que ordena el mapa</h2>
     <img src="../ej2_vae/figs/fig_e12_beta_sampling.png" alt="E12">
-    <ul><li>β=0 (sin KL) → <span class="accent">ruido</span>; β≥0.5 → emojis válidos; β=4 sobre-suaviza.</li></ul>
-    <aside class="notes">Muestreamos z~N(0,I) y decodificamos. Sin KL el latente no es N(0,I), así que el muestreo cae en zona muerta.</aside>
+    <ul><li>Sin ese ingrediente salen <span class="accent">manchas</span>; con él salen emojis de verdad.</li></ul>
+    <aside class="notes">Si sacamos el ingrediente que ordena el mapa (la fila de arriba), al pedirle algo nuevo salen manchas. Con el ingrediente puesto, salen emojis de verdad. Eso muestra para qué sirve.</aside>
   </section>
 
-  <!-- 24 · E16 -->
+  <!-- 27 -->
   <section>
     <span class="tag">E16</span>
-    <h2>Por qué el VAE genera y el AE no</h2>
+    <h2>Por qué uno genera y el otro no</h2>
     <img src="../ej2_vae/figs/fig_e16_ae_vs_vae.png" alt="E16">
-    <ul><li>β=0: latente disperso (±30) → N(0,I) cae afuera. β=1: <span class="accent">compacto ~N(0,I)</span>.</li></ul>
-    <aside class="notes">Esta es la figura clave. El KL es lo que hace que muestrear N(0,I) caiga en zona entrenada. Responde el "problema de la representación" (2b).</aside>
+    <ul><li>Sin ordenar, los puntos quedan <span class="accent">desparramados</span>; ordenados, agrupados en el centro.</li></ul>
+    <aside class="notes">A la izquierda el modelo sin ordenar: los puntos quedan re desparramados, así que si pedís uno al azar caés en el vacío. A la derecha, ordenados y juntos en el centro: por eso este sí genera bien.</aside>
   </section>
 
-  <!-- 25 · E13 -->
+  <!-- 28 -->
   <section>
     <span class="tag">E13</span>
-    <h2>El latente del VAE (β=1)</h2>
+    <h2>El mapa de los emojis</h2>
     <img src="../ej2_vae/figs/fig_e13_latent.png" alt="E13">
-    <ul><li>Las 5 clases quedan agrupadas <span class="accent">dentro de N(0,I)</span>.</li></ul>
-    <aside class="notes">Cada emoji ocupa su región. Los círculos punteados son N(0,I) de referencia.</aside>
+    <ul><li>Cada tipo de emoji ocupa <span class="accent">su zona</span>, todas juntas en el centro.</li></ul>
+    <aside class="notes">Cada tipo de emoji se acomoda en su propia zona del mapa, y todas quedan agrupadas cerca del centro. Eso es lo que queríamos.</aside>
   </section>
 
-  <!-- 26 · E14 -->
+  <!-- 29 -->
   <section>
     <span class="tag">E14</span>
-    <h2>Generación de emojis nuevos (req. 2c)</h2>
+    <h2>Generar emojis nuevos</h2>
     <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="E14">
-    <ul><li>Reconstrucción fiel + <span class="accent">muestras nuevas desde N(0,I)</span>.</li></ul>
-    <aside class="notes">Semilla 26, elegida por cubrir las 5 clases (el latente no es uniforme: corazón/luna ocupan más área).</aside>
+    <ul><li>Reconstruye y además <span class="accent">inventa emojis nuevos</span>, reconocibles.</li></ul>
+    <aside class="notes">El modelo reconstruye los emojis que le mostramos y, además, inventa nuevos pidiéndole puntos al azar del mapa. Se reconocen bien.</aside>
   </section>
 
-  <!-- 27 · E17 atlas -->
+  <!-- 30 -->
   <section>
     <span class="tag">E17</span>
-    <h2>Atlas del latente: cobertura continua</h2>
+    <h2>El mapa completo decodificado</h2>
     <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="E17">
-    <ul><li>Transiciones suaves entre clases → genera <span class="accent">blends nuevos</span>, no copias.</li></ul>
-    <aside class="notes">Barremos una grilla del latente y decodificamos cada celda. Espejo del fig_e8c de 1a.</aside>
+    <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: inventa mezclas, no copia.</li></ul>
+    <aside class="notes">Si recorremos todo el mapa, los emojis se van transformando suavemente de uno a otro. Eso confirma que inventa mezclas nuevas, no que copia los que ya tenía.</aside>
   </section>
 
-  <!-- 28 · E15 (opcional) -->
+  <!-- 31 -->
   <section>
     <span class="tag">E15 — opcional</span>
-    <h2>Curvas: recon vs KL</h2>
+    <h2>El equilibrio</h2>
     <img src="../ej2_vae/figs/fig_e15_recon_kl.png" alt="E15">
-    <ul><li>A más β: menor KL (latente más N(0,I)) y mayor recon-loss → trade-off explícito.</li></ul>
-    <aside class="notes">Slide opcional. β=1 es el punto de equilibrio.</aside>
+    <ul><li>Más orden = mapa más prolijo pero imágenes un poco <span class="accent">peores</span>. Hay que equilibrar.</li></ul>
+    <aside class="notes">Cuanto más le exigimos ordenar el mapa, más prolijo queda pero las imágenes salen un poquito peores. Hay un punto de equilibrio, que es el que elegimos.</aside>
   </section>
 
-  <!-- 29 · Conclusiones -->
+  <!-- 32 -->
   <section>
     <h2>Conclusiones</h2>
-    <ul class="big" style="font-size:0.78em">
-      <li><strong>1a:</strong> no-linealidad + 2D + BCE + Adam → compresión perfecta (0 px); PCA no puede.</li>
-      <li><strong>1b:</strong> limpiar ruido necesita más cuello, y el ruido de train es un trade-off.</li>
-      <li><strong>VAE:</strong> el término KL convierte un compresor en un generador (latente ~N(0,I)).</li>
+    <ul class="big" style="font-size:0.8em">
+      <li><strong>1a:</strong> con curvas y 2 números guardamos las 32 letras perfecto; un método clásico no llega.</li>
+      <li><strong>1b:</strong> limpiar ruido necesita un cuello más ancho, y el ruido de entrenamiento es un equilibrio.</li>
+      <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> cosas nuevas.</li>
     </ul>
-    <aside class="notes">Cerrar con la frase por parte. Preguntas de defensa preparadas en DEFENSA.md.</aside>
+    <aside class="notes">Para cerrar: en la primera parte logramos guardar las letras perfecto con solo 2 números. En la segunda, limpiar ruido necesita un cuello más ancho. Y en la tercera, ordenando el mapa el modelo aprende a inventar. Todo hecho a mano, sin librerías de redes.</aside>
   </section>
 
 </div></div>
