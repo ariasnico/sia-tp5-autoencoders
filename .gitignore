@@ -15,3 +15,10 @@ RESUMEN.md
 # material de referencia del refactor (scripts/figuras originales de partida)
 ref/
 ref_figs/
+
+# imágenes de trabajo / debug (capturas y ejemplos compartidos) — no son del TP
+Exmlp*.png
+malo*.png
+raro*.png
+slide-*.png
+.playwright-mcp/

@@ -64,11 +64,12 @@ def e1():
     df = pd.read_csv(RES / "e1_linear_vs_pca.csv")
     fig, ax = plt.subplots(figsize=(9, 5.5))
     ax.bar(range(len(df)), df["px_mean"], color=[PRIMARY, SECONDARY, "#9CA3AF"])
+    ax.set_ylim(0, max(df["px_mean"]) * 1.4)  # aire para que las etiquetas no toquen el título
     for i, (m, mx) in enumerate(zip(df["px_mean"], df["px_max"])):
-        ax.text(i, m + 0.15, f"prom {m:.2f}\nmax {mx}", ha="center", fontsize=12)
+        ax.text(i, m + 0.2, f"prom {m:.2f}\nmax {mx}", ha="center", fontsize=11)
     ax.set_xticks(range(len(df))); ax.set_xticklabels(df["modelo"], fontsize=11)
     ax.set_ylabel("px incorrectos por letra (promedio)")
-    ax.set_title("E1 · AE lineal ≡ PCA (~7 px); el no-lineal llega a 0")
+    ax.set_title("E1 · AE lineal ≡ PCA (~7 px); el no-lineal llega a 0", pad=14)
     save(fig, "fig_e1_linear_vs_pca.png")
 
 
