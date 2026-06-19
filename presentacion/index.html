@@ -29,7 +29,8 @@
     <h3>TP5 — Deep Learning</h3>
     <p class="sub">Sistemas de Inteligencia Artificial · ITBA · 1Q 2026</p>
     <p class="sub">Nicolás Valentín Arias · Tomás Pinausig · Mateo Pirola · Katia Menshikoff</p>
-    <aside class="notes">Presentamos el TP5. La idea es enseñarle a una red a resumir imágenes y después a inventar imágenes nuevas. Lo hicimos todo a mano, sin librerías de redes. Son tres partes.</aside>
+    <aside class="notes">►► BLOQUE 1 — habla NICOLÁS (~5 min, slides 1 a 8) ◄◄
+    Buenas, somos el grupo. Este es nuestro TP5, sobre redes que aprenden solas. La idea en una frase: primero le enseñamos a una red a resumir imágenes en muy pocos números, y después a inventar imágenes nuevas. Lo programamos todo nosotros, a mano, sin usar librerías de redes ya hechas. Lo dividimos en tres partes y arranco yo con la primera.</aside>
   </section>
 
   <!-- 2 -->
@@ -40,7 +41,7 @@
       <li>Como por el cuello no entra todo, la red tiene que <strong>resumir</strong> la imagen.</li>
       <li><strong>1a:</strong> ¿se puede resumir muchísimo? · <strong>1b:</strong> ¿sirve para limpiar manchas? · <strong>2:</strong> ¿se puede inventar?</li>
     </ul>
-    <aside class="notes">Le pedimos a la red que devuelva la misma imagen que le entra, pero la hacemos pasar por un cuello chiquito. Así está forzada a guardar solo lo importante. Cada parte del TP es una de esas tres preguntas.</aside>
+    <aside class="notes">¿Qué es un autoencoder? Es una red con forma de reloj de arena: le entra una imagen, la hace pasar por un cuello bien angosto en el medio, y del otro lado tiene que devolver la misma imagen. Como por ese cuello no entra toda la información, la red queda obligada a guardar solo lo esencial: o sea, a resumir. Las tres preguntas que nos hicimos: ¿se puede resumir muchísimo sin perder calidad?, ¿eso sirve para limpiar imágenes con ruido?, y ¿se puede usar para inventar imágenes nuevas? Una por cada parte.</aside>
   </section>
 
   <!-- 3 -->
@@ -49,7 +50,7 @@
     <h2>El dataset: 32 letras</h2>
     <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
     <ul><li>32 letras chiquitas de 7×5. Queremos guardar cada una con <span class="accent">solo 2 números</span>.</li></ul>
-    <aside class="notes">Son 32 letras de 7 por 5, en blanco y negro. La meta es guardarlas usando apenas 2 números por letra. Es difícil porque hay letras muy parecidas entre sí.</aside>
+    <aside class="notes">Para la primera parte usamos un conjunto de 32 letras, bien chiquitas, de 7 por 5 puntos, en blanco y negro. El desafío que nos pusimos: guardar cada letra usando apenas 2 números y poder reconstruirla. Es difícil de verdad, porque varias letras se parecen muchísimo entre sí; comprimir tanto sin confundirlas no es para nada obvio.</aside>
   </section>
 
   <!-- 4 -->
@@ -57,7 +58,7 @@
     <span class="tag">1a · CÓMO LO CORRIMOS</span>
     <h2>La receta del mejor modelo</h2>
     <img src="../tablas/tabla_1a_config.png" alt="config 1a">
-    <aside class="notes">Esta tabla es la receta del modelo ganador: un valor por fila, todos funcionando juntos. Ojo, no es lo que probamos, es lo que quedó como mejor. La parte de "probar" está en la tabla siguiente.</aside>
+    <aside class="notes">Acá les muestro cómo quedó configurado nuestro mejor modelo. Cada fila es un ingrediente de la receta, y todos funcionan juntos al mismo tiempo. Quiero aclarar algo importante: esta tabla NO es lo que fuimos probando, es la receta final, la que mejor nos dio. Lo que probamos está en la tabla que sigue.</aside>
   </section>
 
   <!-- 5 -->
@@ -65,7 +66,7 @@
     <span class="tag">1a · QUÉ PROBAMOS</span>
     <h2>Los experimentos</h2>
     <img src="../tablas/tabla_1a_resultados.png" alt="barridos 1a">
-    <aside class="notes">Acá sí están las pruebas. En cada fila cambiamos una sola cosa y miramos qué pasaba. La columna "para qué" dice la pregunta que respondía cada experimento.</aside>
+    <aside class="notes">Esta es la tabla clave de cómo trabajamos. Cada fila es un experimento donde cambiamos una sola cosa y dejamos todo lo demás igual, para ver bien qué efecto tenía. Agregamos una columna 'para qué' con la pregunta concreta que respondía cada experimento. Ahora los cuento uno por uno.</aside>
   </section>
 
   <!-- 6 -->
@@ -74,7 +75,7 @@
     <h2>¿Hacen falta las curvas?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="E1">
     <ul><li>Modelo recto = un método clásico (PCA): se equivoca en <span class="accent">7 píxeles</span>. Con curvas: <span class="accent">0</span>.</li></ul>
-    <aside class="notes">Probamos un modelo "recto" y uno "con curvas". El recto da igual que un método viejo y conocido, y se equivoca en 7 puntitos por letra. El que tiene curvas no se equivoca en ninguno. O sea: las curvas son lo que hace la diferencia.</aside>
+    <aside class="notes">Primer experimento: ¿hacen falta las curvas, o sea la parte no-lineal de la red? Probamos un modelo todo recto y uno con curvas. El recto resultó ser exactamente lo mismo que un método clásico de estadística, el PCA, y se equivoca en unos 7 puntitos por letra. El que tiene curvas no se equivoca en ninguno. Conclusión clara: las curvas son lo que hace toda la diferencia.</aside>
   </section>
 
   <!-- 7 -->
@@ -83,7 +84,7 @@
     <h2>¿Cuántos números por letra?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e2_latent_elbow.png" alt="E2">
     <ul><li>Con 1 no alcanza; <span class="accent">con 2 ya salen perfectas</span>.</li></ul>
-    <aside class="notes">Probamos guardar cada letra con 1, 2, 3, 5 u 8 números. Con 1 solo no entran todas. Con 2 ya salen todas perfectas, y agregar más no mejora. Por eso usamos 2.</aside>
+    <aside class="notes">Segundo: ¿con cuántos números guardamos cada letra? Probamos con 1, 2, 3, 5 y 8. Con un solo número no alcanza, no entran las 32. Con 2 ya salen todas perfectas, y agregar más no mejora nada. Por eso nos quedamos con 2, que además es lo que pedía la consigna.</aside>
   </section>
 
   <!-- 8 -->
@@ -92,7 +93,7 @@
     <h2>¿Qué tan grande la red?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="E3">
     <ul><li>Red muy chica falla; con <span class="accent">20 neuronas</span> ya sale perfecto.</li></ul>
-    <aside class="notes">Probamos redes de distintos tamaños. Si es muy chica, falla. Con 20 neuronas ya sale perfecto y más no agrega. Si en las curvas ves algún salto, es algo normal del entrenamiento: la red se acomoda sola enseguida.</aside>
+    <aside class="notes">Tercero: ¿qué tan grande tiene que ser la red? Probamos varios tamaños. Si es muy chica, falla. Con 20 neuronas ya sale perfecto, y más grande no aporta. Una aclaración: si ven algún pico raro en las curvas, es algo normal del entrenamiento, la red se acomoda sola enseguida. Y con esto cierro mi parte; sigue Tomás.</aside>
   </section>
 
   <!-- 9 -->
@@ -101,7 +102,8 @@
     <h2>¿Cómo entrenar?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="E4">
     <ul><li>Adam es el que <span class="accent">llega más abajo</span>; los otros se quedan a mitad de camino.</li></ul>
-    <aside class="notes">Probamos tres maneras de entrenar la red. La llamada Adam es la que aprende mejor y llega más abajo. Las otras dos se quedan más arriba. Los saltos que se ven a veces son normales y la red se recupera en seguida.</aside>
+    <aside class="notes">►► BLOQUE 2 — habla TOMÁS (~5 min, slides 9 a 16) ◄◄
+    Gracias Nico. Yo sigo con cómo entrenamos la red. Primero, la forma de ajustarla: probamos tres maneras. La que se llama Adam es la que aprende mejor y llega más abajo; las otras dos se quedan a mitad de camino. Los saltitos que aparecen son normales, la red se recupera en seguida. Así que usamos Adam.</aside>
   </section>
 
   <!-- 10 -->
@@ -110,7 +112,7 @@
     <h2>¿Qué tan grande el paso?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
     <ul><li>Paso muy chico tarda; muy grande <span class="accent">no aprende</span>; el del medio anda.</li></ul>
-    <aside class="notes">El "paso" es cuánto corrige la red en cada vuelta. Probamos chico, justo y grande. Muy chico tarda muchísimo; muy grande no aprende nada; el del medio es el bueno.</aside>
+    <aside class="notes">Después miramos el tamaño del paso, o sea cuánto se corrige la red en cada vuelta. Probamos chico, justo y grande. Muy chico tarda una eternidad. Muy grande no aprende nada, se queda arriba sin bajar. El del medio es el que anda bien. Este experimento también sirve para mostrar lo que NO funciona, que la cátedra valora.</aside>
   </section>
 
   <!-- 11 -->
@@ -119,7 +121,7 @@
     <h2>¿Qué tipo de neurona?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
     <ul><li>Las tres terminan perfectas; solo cambia <span class="accent">qué tan rápido</span> llegan.</li></ul>
-    <aside class="notes">Probamos tres tipos de neurona. Las tres terminan sin errores; lo único que cambia es cuál llega más rápido. Conclusión simple: cualquiera sirve.</aside>
+    <aside class="notes">También probamos tres tipos de neurona. Lo interesante es que las tres terminan igual de bien, sin errores. Lo único que cambia es cuál llega más rápido. O sea, para este problema, cualquiera de las tres sirve.</aside>
   </section>
 
   <!-- 12 -->
@@ -128,7 +130,7 @@
     <h2>¿Cómo medir el error?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="E7">
     <ul><li>Una forma (BCE) queda <span class="accent">perfecta</span> para blanco y negro; la otra deja 2 errores.</li></ul>
-    <aside class="notes">Probamos dos maneras de medir cuánto se equivoca la red. Una le queda mejor a las imágenes en blanco y negro y termina perfecta. La otra deja 2 puntitos mal. Por eso usamos la primera.</aside>
+    <aside class="notes">Y lo último de configuración: cómo medir el error mientras entrena. Probamos dos formas. Una le queda mejor a las imágenes en blanco y negro y termina perfecta. La otra deja 2 puntitos mal. Nos quedamos con la primera. Con esto cierro la parte de cómo entrenamos; ahora paso a mostrar el resultado.</aside>
   </section>
 
   <!-- 13 -->
@@ -137,7 +139,7 @@
     <h2>Reconstrucción: sin errores</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="E8a">
     <ul><li>Arriba la letra real, abajo la de la red: <span class="accent">iguales, 0 errores</span>.</li></ul>
-    <aside class="notes">Este es el modelo ganador. En cada par, arriba está la letra original y abajo lo que devuelve la red. Son iguales: cero errores en las 32 letras.</aside>
+    <aside class="notes">Este es el modelo ganador. En cada par, arriba está la letra original y abajo lo que devuelve la red. Fíjense que son idénticas: cero errores en las 32 letras. Logramos el objetivo de la consigna con margen.</aside>
   </section>
 
   <!-- 14 -->
@@ -146,7 +148,7 @@
     <h2>El mapa de 2 números</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="E8b">
     <ul><li>Las 32 letras ubicadas en el mapa; el recuadro de la derecha es un <span class="accent">zoom</span> del centro.</li></ul>
-    <aside class="notes">Acá están las 32 letras puestas en el mapa de 2 números: cada punto es una letra. El recuadro de la derecha hace un zoom para poder leer las del centro, que estaban amontonadas.</aside>
+    <aside class="notes">Y este es el mapa que aprendió: cada una de las 32 letras quedó ubicada en un punto, usando solo 2 números. Como en el centro quedaban un poco amontonadas, pusimos un zoom a la derecha para poder leerlas todas.</aside>
   </section>
 
   <!-- 15 -->
@@ -155,7 +157,7 @@
     <h2>Inventar letras nuevas</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="E8c">
     <ul><li>Recorriendo el mapa aparecen <span class="accent">letras que no estaban</span> en el conjunto.</li></ul>
-    <aside class="notes">Si recorremos el mapa y miramos qué dibuja la red en cada punto, aparecen letras que no le habíamos enseñado. O sea, la red puede inventar.</aside>
+    <aside class="notes">Lo lindo es que el mapa no tiene solo las 32 letras. Si lo recorremos y miramos qué dibuja la red en cada punto, aparecen letras nuevas, que nunca le enseñamos. O sea, la red ya puede inventar un poco.</aside>
   </section>
 
   <!-- 16 -->
@@ -164,7 +166,7 @@
     <h2>De la 'a' a la 'o'</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="E8d">
     <ul><li>Caminamos en el mapa de la 'a' a la 'o': los pasos del medio son <span class="accent">mezclas continuas</span>.</li></ul>
-    <aside class="notes">Vamos caminando en el mapa desde la 'a' hasta la 'o'. Los pasos del medio son mezclas de las dos: muestran que el mapa es continuo, sin huecos.</aside>
+    <aside class="notes">Y para mostrarlo más claro: acá caminamos en el mapa desde la 'a' hasta la 'o'. Los pasos del medio son mezclas suaves de las dos letras. Esto demuestra que el mapa es continuo, sin huecos. Con esto termino; sigue Mateo con la parte de limpiar ruido.</aside>
   </section>
 
   <!-- 17 -->
@@ -172,7 +174,8 @@
     <span class="tag">1b · CÓMO LO CORRIMOS</span>
     <h2>Limpiar ruido — la receta</h2>
     <img src="../tablas/tabla_1b_config.png" alt="config 1b">
-    <aside class="notes">Receta del modelo que limpia ruido. Lo clave: le mostramos la imagen sucia y le pedimos la limpia. Así aprende a sacar las manchas.</aside>
+    <aside class="notes">►► BLOQUE 3 — habla MATEO (~5 min, slides 17 a 22) ◄◄
+    Gracias Tomás. Yo me encargo de la segunda parte: usar la misma idea, pero para limpiar imágenes con ruido. La receta es parecida a la anterior, con un cambio clave en cómo entrenamos: en vez de mostrarle la imagen y pedirle la misma, le mostramos la imagen sucia, con manchas, y le pedimos la versión limpia. Así la red aprende a sacar el ruido. Otro cambio es que el cuello lo hacemos más ancho, y ya les explico por qué.</aside>
   </section>
 
   <!-- 18 -->
@@ -180,7 +183,7 @@
     <span class="tag">1b · QUÉ PROBAMOS</span>
     <h2>Los experimentos</h2>
     <img src="../tablas/tabla_1b_resultados.png" alt="barridos 1b">
-    <aside class="notes">Las pruebas del limpiador: qué tan ancho conviene el cuello, y cuánto ruido usar al entrenar.</aside>
+    <aside class="notes">Acá están los experimentos de esta parte. Fueron dos preguntas principales: primero, qué tan ancho conviene el cuello para limpiar bien; y segundo, con cuánto ruido conviene entrenar a la red. Los recorro.</aside>
   </section>
 
   <!-- 19 -->
@@ -189,7 +192,7 @@
     <h2>¿Por qué un cuello más ancho?</h2>
     <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="E9">
     <ul><li>Cuello 2 limpia mal; <span class="accent">cuello 10</span> limpia bien; más de 10 no suma.</li></ul>
-    <aside class="notes">El cuello de 2 (el de la primera parte) limpia mal. Si lo agrandamos a 10, limpia mucho mejor. Más de 10 ya no cambia nada. Por eso para limpiar usamos 10.</aside>
+    <aside class="notes">El primero, el ancho del cuello. El cuello de 2 que usábamos antes, para limpiar funciona mal: recupera menos de la mitad de las letras. Si lo agrandamos a 10, mejora un montón. Y más de 10 ya no cambia nada. ¿Por qué pasa esto? Porque limpiar es más difícil que solo resumir: la red necesita más lugar para trabajar. Por eso acá usamos 10 y no 2.</aside>
   </section>
 
   <!-- 20 -->
@@ -198,7 +201,7 @@
     <h2>¿Cuánto ruido al entrenar?</h2>
     <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="E10">
     <ul><li>Poco ruido: bien con poco, mal con mucho. Mucho: al revés. <span class="accent">No hay un único mejor</span>.</li></ul>
-    <aside class="notes">Si entrenamos con poco ruido, después limpia bien lo poco sucio pero mal lo muy sucio. Si entrenamos con mucho, al revés. Las líneas se cruzan: depende de cuánta suciedad esperás. Un punto intermedio es buen equilibrio.</aside>
+    <aside class="notes">El segundo, cuánto ruido usar al entrenar. Esto tiene una vuelta interesante. Si entrenamos con poco ruido, después la red limpia bien lo poco sucio pero se rompe con lo muy sucio. Si entrenamos con mucho ruido, al revés: aguanta lo muy sucio pero pierde precisión con lo limpio. Las líneas del gráfico se cruzan. O sea, no hay un único mejor: depende de cuánta suciedad esperás encontrar. Nosotros elegimos un punto intermedio como buen equilibrio.</aside>
   </section>
 
   <!-- 21 -->
@@ -207,7 +210,7 @@
     <h2>Resultado del limpiador</h2>
     <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="champion">
     <ul><li>Recupera <span class="accent">la mayoría de las letras</span>, incluso con bastante ruido.</li></ul>
-    <aside class="notes">El limpiador final recupera bien la mayoría de las letras: casi todas con poco ruido, y todavía muchas con bastante ruido.</aside>
+    <aside class="notes">Y este es el resultado de nuestro mejor limpiador. Recupera bien la gran mayoría de las letras: casi todas cuando el ruido es poco, y todavía muchas cuando el ruido es bastante. Es un resultado sólido.</aside>
   </section>
 
   <!-- 22 -->
@@ -216,7 +219,7 @@
     <h2>Limpio / sucio / recuperado</h2>
     <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="E11">
     <ul><li>Se ve la letra <span class="accent">limpia, la sucia y la que recupera</span> la red.</li></ul>
-    <aside class="notes">Acá se ve con ejemplos: arriba la letra limpia, en el medio la ensuciada, y abajo la que recupera la red. Anda bien hasta bastante ruido.</aside>
+    <aside class="notes">Para que se vea con ejemplos concretos: en cada columna, arriba está la letra limpia, en el medio la versión ensuciada que le damos, y abajo lo que la red logra recuperar. Funciona bien hasta niveles de ruido bastante altos. Con esto cierro mi parte; sigue Katia con la última, que es la más copada: generar imágenes nuevas.</aside>
   </section>
 
   <!-- 23 -->
@@ -224,7 +227,8 @@
     <span class="tag">VAE · CÓMO LO CORRIMOS</span>
     <h2>El generador — la receta</h2>
     <img src="../tablas/tabla_vae_config.png" alt="config vae">
-    <aside class="notes">Receta del modelo que genera, el VAE. La diferencia con antes: en vez de guardar un punto por imagen, guarda una zona. Eso es lo que después le deja inventar.</aside>
+    <aside class="notes">►► BLOQUE 4 — habla KATIA (~5 min, slides 23 a 32) ◄◄
+    Gracias Mateo. Yo cierro con la parte de generar. El modelo se llama VAE. La diferencia clave con todo lo anterior: en vez de guardar cada imagen en un punto del mapa, la guarda en una zona, una nube. Eso, que parece un detalle, es justo lo que después le permite inventar. Esta es su receta.</aside>
   </section>
 
   <!-- 24 -->
@@ -232,7 +236,7 @@
     <span class="tag">VAE · QUÉ PROBAMOS</span>
     <h2>El experimento</h2>
     <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
-    <aside class="notes">Lo único que cambiamos es un número (beta) que dice cuánta importancia le damos a mantener el mapa ordenado.</aside>
+    <aside class="notes">Y el único experimento que variamos acá es un número que llamamos beta. Beta dice cuánta importancia le damos a mantener el mapa ordenado y compacto. Ahora vemos por qué eso importa tanto.</aside>
   </section>
 
   <!-- 25 -->
@@ -241,7 +245,7 @@
     <h2>Datos nuevos: emojis</h2>
     <img src="../ej2_vae/figs/contact_sheet.png" alt="contact sheet">
     <ul><li>Probamos una versión que se confundía y la cambiamos por <span class="accent">siluetas claras</span>.</li></ul>
-    <aside class="notes">Para esta parte usamos emojis. La primera versión (de contorno) se confundía a tamaño chico, así que la cambiamos por siluetas rellenas, que se ven claras. Elegimos 5 bien distintos.</aside>
+    <aside class="notes">Para esta parte cambiamos de datos: usamos emojis. Al principio probamos una versión de contorno, pero a tamaño chico se confundían unos con otros, así que la cambiamos por siluetas rellenas, que se ven bien claras. Elegimos 5 emojis bien distintos entre sí.</aside>
   </section>
 
   <!-- 26 -->
@@ -250,7 +254,7 @@
     <h2>El ingrediente que ordena el mapa</h2>
     <img src="../ej2_vae/figs/fig_e12_beta_sampling.png" alt="E12">
     <ul><li>Sin ese ingrediente salen <span class="accent">manchas</span>; con él salen emojis de verdad.</li></ul>
-    <aside class="notes">Si sacamos el ingrediente que ordena el mapa (la fila de arriba), al pedirle algo nuevo salen manchas. Con el ingrediente puesto, salen emojis de verdad. Eso muestra para qué sirve.</aside>
+    <aside class="notes">Acá está la idea central. La fila de arriba es el modelo SIN ese ingrediente que ordena el mapa: cuando le pedimos algo nuevo, salen manchas, basura. Las otras filas, con el ingrediente puesto, generan emojis de verdad. Esto muestra para qué sirve ordenar el mapa.</aside>
   </section>
 
   <!-- 27 -->
@@ -259,7 +263,7 @@
     <h2>Por qué uno genera y el otro no</h2>
     <img src="../ej2_vae/figs/fig_e16_ae_vs_vae.png" alt="E16">
     <ul><li>Sin ordenar, los puntos quedan <span class="accent">desparramados</span>; ordenados, agrupados en el centro.</li></ul>
-    <aside class="notes">A la izquierda el modelo sin ordenar: los puntos quedan re desparramados, así que si pedís uno al azar caés en el vacío. A la derecha, ordenados y juntos en el centro: por eso este sí genera bien.</aside>
+    <aside class="notes">Esta es la explicación de fondo. A la izquierda, el modelo sin ordenar: los puntos quedan re desparramados por todos lados, así que si pedís uno al azar, caés en un lugar vacío y sale cualquier cosa. A la derecha, el modelo ordenado: todo queda juntito en el centro. Por eso este sí puede generar y el otro no.</aside>
   </section>
 
   <!-- 28 -->
@@ -268,7 +272,7 @@
     <h2>El mapa de los emojis</h2>
     <img src="../ej2_vae/figs/fig_e13_latent.png" alt="E13">
     <ul><li>Cada tipo de emoji ocupa <span class="accent">su zona</span>, todas juntas en el centro.</li></ul>
-    <aside class="notes">Cada tipo de emoji se acomoda en su propia zona del mapa, y todas quedan agrupadas cerca del centro. Eso es lo que queríamos.</aside>
+    <aside class="notes">Y acá se ve el mapa ordenado por tipo de emoji: cada clase se acomoda en su propia zona, y todas quedan agrupadas cerca del centro. Justo lo que buscábamos.</aside>
   </section>
 
   <!-- 29 -->
@@ -277,7 +281,7 @@
     <h2>Generar emojis nuevos</h2>
     <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="E14">
     <ul><li>Reconstruye y además <span class="accent">inventa emojis nuevos</span>, reconocibles.</li></ul>
-    <aside class="notes">El modelo reconstruye los emojis que le mostramos y, además, inventa nuevos pidiéndole puntos al azar del mapa. Se reconocen bien.</aside>
+    <aside class="notes">Estos son los resultados de generar: el modelo reconstruye los emojis que le mostramos, y además inventa nuevos pidiéndole puntos al azar del mapa. Y se reconocen perfectamente.</aside>
   </section>
 
   <!-- 30 -->
@@ -286,7 +290,7 @@
     <h2>El mapa completo decodificado</h2>
     <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="E17">
     <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: inventa mezclas, no copia.</li></ul>
-    <aside class="notes">Si recorremos todo el mapa, los emojis se van transformando suavemente de uno a otro. Eso confirma que inventa mezclas nuevas, no que copia los que ya tenía.</aside>
+    <aside class="notes">Una vista más completa: recorriendo todo el mapa, los emojis se van transformando de a poco, uno en otro, suavemente. Esto confirma que el modelo inventa mezclas nuevas, no que copia los que ya tenía.</aside>
   </section>
 
   <!-- 31 -->
@@ -295,7 +299,7 @@
     <h2>El equilibrio</h2>
     <img src="../ej2_vae/figs/fig_e15_recon_kl.png" alt="E15">
     <ul><li>Más orden = mapa más prolijo pero imágenes un poco <span class="accent">peores</span>. Hay que equilibrar.</li></ul>
-    <aside class="notes">Cuanto más le exigimos ordenar el mapa, más prolijo queda pero las imágenes salen un poquito peores. Hay un punto de equilibrio, que es el que elegimos.</aside>
+    <aside class="notes">Una última cosa sobre ese número beta: cuanto más le exigimos ordenar el mapa, más prolijo queda, pero las imágenes salen un poquito peores. Hay un punto de equilibrio, y elegimos el del medio.</aside>
   </section>
 
   <!-- 32 -->
@@ -306,7 +310,7 @@
       <li><strong>1b:</strong> limpiar ruido necesita un cuello más ancho, y el ruido de entrenamiento es un equilibrio.</li>
       <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> cosas nuevas.</li>
     </ul>
-    <aside class="notes">Para cerrar: en la primera parte logramos guardar las letras perfecto con solo 2 números. En la segunda, limpiar ruido necesita un cuello más ancho. Y en la tercera, ordenando el mapa el modelo aprende a inventar. Todo hecho a mano, sin librerías de redes.</aside>
+    <aside class="notes">Y para cerrar, las conclusiones de todo el trabajo. En la primera parte logramos guardar las 32 letras perfecto usando solo 2 números, algo que un método clásico no consigue. En la segunda, vimos que limpiar ruido necesita un cuello más ancho y que el ruido de entrenamiento es un equilibrio. Y en la tercera, que ordenando el mapa el modelo pasa de simplemente resumir a poder inventar cosas nuevas. Todo programado por nosotros, a mano. Muchas gracias. ¿Alguna pregunta?</aside>
   </section>
 
 </div></div>
