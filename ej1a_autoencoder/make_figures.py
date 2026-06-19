@@ -34,12 +34,14 @@ def save(fig, name):
 
 
 def e0a():
-    fig, ax = plt.subplots(4, 8, figsize=(11, 6.5))
+    fig, ax = plt.subplots(4, 8, figsize=(12, 7))
     for j in range(N):
         a = ax[j // 8, j % 8]
         a.imshow(X[j].reshape(H, W)); a.set_title(LABELS[j], fontsize=13); a.axis("off")
     fig.suptitle("E0 · Dataset font.h: 32 caracteres de 7×5 (binarios)")
-    save(fig, "fig_e0a_dataset_letters.png")
+    fig.subplots_adjust(wspace=0.4, hspace=0.5, left=0.03, right=0.97)
+    fig.savefig(FIGS / "fig_e0a_dataset_letters.png", pad_inches=0.3)
+    plt.close(fig); print("   fig_e0a_dataset_letters.png")
 
 
 def e0b():
