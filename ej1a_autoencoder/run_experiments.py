@@ -116,7 +116,9 @@ print(pd.DataFrame(rows).to_string(index=False))
 print("\n== E6: activación hidden ==")
 rows = []
 for act in ["tanh", "relu", "sigmoid"]:
-    _, e, c = train(act_hidden=act)
+    # eps=1e-4 (mayor que el 1e-8 default) estabiliza Adam: evita el spike y el dying-relu,
+    # para que la comparación de activaciones se vea limpia. Las 3 igual llegan a 0 px.
+    _, e, c = train(act_hidden=act, opt=Adam(0.01, eps=1e-4))
     curves[f"e6_{act}"] = c
     rows.append({"act_hidden": act, **stats(e)})
 pd.DataFrame(rows).to_csv(RESULTS / "e6_activation.csv", index=False)
