@@ -202,7 +202,64 @@ def e8():
     save(fig, "fig_e8d_interpolation.png")
 
 
+def e0c_hamming():
+    """Heatmap de distancia Hamming solo (para la slide del dataset): motiva que comprimir a 2D
+    es difícil porque hay letras casi idénticas que igual hay que separar."""
+    hm = hamming_matrix(X)
+    fig, ax = plt.subplots(figsize=(7.0, 6.2))
+    im = ax.imshow(hm, cmap="magma"); ax.grid(False)
+    ax.set_xticks(range(N)); ax.set_xticklabels(LABELS, fontsize=7)
+    ax.set_yticks(range(N)); ax.set_yticklabels(LABELS, fontsize=7)
+    hmoff = hm + np.eye(N, dtype=int) * 999
+    i, j = np.unravel_index(np.argmin(hmoff), hm.shape)
+    ax.set_title("Qué tan distintas son las letras entre sí\n(# de píxeles en que difieren)")
+    ax.set_xlabel(f"hay pares casi idénticos: '{LABELS[i]}' ~ '{LABELS[j]}' a sólo {hm[i, j]} px",
+                  color=PRIMARY)
+    fig.colorbar(im, ax=ax, fraction=0.046)
+    save(fig, "fig_e0c_hamming.png")
+
+
+def e8e_latent_vs_hamming():
+    """Estructura de similitud en píxeles (Hamming) vs en el mapa latente 2D del campeón.
+    La correlación de Spearman entre las distancias de a pares dice si el AE preservó el
+    parecido entre letras. Determinístico (sin azar): mismo orden de LABELS en ambas matrices."""
+    from scipy.stats import spearmanr
+    Z = np.load(RES / "champion_latent.npz")["Z"]
+    hm = hamming_matrix(X).astype(float)
+    diff = Z[:, None, :] - Z[None, :, :]
+    lm = np.sqrt((diff ** 2).sum(-1))                 # distancia euclídea por par en el latente
+    iu = np.triu_indices(N, k=1)                      # 496 pares (triángulo superior)
+    rho, _ = spearmanr(hm[iu], lm[iu])
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 6.2))
+    for ax, M, t in [(a1, hm, "Distancia en píxeles (Hamming)"),
+                     (a2, lm, "Distancia en el mapa latente 2D")]:
+        im = ax.imshow(M, cmap="magma"); ax.grid(False)
+        ax.set_xticks(range(N)); ax.set_xticklabels(LABELS, fontsize=6)
+        ax.set_yticks(range(N)); ax.set_yticklabels(LABELS, fontsize=6)
+        ax.set_title(t)
+        fig.colorbar(im, ax=ax, fraction=0.046)
+    fig.suptitle(f"E8 · ¿El latente preservó el parecido entre letras?   Spearman ρ = {rho:.2f}")
+    save(fig, "fig_e8e_latent_vs_hamming.png")
+    print(f"   [Spearman Hamming vs latente = {rho:.4f}]")
+    return rho
+
+
+def e1_pca_pixel_error():
+    """Dónde falla el modelo lineal/PCA(2): fracción de letras con ese píxel mal, promediada
+    sobre las 32 letras y reshape a 7×5. Determinístico (PCA por SVD analítico)."""
+    mu = X.mean(0); Xc = X - mu
+    _, _, Vt = np.linalg.svd(Xc, full_matrices=False)
+    Xr = (Xc @ Vt[:2].T) @ Vt[:2] + mu                # reconstrucción PCA(2)
+    err = np.abs((Xr > 0.5).astype(float) - X).mean(0).reshape(H, W)
+    fig, ax = plt.subplots(figsize=(5.0, 6.0))
+    im = ax.imshow(err, cmap="magma", vmin=0); ax.grid(False); ax.set_xticks([]); ax.set_yticks([])
+    ax.set_title("E1 · Dónde falla PCA(2)\n(error por píxel, prom. 32 letras)")
+    fig.colorbar(im, ax=ax, fraction=0.05, label="frac. de letras con ese píxel mal")
+    save(fig, "fig_e1_pca_pixel_error.png")
+
+
 if __name__ == "__main__":
     print("Generando figuras 1a:")
-    e0a(); e0b(); e1(); e2(); e3(); e4(); e5(); e6(); e7(); e8()
+    e0a(); e0b(); e0c_hamming(); e1(); e1_pca_pixel_error(); e2(); e3(); e4(); e5(); e6(); e7()
+    e8(); e8e_latent_vs_hamming()
     print("OK figuras 1a en", FIGS)

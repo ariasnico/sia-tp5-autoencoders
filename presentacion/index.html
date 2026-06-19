@@ -10,6 +10,8 @@
     :root { --azul:#1E3A5F; --naranja:#C2410C; }
     .reveal h1,.reveal h2,.reveal h3 { color:var(--azul); text-transform:none; letter-spacing:normal; }
     .reveal section img { border:none; box-shadow:0 3px 14px rgba(0,0,0,.18); max-height:50vh; max-width:88%; background:#fff; margin:0.2em auto; }
+    .reveal .duo { display:flex; gap:2.5%; justify-content:center; align-items:center; }
+    .reveal .duo img { max-height:48vh; max-width:48%; }
     .reveal ul { font-size:0.55em; width:88%; margin:0.25em auto; }
     .reveal li { margin:0.12em 0; }
     .reveal .accent { color:var(--naranja); font-weight:bold; }
@@ -45,16 +47,22 @@
   <section>
     <span class="tag">EXPLORACIÓN · E0</span>
     <h2>El dataset: 32 letras</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
-    <ul><li>32 letras chiquitas de 7×5. Queremos guardar cada una con <span class="accent">solo 2 números</span>.</li></ul>
+    <div class="duo">
+      <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
+      <img src="../ej1a_autoencoder/figs/fig_e0c_hamming.png" alt="distancias entre letras">
+    </div>
+    <ul><li>32 letras de 7×5, a guardar con <span class="accent">solo 2 números</span>. Difícil: hay pares casi idénticos (<span class="accent">l y | a 2 px</span>) que igual hay que separar.</li></ul>
   </section>
 
   <!-- 4 -->
   <section>
     <span class="tag">E1</span>
     <h2>¿Hacen falta las curvas?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="E1">
-    <ul><li>Modelo recto = un método clásico (PCA): se equivoca en <span class="accent">7 píxeles</span>. Con curvas: <span class="accent">0</span>.</li></ul>
+    <div class="duo">
+      <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="E1">
+      <img src="../ej1a_autoencoder/figs/fig_e1_pca_pixel_error.png" alt="dónde falla PCA">
+    </div>
+    <ul><li>Modelo recto (PCA): <span class="accent">7 píxeles</span> de error, concentrados en el <span class="accent">centro del glifo</span>. Con curvas: <span class="accent">0</span>.</li></ul>
   </section>
 
   <!-- 5 -->
@@ -135,6 +143,17 @@
     <h2>El mapa de 2 números</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="E8b">
     <ul><li>Las 32 letras ubicadas en el mapa; el recuadro de la derecha es un <span class="accent">zoom</span> del centro.</li></ul>
+  </section>
+
+  <!-- 14b (nueva) · ¿se preserva el parecido? -->
+  <section>
+    <span class="tag">1a · ¿SE PRESERVA EL PARECIDO?</span>
+    <h2>El mapa, ¿respeta las similitudes?</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
+    <ul>
+      <li>El AE <span class="accent">distingue las 32 letras a la perfección</span> (tiene que, para reconstruir a 0 px).</li>
+      <li>El <span class="accent">parecido</span>, en cambio, lo conserva <span class="accent">solo a medias (ρ = 0.57)</span>: las parecidas tienden a quedar cerca, pero los casi idénticos (l y |) los <strong>separa a propósito</strong> para poder distinguirlos.</li>
+    </ul>
   </section>
 
   <!-- 15 -->

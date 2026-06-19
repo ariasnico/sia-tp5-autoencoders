@@ -406,6 +406,20 @@
       <figcaption>Las 32 letras en el mapa de 2 dimensiones; el recuadro de la derecha es un zoom del centro.</figcaption>
     </figure>
 
+    <p><strong class="azul">2b) ¿El mapa preservó el parecido entre letras?</strong> — comparamos la distancia
+      entre cada par de letras en píxeles (Hamming) vs en el mapa latente.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
+      <figcaption>Distancia en píxeles (izq.) vs en el mapa 2D (der.), mismas letras y orden. Spearman ρ = 0.57.</figcaption>
+    </figure>
+    <div class="box teach"><h4>💡 El contraste (un insight fino)</h4>El AE preserva la <strong>distinguibilidad
+      por completo</strong> — tiene que, porque reconstruye las 32 letras a 0 px, así que ninguna se pisa con otra.
+      Pero el <strong>parecido lo conserva solo a medias (ρ = 0.57)</strong>: las parecidas <em>tienden</em> a quedar
+      cerca, pero los pares casi idénticos los <strong>separa a propósito</strong>. Ejemplo verificado: <code>l</code>
+      y <code>|</code> son el par <strong>#1 más parecido en píxeles</strong> (2 px), pero en el mapa quedan más
+      separados que ~6% de los pares — el AE los empuja aparte justamente para poder reconstruir ambos sin error.
+      En una frase: <strong>optimiza reconstrucción, no la métrica de distancias.</strong></div>
+
     <p><strong class="azul">3) Inventar letras nuevas</strong> — recorriendo el mapa aparecen formas que no estaban
       en el dataset.</p>
     <figure>
