@@ -28,5 +28,5 @@ para ver qué pasa. Esta es la tabla de "qué valores probamos y qué dio cada u
 - **E7 · loss · `BCE, MSE`** — 2 pérdidas. **BCE 0 px** · MSE 2 px. → para binario, BCE.
 
 ## La gran conclusión
-De juntar lo mejor de cada barrido sale la **receta campeona** (`tabla_1a_config`): no-lineal + 2D + ≥20 unidades
+De juntar lo mejor de cada barrido sale la **receta ganadora** (`tabla_1a_config`): no-lineal + 2D + ≥20 unidades
 + Adam + tanh + BCE → **0 px**. Cada fila de esta tabla justifica una decisión de esa receta.

@@ -2,7 +2,7 @@
 
 E9   ancho de cuello {2,5,10,20}                 -> capacidad de denoising vs compresión
 E10  ruido de entrenamiento {.05,.15,.30} × test  -> trade-off robustez/precisión
-E11  (guarda el DAE campeón para los tripletes cualitativos en make_figures)
+E11  (guarda el DAE ganador para los tripletes cualitativos en make_figures)
 
 Entrenamiento: entrada con bit-flip FRESCO cada época, target = patrón limpio. Semillas fijas.
 """
@@ -81,8 +81,8 @@ df10 = pd.DataFrame(allrows)
 df10.to_csv(RES / "e10_train_noise.csv", index=False)
 print(df10.pivot(index="test_p", columns="p_train", values="px_mean").to_string())
 
-# --- Campeón reforzado: cuello=10, p_train=0.15 reentrenado a FULL épocas (número contundente) ---
-print("\n== Campeón denoising (cuello=10, p_train=0.15) a full épocas ==")
+# --- Ganador reforzado: cuello=10, p_train=0.15 reentrenado a FULL épocas (número contundente) ---
+print("\n== Ganador denoising (cuello=10, p_train=0.15) a full épocas ==")
 EPOCHS_CHAMP = 15000
 rng = np.random.default_rng(SEED)
 champ = make_dae(latent=10)
@@ -93,10 +93,10 @@ champ_rows = [{"test_p": p, "px_mean": round(ev[p]["px_mean"], 3),
                "pct_perfect": round(100 * ev[p]["frac_perfect"], 1)} for p in [0.10, 0.15, 0.20]]
 pd.DataFrame(champ_rows).to_csv(RES / "e_champion.csv", index=False)
 print(pd.DataFrame(champ_rows).to_string(index=False))
-champ.save(RES / "dae_champion.npz")  # -> tripletes E11 (campeón reforzado)
+champ.save(RES / "dae_champion.npz")  # -> tripletes E11 (ganador reforzado)
 
 (RES / "config_used.json").write_text(json.dumps(
     {"seed": SEED, "epochs_sweep": EPOCHS, "epochs_champion": EPOCHS_CHAMP,
      "dae": "35-25-{cuello}-25-35 | tanh/identity/sigmoid | BCE | Adam(0.01)",
      "champion": "cuello=10, p_train=0.15", "test_levels": TEST_LEVELS}, indent=2))
-print(f"\nOK 1b en {time.time() - t0:.1f}s. DAE campeón reforzado (15000 ep) guardado.")
+print(f"\nOK 1b en {time.time() - t0:.1f}s. DAE ganador reforzado (15000 ep) guardado.")

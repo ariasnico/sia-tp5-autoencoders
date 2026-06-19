@@ -1,6 +1,6 @@
 # Cómo leer `tabla_1a_config.png` — Configuración del Autoencoder (1a)
 
-**Qué es esta tabla:** la **receta del modelo campeón** de 1a — un solo modelo, el ganador. Cada fila es
+**Qué es esta tabla:** la **receta del modelo ganador** de 1a — un solo modelo, el ganador. Cada fila es
 **un valor fijo** y **todos conviven al mismo tiempo** en esa única red. NO son valores que comparamos
 (las comparaciones están en `tabla_1a_resultados.png`).
 

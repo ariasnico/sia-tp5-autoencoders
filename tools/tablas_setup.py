@@ -98,11 +98,11 @@ render_table(
     "1b · Denoising — configuración",
     ["Parámetro", "Valor", "Por qué"],
     [
-        ["Arquitectura", "35-25-{cuello}-25-35", "cuello variable; campeón usa 10 (E9)"],
+        ["Arquitectura", "35-25-{cuello}-25-35", "cuello variable; ganador usa 10 (E9)"],
         ["Entrenamiento", "bit-flip(p) → limpio", "entrada ruidosa, target limpio"],
-        ["p_train (campeón)", "0.15", "compromiso del trade-off (E10)"],
+        ["p_train (ganador)", "0.15", "compromiso del trade-off (E10)"],
         ["Loss / Opt", "BCE / Adam(0.01)", "igual que 1a"],
-        ["Épocas", "6000 · campeón 15000", "el campeón se refuerza"],
+        ["Épocas", "6000 · ganador 15000", "el ganador se refuerza"],
         ["Evaluación", "30-50 realiz. x 32 letras", "robustez estadística"],
         ["Seed", "0", "reproducible"],
     ], CFG, "tabla_1b_config.png")
@@ -113,7 +113,7 @@ render_table(
     [
         ["E9", "¿qué cuello para limpiar?", "cuello: 2,5,10,20", "2→48% · 10→59% · 20 satura"],
         ["E10", "¿cuánto ruido en el train?", "p_train: 0.05/0.15/0.30", "curvas se cruzan: trade-off"],
-        ["campeón", "número final del denoiser", "cuello 10 · 15000 ep", "81% ≤1px @15% (92% @10%)"],
+        ["ganador", "número final del denoiser", "cuello 10 · 15000 ep", "81% ≤1px @15% (92% @10%)"],
     ], RES, "tabla_1b_resultados.png")
 
 render_table(

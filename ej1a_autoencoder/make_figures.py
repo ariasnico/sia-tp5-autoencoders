@@ -1,6 +1,6 @@
 """TP5 1a — genera las figuras desde los artefactos de results/. Estilo central de entrega.
 
-E0 (exploración) se computa acá; E1..E8 salen de CSVs / curvas / campeón. No reentrena.
+E0 (exploración) se computa acá; E1..E8 salen de CSVs / curvas / ganador. No reentrena.
 """
 import sys
 from pathlib import Path
@@ -161,7 +161,7 @@ def e8():
         blk, col = j // 8, j % 8
         ax[blk * 2, col].imshow(X[j].reshape(H, W)); ax[blk * 2, col].set_title(LABELS[j], fontsize=11); ax[blk * 2, col].axis("off")
         ax[blk * 2 + 1, col].imshow(rec[j].reshape(H, W)); ax[blk * 2 + 1, col].axis("off")
-    fig.suptitle("E8 · Campeón 35-20-2-20-35: Original (sup.) vs Reconstrucción (inf.) — 0 px error")
+    fig.suptitle("E8 · Ganador 35-20-2-20-35: Original (sup.) vs Reconstrucción (inf.) — 0 px error")
     save(fig, "fig_e8a_reconstructions.png")
     # E8b — scatter latente con inset de zoom al cluster central
     fig, ax = plt.subplots(figsize=(13, 8))

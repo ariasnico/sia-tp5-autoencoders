@@ -4,12 +4,12 @@
 **2 dimensiones** con **error máximo de 1 píxel** por letra; graficar el latente 2D y generar
 una letra nueva fuera del conjunto.
 
-**Resultado:** ✅ campeón **35-20-2-20-35** (tanh / identity / sigmoid · BCE · Adam(0.01) · 6000 épocas)
+**Resultado:** ✅ ganador **35-20-2-20-35** (tanh / identity / sigmoid · BCE · Adam(0.01) · 6000 épocas)
 → **0 px de error en las 32 letras** (32/32 perfectas, supera holgado el ≤1px).
 
 ## Cómo correr
 ```bash
-python3 ej1a_autoencoder/run_experiments.py   # entrena, guarda results/*.csv + curvas/campeón .npz
+python3 ej1a_autoencoder/run_experiments.py   # entrena, guarda results/*.csv + curvas/ganador .npz
 python3 ej1a_autoencoder/make_figures.py      # genera figs/*.png desde results/
 python3 ej1a_autoencoder/diagnostics.py       # (defensa) E1 vs E3: confirma que sin capa oculta = PCA
 ```
@@ -28,7 +28,7 @@ Semilla fija (`SEED=0`). Lógica reutilizable en `tp5lib/`, métricas en `result
 | **E5** | learning rate | 0.0003 lento (3 px), 0.01 justo (0 px), **0.3 no aprende (33 px)** | `fig_e5` |
 | **E6** | activación oculta | tanh/relu/sigmoid → todas 0 px, distinta **velocidad** | `fig_e6` |
 | **E7** | BCE vs MSE | **BCE 0 px**, MSE 2 px | `fig_e7` |
-| **E8** | campeón | reconstrucción · latente 2D · generación · interpolación | `fig_e8a`–`fig_e8d` |
+| **E8** | ganador | reconstrucción · latente 2D · generación · interpolación | `fig_e8a`–`fig_e8d` |
 
 ### Lo que enseña cada cosa (incluido lo que NO funcionó)
 - **E1 — conexión con TP4 (PCA):** el AE lineal y PCA(2) dan *exactamente* el mismo error (7.188 px).

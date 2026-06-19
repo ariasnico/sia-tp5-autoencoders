@@ -1,7 +1,7 @@
 """TP5 1a — corre los experimentos E1..E8 del autoencoder básico (latente 2D, objetivo ≤1px).
 
 Entrena, mide error en píxeles y persiste métricas (CSV) + curvas de loss (npz) + el
-campeón (npz). Las figuras las produce make_figures.py desde estos artefactos. Semillas fijas.
+ganador (npz). Las figuras las produce make_figures.py desde estos artefactos. Semillas fijas.
 
 Experimentos:
   E1  AE lineal vs AE no-lineal vs PCA(2)      -> la no-linealidad hace falta (lineal ≈ PCA)
@@ -11,7 +11,7 @@ Experimentos:
   E5  learning rate {bajo, justo, alto}        -> sensibilidad; el alto diverge
   E6  activación hidden tanh/relu/sigmoid      -> efecto de la no-linealidad
   E7  loss BCE vs MSE                           -> para binario, BCE es mejor
-  E8  campeón -> guarda modelo + latente        -> ≤1px, scatter 2D y generación (en figuras)
+  E8  ganador -> guarda modelo + latente        -> ≤1px, scatter 2D y generación (en figuras)
 """
 import sys
 import json
@@ -62,7 +62,7 @@ curves = {}
 t0 = time.time()
 
 print("== E1: lineal vs no-lineal vs PCA ==")
-ae_champ, e_nl, c_nl = train()                                   # no-lineal campeón
+ae_champ, e_nl, c_nl = train()                                   # no-lineal ganador
 _, e_lin, _ = train(hidden=(), act_hidden="identity",
                     act_latent="identity", act_out="identity", loss="mse")  # AE lineal
 mu = X.mean(0); Xc = X - mu                                      # PCA(2) por SVD
@@ -133,7 +133,7 @@ for loss in ["bce", "mse"]:
 pd.DataFrame(rows).to_csv(RESULTS / "e7_loss.csv", index=False)
 print(pd.DataFrame(rows).to_string(index=False))
 
-print("\n== E8: campeón -> guardar modelo + latente ==")
+print("\n== E8: ganador -> guardar modelo + latente ==")
 ae_champ.save(RESULTS / "champion_1a.npz")
 np.savez(RESULTS / "champion_latent.npz", Z=encode(ae_champ, X), px=e_nl)
 curves["e8_champion"] = c_nl
@@ -143,5 +143,5 @@ np.savez(RESULTS / "curves_1a.npz", **curves)
      "champion": "35-20-2-20-35 | tanh/identity/sigmoid | BCE | Adam(0.01)"}, indent=2))
 
 print(f"\nOK 1a en {time.time() - t0:.1f}s. "
-      f"Campeón: px_max={int(e_nl.max())} perfectas={int((e_nl == 0).sum())}/32 "
+      f"Ganador: px_max={int(e_nl.max())} perfectas={int((e_nl == 0).sum())}/32 "
       f"<=1px={int((e_nl <= 1).sum())}/32")

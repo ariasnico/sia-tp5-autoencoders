@@ -22,7 +22,7 @@ Semilla fija (`SEED=0`). Evaluación robusta: 30 realizaciones de ruido × 32 le
 | **E9**  | ancho de cuello {2,5,10,20} | cuello 2 → **48% ≤1px**; 10 → **59%**; 20 satura | `fig_e9` |
 | **E10** | ruido train {5,15,30%} × test | **trade-off**: cada nivel óptimo en su rango de test | `fig_e10` |
 | **E11** | tripletes cualitativos | recupera bien a 10–20%, se degrada a 30% | `fig_e11` |
-| **campeón** | cuello 10 a 15 000 ep | **81% ≤1px a 15% ruido** (92% a 10%, 64% a 20%) | `fig_e_champion` |
+| **ganador** | cuello 10 a 15 000 ep | **81% ≤1px a 15% ruido** (92% a 10%, 64% a 20%) | `fig_e_champion` |
 
 ### Lo que enseña cada cosa
 - **E9 — por qué NO el cuello 2D de 1a:** con cuello 2 sólo se recupera el 48% de las letras a 20% de
@@ -32,5 +32,5 @@ Semilla fija (`SEED=0`). Evaluación robusta: 30 realizaciones de ruido × 32 le
   (5%) da el mejor resultado en test limpio pero se rompe ante mucho ruido; entrenar con mucho (30%)
   es robusto a ruido alto pero peor en limpio. Las curvas se **cruzan** → 15% es buen compromiso.
 - **E11:** evidencia visual de que el denoiser reconstruye el patrón limpio desde la versión corrupta.
-- **Campeón reforzado:** el DAE cuello 10 reentrenado a 15 000 épocas recupera el **81 % de las letras con
+- **Ganador reforzado:** el DAE cuello 10 reentrenado a 15 000 épocas recupera el **81 % de las letras con
   ≤1 px a su nivel de ruido (15 %)** y 92 % a 10 % — el número contundente del denoiser (`fig_e_champion`).

@@ -9,7 +9,7 @@ juntos. El único barrido está en `tabla_vae_resultados.png` (el de β).
   capa del encoder **He=128** → **cuello Z=2** (latente 2D, para poder graficarlo) → capa del decoder **Hd=128**
   → salida 400. A diferencia de 1a, el encoder no da un punto sino una **distribución** (μ, logσ²). Una sola red.
 - **Loss `recon(BCE) + beta·KL`** — la pérdida tiene **dos términos**: la reconstrucción (BCE) y el **KL** (que
-  empuja el latente hacia N(0,I)). `beta` pesa el KL; **el campeón usa β=1** (el barrido de β es E12).
+  empuja el latente hacia N(0,I)). `beta` pesa el KL; **el ganador usa β=1** (el barrido de β es E12).
 - **Optimizador `Adam (lr=1e-3)`** — un valor.
 - **Épocas / batch `3500 / 128`** — un valor cada uno.
 - **Dataset `5 emojis · 700 · 20×20`** — 5 clases (corazón, estrella, gota, luna, rayo), 140 imágenes cada una =

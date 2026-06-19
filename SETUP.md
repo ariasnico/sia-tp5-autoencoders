@@ -6,7 +6,7 @@
 
 ## 1a — Autoencoder
 
-### Configuración base (el campeón)
+### Configuración base (el ganador)
 | Parámetro | Valor | Por qué |
 |---|---|---|
 | Arquitectura | `35-20-2-20-35` | MLP simétrico; cuello 2D = objetivo del enunciado |
@@ -35,11 +35,11 @@
 ### Configuración base
 | Parámetro | Valor | Por qué |
 |---|---|---|
-| Arquitectura | `35-25-{cuello}-25-35` | cuello variable; campeón usa 10 (E9) |
+| Arquitectura | `35-25-{cuello}-25-35` | cuello variable; ganador usa 10 (E9) |
 | Entrenamiento | entrada `bit-flip(p)` fresco/época → target limpio | el ruido binario natural; target ≠ entrada |
-| `p_train` (campeón) | `0.15` | compromiso del trade-off (E10) |
+| `p_train` (ganador) | `0.15` | compromiso del trade-off (E10) |
 | Loss / Opt | `BCE` / `Adam(0.01)` | igual que 1a |
-| Épocas | `6000` (barridos) · `15000` (campeón) | el campeón se refuerza para un número contundente |
+| Épocas | `6000` (barridos) · `15000` (ganador) | el ganador se refuerza para un número contundente |
 | Evaluación | 30–50 realizaciones de ruido × 32 letras por nivel | robustez estadística |
 
 ### Barridos y resultados
@@ -47,7 +47,7 @@
 |---|---|---|---|
 | E9 | ancho de cuello | 2, 5, 10, 20 | 2→48 % · **10→59 %** · 20 satura (≤1px @20% ruido) |
 | E10 | ruido de entrenamiento | 0.05, 0.15, 0.30 | curvas se **cruzan**: trade-off poco/mucho ruido |
-| campeón | (15000 ep, cuello 10) | test 10/15/20 % | **81 % ≤1px @15 %** (92 % @10 %, 64 % @20 %) |
+| ganador | (15000 ep, cuello 10) | test 10/15/20 % | **81 % ≤1px @15 %** (92 % @10 %, 64 % @20 %) |
 
 ## 2 — VAE
 

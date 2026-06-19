@@ -1,4 +1,4 @@
-"""TP5 1b — figuras E9-E11 + campeón reforzado, desde results/. Estilo central."""
+"""TP5 1b — figuras E9-E11 + ganador reforzado, desde results/. Estilo central."""
 import sys
 from pathlib import Path
 
@@ -65,7 +65,7 @@ def e_champion():
         ax.text(i + w / 2, b + 1.5, f"{b:.0f}", ha="center", fontsize=12)
     ax.set_xticks(x); ax.set_xticklabels([f"test {int(p * 100)}%" for p in df["test_p"]])
     ax.set_ylabel("% de letras"); ax.set_ylim(0, 105)
-    ax.set_title("Campeón denoising (cuello 10, 15000 ep): % de letras recuperadas")
+    ax.set_title("Ganador denoising (cuello 10, 15000 ep): % de letras recuperadas")
     ax.legend()
     save(fig, "fig_e_champion.png")
 
@@ -88,7 +88,7 @@ def e11():
                     ax.set_ylabel(lab, rotation=0, ha="right", va="center", fontsize=11)
             if li == 0:
                 axes[r0, ci].set_title(LABELS[idx], fontsize=13)
-    fig.suptitle("E11 · DAE campeón (cuello=10, p_train=15%): limpio / ruidoso / recuperado")
+    fig.suptitle("E11 · DAE ganador (cuello=10, p_train=15%): limpio / ruidoso / recuperado")
     save(fig, "fig_e11_triplets.png")
 
 
