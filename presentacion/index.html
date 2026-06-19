@@ -9,7 +9,7 @@
   <style>
     :root { --azul:#1E3A5F; --naranja:#C2410C; }
     .reveal h1,.reveal h2,.reveal h3 { color:var(--azul); text-transform:none; letter-spacing:normal; }
-    .reveal section img { border:none; box-shadow:0 3px 14px rgba(0,0,0,.18); max-height:60vh; background:#fff; }
+    .reveal section img { border:none; box-shadow:0 3px 14px rgba(0,0,0,.18); max-height:62vh; max-width:92%; background:#fff; }
     .reveal .row { display:flex; gap:2.5%; justify-content:center; align-items:center; }
     .reveal .row img { max-height:54vh; }
     .reveal ul { font-size:0.66em; width:90%; margin:0.3em auto; }
@@ -107,16 +107,22 @@
     <aside class="notes">Adam adapta el paso por parámetro y escapa de la meseta donde SGD se estanca.</aside>
   </section>
 
-  <!-- 10 · E5/E6 (opcional) -->
+  <!-- 10a · E5 (opcional) -->
   <section>
-    <span class="tag">E5 · E6 — opcionales</span>
-    <h2>Learning rate y activación</h2>
-    <div class="row">
-      <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
-      <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
-    </div>
-    <ul><li>lr=0.3 <span class="accent">no aprende</span> (33 px); las 3 activaciones llegan a 0 px pero a distinta velocidad.</li></ul>
-    <aside class="notes">Slides opcionales (recortar si falta tiempo). E5 muestra una config que falla. E6: todas convergen, difieren en velocidad.</aside>
+    <span class="tag">E5 — opcional</span>
+    <h2>Learning rate</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
+    <ul><li>Muy bajo = lento; muy alto (<span class="accent">0.3 no aprende</span>, 33 px); 0.01 es el justo.</li></ul>
+    <aside class="notes">Opcional. Muestra una config que falla: el lr alto queda atascado arriba.</aside>
+  </section>
+
+  <!-- 10b · E6 (opcional) -->
+  <section>
+    <span class="tag">E6 — opcional</span>
+    <h2>Activación oculta</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
+    <ul><li>tanh / relu / sigmoid llegan <span class="accent">todas a 0 px</span>, difieren en velocidad de convergencia.</li></ul>
+    <aside class="notes">Opcional. Por eso es una figura de curvas: el resultado final es el mismo, cambia la velocidad.</aside>
   </section>
 
   <!-- 11 · E7 -->
@@ -146,16 +152,22 @@
     <aside class="notes">Cada punto es una letra en el latente. El zoom de la derecha despeja el centro apiñado.</aside>
   </section>
 
-  <!-- 14 · E8 generación -->
+  <!-- 14a · E8 generación grilla -->
   <section>
     <span class="tag">E8 · CAMPEÓN</span>
-    <h2>Generación de letras nuevas (req. 1a-4)</h2>
-    <div class="row">
-      <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="E8c">
-      <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="E8d">
-    </div>
-    <ul><li>Barriendo el latente salen glifos que no están en el set; interpolación a→o.</li></ul>
-    <aside class="notes">Los puntos intermedios decodifican letras inventadas. El latente es continuo y navegable.</aside>
+    <h2>Generación: barrido del latente (req. 1a-4)</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="E8c">
+    <ul><li>Cada celda es un punto del latente decodificado → salen glifos que <span class="accent">no están en el set</span>.</li></ul>
+    <aside class="notes">El latente es continuo: decodificar puntos intermedios da letras nuevas.</aside>
+  </section>
+
+  <!-- 14b · E8 interpolación -->
+  <section>
+    <span class="tag">E8 · CAMPEÓN</span>
+    <h2>Interpolación en el latente: a → o</h2>
+    <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="E8d">
+    <ul><li>Los intermedios son <span class="accent">letras inventadas</span> (no están en el dataset).</li></ul>
+    <aside class="notes">Caminamos en línea recta del punto 'a' al 'o'; el decoder genera transiciones suaves.</aside>
   </section>
 
   <!-- 15 · 1b setup config -->
@@ -192,16 +204,22 @@
     <aside class="notes">No hay un único "mejor": depende del ruido esperado. 15 % es buen compromiso.</aside>
   </section>
 
-  <!-- 19 · campeón + E11 -->
+  <!-- 19a · campeón -->
   <section>
     <span class="tag">1b · CAMPEÓN</span>
     <h2>Resultado del denoiser</h2>
-    <div class="row">
-      <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="champion">
-      <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="E11">
-    </div>
-    <ul><li><span class="accent">81 % de letras con ≤1px a 15 % de ruido</span> (92 % a 10 %). Tripletes: limpio / ruidoso / recuperado.</li></ul>
-    <aside class="notes">El campeón reforzado a 15000 épocas. Los tripletes son la prueba visual; se degrada recién a 30 %.</aside>
+    <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="champion">
+    <ul><li><span class="accent">81 % de letras con ≤1px a 15 % de ruido</span> (92 % a 10 %, 64 % a 20 %).</li></ul>
+    <aside class="notes">El campeón reforzado a 15000 épocas, cuello 10.</aside>
+  </section>
+
+  <!-- 19b · E11 tripletes -->
+  <section>
+    <span class="tag">E11</span>
+    <h2>Denoising: limpio / ruidoso / recuperado</h2>
+    <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="E11">
+    <ul><li>Prueba visual: recupera bien a 10–20 %, se degrada recién a 30 %.</li></ul>
+    <aside class="notes">Cada bloque: original arriba, versión con ruido en el medio, recuperado abajo.</aside>
   </section>
 
   <!-- 20 · VAE setup config -->
@@ -290,7 +308,6 @@
       <li><strong>1a:</strong> no-linealidad + 2D + BCE + Adam → compresión perfecta (0 px); PCA no puede.</li>
       <li><strong>1b:</strong> limpiar ruido necesita más cuello, y el ruido de train es un trade-off.</li>
       <li><strong>VAE:</strong> el término KL convierte un compresor en un generador (latente ~N(0,I)).</li>
-      <li class="sub">Todo numpy from scratch, semillas fijas, reproducible. Repo: github.com/ariasnico/sia-tp5-autoencoders</li>
     </ul>
     <aside class="notes">Cerrar con la frase por parte. Preguntas de defensa preparadas en DEFENSA.md.</aside>
   </section>
