@@ -272,12 +272,15 @@
     <div class="box teach"><h4>💡 Qué enseña</h4>Hace falta la capa oculta no-lineal, y <strong>20 neuronas es la
       capacidad mínima</strong> para 0 px. De acá sale el "20" de la receta ganadora.</div>
     <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
-      <p>El caso sin capa oculta (14 px máx) es la <strong>misma barrera lineal</strong> de E1, vista con otra
-      métrica (E1 reportaba el promedio 7.19; acá el máximo). Un <code>diagnostics.py</code> aparte lo confirma con
-      3 semillas: el px máximo del encoder lineal da <code>[14, 15, 16]</code> — o sea es una barrera
+      <p>Tanto el AE lineal (E1) como esta red sin capa oculta tienen <strong>encoder lineal</strong>, así que su
+      capacidad de comprimir a 2D es la de <strong>PCA</strong>. No dan números <em>idénticos</em> porque usan
+      distinta capa de salida y loss (E1: <code>identity + MSE</code> → promedio 7.19 / máx 15; sin-capa:
+      <code>sigmoid + BCE</code> → promedio 6.84 / máx 14), pero esa diferencia viene de la <em>salida</em>: la
+      sigmoid no le agrega capacidad al <em>encoder</em>. Con la misma métrica son equivalentes. Un
+      <code>diagnostics.py</code> con 3 semillas (px máx = <code>[14, 15, 16]</code>) confirma que la barrera es
       <strong>estructural, no un mínimo local</strong> donde quedó atascado el entrenamiento. Lo que la rompe es
-      la capa oculta no-lineal: con <code>(20,)</code> → 0 px. La de 30 converge un toque más rápido pero 20 ya
-      es suficiente; más neuronas no agregan.</p>
+      la capa oculta no-lineal: con <code>(20,)</code> → 0 px (la de 30 converge un toque más rápido, pero 20 ya
+      alcanza).</p>
     </div></details>
   </section>
 
@@ -595,6 +598,11 @@
     <p style="text-align:center; font-size:1.08rem; color:var(--azul); font-weight:700; margin:18px 0">
       AE = navegar a mano entre puntos conocidos &nbsp;·&nbsp; VAE = samplear al azar de un prior conocido</p>
     <p>El peso de ese término KL se llama <strong>β (beta)</strong>, y es lo único que barrimos en toda la Parte 2.</p>
+    <div class="box teach"><h4>🔬 El detalle más riguroso del TP</h4>Todo el VAE está programado en numpy
+      <strong>desde cero</strong> —incluido el backprop del término KL y del reparametrization trick, derivados
+      <strong>a mano</strong>— y verificado con un <strong>gradient check numérico (error 5e-08)</strong>. Es decir:
+      comprobamos contra diferencias finitas que cada derivada está bien calculada; no confiamos en el autograd de
+      ninguna librería.</div>
     <details class="tech"><summary>🔬 En detalle (técnico) — arquitectura y loss</summary><div class="body">
       <p>Arquitectura: <code>400 → 128 → (μ, logσ²) en Z=2 → 128 → 400</code>, con sigmoid en la salida. El
       <strong>reparametrization trick</strong> escribe <code>z = μ + σ·ε</code> con <code>ε~N(0,I)</code>: deja el
