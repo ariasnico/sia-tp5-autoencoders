@@ -126,7 +126,7 @@
     <span class="tag">1a · GANADOR</span>
     <h2>Reconstrucción: sin errores</h2>
     <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="E8a">
-    <ul><li>Arriba la letra real, abajo la de la red: <span class="accent">iguales, 0 errores</span>.</li></ul>
+    <ul><li>Arriba la letra real, abajo la de la red: <span class="accent">0 px de error · 32 de 32 letras perfectas</span>.</li></ul>
   </section>
 
   <!-- 14 -->
@@ -198,7 +198,7 @@
     <span class="tag">1b · GANADOR</span>
     <h2>Resultado del limpiador</h2>
     <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="ganador">
-    <ul><li>Recupera <span class="accent">la mayoría de las letras</span>, incluso con bastante ruido.</li></ul>
+    <ul><li>Recupera el <span class="accent">81% de las letras a 15% de ruido</span> (y 92% a 10%).</li></ul>
   </section>
 
   <!-- 23 -->
@@ -246,7 +246,7 @@
     <span class="tag">VAE · CÓMO LO CORRIMOS</span>
     <h2>El experimento y la receta</h2>
     <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
-    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li></ul>
+    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con el backprop <span class="accent">verificado (gradient check 5e-08)</span>.</li></ul>
   </section>
 
   <!-- 29 -->
