@@ -63,7 +63,7 @@ def render_table(title, headers, rows, cols, fname, fs=13, w=15):
 
 
 CFG = [(0.0, "left", "param"), (0.21, "left", "value"), (0.55, "left", "text")]
-RES = [(0.0, "left", "param"), (0.085, "left", "text"), (0.33, "left", "value"), (0.61, "left", "text")]
+RES = [(0.0, "left", "param"), (0.06, "left", "text"), (0.38, "left", "value"), (0.66, "left", "text")]
 
 render_table(
     "1a · Autoencoder — configuración",
@@ -82,16 +82,16 @@ render_table(
     ], CFG, "tabla_1a_config.png")
 
 render_table(
-    "1a · Autoencoder — barridos y resultados",
-    ["Exp", "Qué variamos", "Valores probados", "Resultado / lectura"],
+    "1a · Autoencoder — experimentos: qué, para qué y resultado",
+    ["Exp", "Para qué (la pregunta)", "Qué variamos", "Resultado / lectura"],
     [
-        ["E1", "tipo de modelo", "lineal · PCA · no-lineal", "lineal=PCA=7.19px → no-lineal 0px"],
-        ["E2", "dim. latente", "1, 2, 3, 5, 8", "1→18/32;  ≥2→0px  (codo)"],
-        ["E3", "capa oculta", "(), (10), (20), (30), (20,20)", "()→14px (=PCA);  ≥20→0px"],
-        ["E4", "optimizador", "SGD · Momentum · Adam", "Adam 0 · Mom 1 · SGD 5 px"],
-        ["E5", "learning rate", "0.0003, 0.01, 0.3", "0.3 no aprende (33px); 0.01 justo"],
-        ["E6", "activación oculta", "tanh, relu, sigmoid", "las 3 → 0px (distinta velocidad)"],
-        ["E7", "loss", "BCE, MSE", "BCE 0px · MSE 2px"],
+        ["E1", "¿hace falta no-linealidad?", "modelo: lineal/PCA/no-lineal", "lineal=PCA=7.19px → no-lineal 0px"],
+        ["E2", "¿cuántas dim. latentes?", "latente: 1,2,3,5,8", "1→18/32;  ≥2→0px  (codo)"],
+        ["E3", "¿cuánta capacidad de red?", "oculta: (),(10),(20),(30),(20,20)", "()→14px (=PCA);  ≥20→0px"],
+        ["E4", "¿qué optimizador converge?", "SGD/Momentum/Adam", "Adam 0 · Mom 1 · SGD 5 px"],
+        ["E5", "¿sensibilidad al learning rate?", "lr: 0.0003/0.01/0.3", "0.3 no aprende(33px); 0.01 justo"],
+        ["E6", "¿qué activación oculta?", "tanh/relu/sigmoid", "las 3 → 0px (distinta velocidad)"],
+        ["E7", "¿qué pérdida para binario?", "BCE/MSE", "BCE 0px · MSE 2px"],
     ], RES, "tabla_1a_resultados.png")
 
 render_table(
@@ -108,12 +108,12 @@ render_table(
     ], CFG, "tabla_1b_config.png")
 
 render_table(
-    "1b · Denoising — barridos y resultados",
-    ["Exp", "Qué variamos", "Valores probados", "Resultado / lectura"],
+    "1b · Denoising — experimentos: qué, para qué y resultado",
+    ["Exp", "Para qué (la pregunta)", "Qué variamos", "Resultado / lectura"],
     [
-        ["E9", "ancho de cuello", "2, 5, 10, 20", "2→48% · 10→59% · 20 satura"],
-        ["E10", "ruido de train", "0.05, 0.15, 0.30", "curvas se cruzan: trade-off"],
-        ["campeón", "cuello 10 · 15000 ep", "test 10/15/20%", "81% ≤1px @15% (92% @10%)"],
+        ["E9", "¿qué cuello para limpiar?", "cuello: 2,5,10,20", "2→48% · 10→59% · 20 satura"],
+        ["E10", "¿cuánto ruido en el train?", "p_train: 0.05/0.15/0.30", "curvas se cruzan: trade-off"],
+        ["campeón", "número final del denoiser", "cuello 10 · 15000 ep", "81% ≤1px @15% (92% @10%)"],
     ], RES, "tabla_1b_resultados.png")
 
 render_table(
@@ -131,12 +131,12 @@ render_table(
     ], CFG, "tabla_vae_config.png")
 
 render_table(
-    "VAE · barrido de beta y resultados",
-    ["Exp", "Qué variamos", "Valores", "Resultado / lectura"],
+    "VAE · experimento: qué, para qué y resultado",
+    ["Exp", "Para qué (la pregunta)", "Qué variamos", "Resultado / lectura"],
     [
-        ["E12", "beta (peso del KL)", "0, 0.5, 1, 4", "β=0 ruido; β=1 equilibrio; β=4 sobre-reg."],
-        ["—", "recon (% px) por β", "0 / 1 / 4", "2.6% · 3.2% · 3.7%  (peor con β↑)"],
-        ["—", "latente std por β", "0 / 1 / 4", "11.5 · 1.17 · 1.06  (→N(0,I) con β↑)"],
+        ["E12", "¿cuánto pesa el KL?", "beta: 0/0.5/1/4", "β=0 ruido; β=1 equilibrio; β=4 sobre-reg."],
+        ["—", "ídem, visto por reconstrucción", "recon % por β: 0/1/4", "2.6% · 3.2% · 3.7%  (peor con β↑)"],
+        ["—", "ídem, visto por el latente", "std por β: 0/1/4", "11.5 · 1.17 · 1.06  (→N(0,I) con β↑)"],
     ], RES, "tabla_vae_resultados.png")
 
 print("OK ->", OUT)
