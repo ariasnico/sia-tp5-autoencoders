@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP5 · Los experimentos paso a paso</title>
+<style>
+  :root{
+    --azul:#1E3A5F; --azul2:#2C5282; --naranja:#C2410C; --naranja2:#EA580C;
+    --tinta:#1F2933; --gris:#52606D; --gris2:#7B8794;
+    --linea:#E4E7EB; --fondo:#FBFBFA; --tarjeta:#FFFFFF;
+    --ok:#0F766E; --okbg:#ECFDF5; --warn:#B45309; --warnbg:#FFFBEB; --warnbd:#FCD34D;
+    --tech:#3730A3; --techbg:#EEF2FF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--fondo); color:var(--tinta);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:17px; -webkit-font-smoothing:antialiased;
+  }
+  /* barra de progreso de lectura */
+  #progress{position:fixed; top:0; left:0; height:4px; width:0;
+    background:linear-gradient(90deg,var(--azul),var(--naranja)); z-index:100; transition:width .1s ease;}
+  /* nav superior */
+  nav{position:sticky; top:0; z-index:50; background:rgba(251,251,250,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--linea);}
+  nav .inner{max-width:920px; margin:0 auto; padding:10px 22px; display:flex; gap:6px; flex-wrap:wrap;
+    align-items:center; font-size:14px;}
+  nav .brand{font-weight:800; color:var(--azul); margin-right:auto; letter-spacing:.2px}
+  nav a{color:var(--gris); text-decoration:none; padding:4px 10px; border-radius:999px; font-weight:600}
+  nav a:hover{background:var(--azul); color:#fff}
+  /* layout general */
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px}
+  .hero{padding:70px 22px 40px; text-align:center; max-width:920px; margin:0 auto}
+  .hero .kic{color:var(--naranja); font-weight:800; letter-spacing:3px; font-size:13px; text-transform:uppercase}
+  .hero h1{color:var(--azul); font-size:2.6rem; line-height:1.12; margin:.3em 0 .2em; letter-spacing:-.5px}
+  .hero p.sub{color:var(--gris); font-size:1.15rem; margin:.2em auto; max-width:680px}
+  .hero .meta{color:var(--gris2); font-size:.95rem; margin-top:18px}
+  /* tarjeta intro / lectura */
+  .read{background:var(--tarjeta); border:1px solid var(--linea); border-radius:16px; padding:24px 28px;
+    margin:26px auto; box-shadow:0 1px 3px rgba(16,24,40,.04)}
+  .read h2{color:var(--azul); margin:.1em 0 .4em; font-size:1.5rem}
+  .read h3{color:var(--azul2); font-size:1.15rem; margin:1.1em 0 .3em}
+  /* divisor de parte */
+  .part{margin:64px auto 8px; max-width:920px; padding:0 22px}
+  .part .badge{display:inline-block; background:var(--azul); color:#fff; font-weight:800; letter-spacing:2px;
+    font-size:13px; padding:6px 16px; border-radius:999px; text-transform:uppercase}
+  .part h2{color:var(--azul); font-size:2rem; margin:.35em 0 .15em; letter-spacing:-.4px}
+  .part .pintro{color:var(--gris); font-size:1.08rem; max-width:760px}
+  /* seccion de experimento */
+  .exp{background:var(--tarjeta); border:1px solid var(--linea); border-radius:16px;
+    padding:26px 30px; margin:24px auto; box-shadow:0 1px 3px rgba(16,24,40,.04)}
+  .exp .eyebrow{color:var(--naranja); font-weight:800; letter-spacing:1.5px; font-size:12.5px; text-transform:uppercase}
+  .exp h3{color:var(--azul); font-size:1.5rem; margin:.15em 0 .5em; line-height:1.2}
+  .exp p{margin:.55em 0}
+  .exp p .qlabel{color:var(--azul2); font-weight:800}
+  .lead{font-size:1.06rem}
+  figure{margin:22px 0; text-align:center}
+  figure img{max-width:100%; max-height:64vh; border:1px solid var(--linea); border-radius:10px;
+    background:#fff; box-shadow:0 4px 18px rgba(16,24,40,.10)}
+  figcaption{color:var(--gris2); font-size:.86rem; margin-top:8px; font-style:italic}
+  /* tabla de numeros */
+  .tbl{overflow-x:auto; margin:16px 0}
+  table{border-collapse:collapse; width:100%; font-size:.92rem}
+  th,td{border:1px solid var(--linea); padding:7px 11px; text-align:center}
+  th{background:#F3F4F6; color:var(--azul); font-weight:700}
+  td.k{text-align:left; font-weight:600; color:var(--gris)}
+  tr.win td{background:var(--okbg); font-weight:700}
+  .win-pill{color:var(--ok); font-weight:800}
+  /* chips de stats */
+  .chips{display:flex; gap:12px; flex-wrap:wrap; margin:16px 0}
+  .chip{background:#F8FAFC; border:1px solid var(--linea); border-radius:12px; padding:10px 16px; min-width:120px}
+  .chip .n{font-size:1.5rem; font-weight:800; color:var(--azul); line-height:1}
+  .chip .l{font-size:.8rem; color:var(--gris2); margin-top:4px}
+  .chip.hot .n{color:var(--naranja)}
+  /* cajas */
+  .box{border-radius:12px; padding:14px 18px; margin:18px 0}
+  .box h4{margin:0 0 .3em; font-size:1rem; letter-spacing:.3px}
+  .box.fail{background:var(--warnbg); border:1px solid var(--warnbd)}
+  .box.fail h4{color:var(--warn)}
+  .box.teach{background:var(--okbg); border:1px solid #6EE7B7}
+  .box.teach h4{color:var(--ok)}
+  /* detalle tecnico colapsable */
+  details.tech{background:var(--techbg); border:1px solid #C7D2FE; border-radius:12px; margin:18px 0; overflow:hidden}
+  details.tech summary{cursor:pointer; padding:13px 18px; font-weight:700; color:var(--tech); list-style:none}
+  details.tech summary::-webkit-details-marker{display:none}
+  details.tech summary::before{content:"▸ "; color:var(--tech)}
+  details.tech[open] summary::before{content:"▾ "}
+  details.tech .body{padding:2px 18px 16px; font-size:.95rem; color:#312E81}
+  details.tech .body code{background:#fff; border:1px solid #C7D2FE; border-radius:5px; padding:1px 5px; font-size:.88em}
+  /* misc */
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:#F1F5F9; border-radius:5px; padding:1px 5px; font-size:.9em}
+  .accent{color:var(--naranja); font-weight:700}
+  .azul{color:var(--azul); font-weight:700}
+  hr.soft{border:none; border-top:1px solid var(--linea); margin:30px 0}
+  footer{max-width:920px; margin:50px auto 30px; padding:24px 22px; color:var(--gris2); font-size:.9rem;
+    border-top:1px solid var(--linea); text-align:center}
+  @media(max-width:600px){
+    body{font-size:16px}
+    .hero h1{font-size:2rem}
+    .exp{padding:20px 18px} .read{padding:20px 18px}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav><div class="inner">
+  <span class="brand">TP5 · Autoencoders</span>
+  <a href="#intro">Intro</a>
+  <a href="#p1a">1a</a>
+  <a href="#p1b">1b</a>
+  <a href="#pvae">VAE</a>
+  <a href="#cierre">Cierre</a>
+</div></nav>
+
+<header class="hero">
+  <div class="kic">SIA · ITBA · 1Q 2026</div>
+  <h1>Los experimentos, paso a paso</h1>
+  <p class="sub">Todo lo que probamos en el TP5 de autoencoders — qué nos preguntábamos en cada paso,
+    qué salió, <strong>qué NO funcionó</strong> y qué aprendimos. Con los números reales.</p>
+  <p class="meta">Nicolás Valentín Arias · Tomás Pinausig · Mateo Pirola · Katia Menshikoff</p>
+</header>
+
+<!-- ===================== INTRO ===================== -->
+<div class="wrap" id="intro">
+  <div class="read">
+    <h2>¿Qué es un autoencoder?</h2>
+    <p>Una red neuronal que <strong>copia su entrada en la salida</strong>… pero obligada a pasar la información
+      por un <span class="accent">cuello angosto</span> en el medio. Como por ese cuello no entra todo, la red
+      está forzada a <strong>resumir</strong> la imagen en unos pocos números y después reconstruirla.</p>
+    <p style="text-align:center; font-size:1.05rem; color:var(--azul); font-weight:700; margin:18px 0">
+      entrada (35) &nbsp;→&nbsp; <span style="color:var(--gris)">encoder</span> &nbsp;→&nbsp;
+      <span class="accent">cuello (2 números)</span> &nbsp;→&nbsp; <span style="color:var(--gris)">decoder</span>
+      &nbsp;→&nbsp; salida (35)</p>
+    <p>La primera mitad (<em>encoder</em>) comprime; el <em>cuello</em> es el resumen; la segunda mitad
+      (<em>decoder</em>) reconstruye. Si la reconstrucción sale bien, ese resumen chiquito capturó lo esencial.</p>
+    <h3>Las tres preguntas del TP</h3>
+    <p>El trabajo tiene tres partes, cada una preguntando algo distinto sobre esta idea:</p>
+    <ul>
+      <li><span class="azul">Parte 1a —</span> ¿se puede resumir <strong>muchísimo</strong>? (32 letras en solo 2 números)</li>
+      <li><span class="azul">Parte 1b —</span> ¿sirve para <strong>limpiar manchas</strong>? (autoencoder denoising)</li>
+      <li><span class="azul">Parte 2 —</span> ¿se puede <strong>inventar</strong> imágenes nuevas? (autoencoder variacional, VAE)</li>
+    </ul>
+    <p style="color:var(--gris); font-size:.96rem; margin-top:14px">Una aclaración sobre el método: cada
+      experimento <strong>cambia una sola cosa</strong> respecto de la receta base y mide el efecto. Así, al final,
+      la "receta ganadora" es literalmente <em>lo mejor de cada barrido</em>. Todo corre con semilla fija
+      (<code>seed=0</code>), así que es reproducible. Y todo está hecho <strong>en numpy puro, desde cero</strong>
+      (la red es la del TP3).</p>
+  </div>
+</div>
+
+<!-- ===================== PARTE 1a ===================== -->
+<div class="part" id="p1a">
+  <span class="badge">Parte 1a</span>
+  <h2>Autoencoder: 32 letras en 2 números</h2>
+  <p class="pintro">El objetivo del enunciado: aprender los <strong>32 caracteres de 7×5 píxeles</strong> de
+    <code>font.h</code> usando un cuello de <strong>solo 2 dimensiones</strong>, con un error máximo de
+    <strong>1 píxel</strong> por letra. Además, graficar ese mapa 2D y generar letras nuevas. Spoiler: lo logramos
+    con <span class="accent">0 px de error</span>. Pero antes de llegar ahí, probamos todo esto 👇</p>
+</div>
+
+<div class="wrap">
+
+  <!-- E0 -->
+  <section class="exp" id="e0">
+    <div class="eyebrow">Parte 1a · Exploración E0</div>
+    <h3>¿Con qué dataset estamos trabajando?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> Antes de comprimir, ¿qué tan difícil es esto?
+      ¿Cuán parecidas son las letras entre sí?</p>
+    <p><span class="qlabel">Qué miramos.</span> Las 32 letras (7×5 = 35 píxeles, blanco y negro), la distancia
+      entre cada par (cuántos píxeles las diferencian) y cuántos píxeles tiene encendidos cada una.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="las 32 letras del dataset">
+      <figcaption>Las 32 letras del dataset (<code>` a…z { | } ~ DEL</code>), cada una de 7×5 píxeles.</figcaption>
+    </figure>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e0b_dataset_stats.png" alt="estadísticas del dataset">
+      <figcaption>Izq: matriz de distancias entre letras. Der: cuántos píxeles encendidos tiene cada una.</figcaption>
+    </figure>
+    <div class="chips">
+      <div class="chip"><div class="n">2 px</div><div class="l">el par más parecido: <code>l</code> y <code>|</code></div></div>
+      <div class="chip"><div class="n">3 → 35</div><div class="l">píxeles encendidos: de <code>`</code> a <code>DEL</code></div></div>
+    </div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Hay letras casi idénticas (<code>l</code> y <code>|</code> a
+      solo 2 píxeles) que el cuello de 2D va a tener que separar igual, y un outlier rarísimo (<code>DEL</code>,
+      con todos los píxeles encendidos). Comprimir 35 dimensiones a 2 sin perder estas diferencias finas es
+      genuinamente difícil — por eso hace falta una red con curvas (no-lineal).</div>
+  </section>
+
+  <!-- E1 -->
+  <section class="exp" id="e1">
+    <div class="eyebrow">Parte 1a · Experimento E1</div>
+    <h3>¿Hacen falta las "curvas" (la no-linealidad)?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Alcanza con un método lineal clásico —que es
+      justo el PCA del TP4— o hace falta una red no-lineal?</p>
+    <p><span class="qlabel">Qué probamos.</span> Tres modelos comprimiendo a 2D: un autoencoder
+      <strong>no-lineal</strong>, un autoencoder <strong>lineal</strong>, y <strong>PCA</strong> de 2 componentes.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="lineal vs PCA vs no-lineal">
+      <figcaption>Error de reconstrucción (en píxeles) de cada modelo. Menos es mejor.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">modelo</th><th>px máximo</th><th>px promedio</th><th>letras perfectas</th></tr>
+      <tr class="win"><td class="k">AE no-lineal</td><td>0</td><td>0.000</td><td>32 / 32 ✓</td></tr>
+      <tr><td class="k">AE lineal</td><td>15</td><td>7.188</td><td>0 / 32</td></tr>
+      <tr><td class="k">PCA (2 comp.)</td><td>15</td><td>7.188</td><td>0 / 32</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El AE lineal y el PCA fracasan <strong>idénticamente</strong>:
+      7.188 px de error promedio, <strong>cero letras perfectas</strong>. Que den exactamente el mismo número no
+      es casualidad: <strong>un autoencoder lineal <em>es</em> PCA</strong>.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>La no-linealidad es lo que rompe la barrera. Solo el modelo con
+      "curvas" baja a <span class="accent">0 px</span>. Esta es la conexión directa con PCA del TP4: el lineal no
+      alcanza para el objetivo de ≤1px.</div>
+    <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
+      <p>El AE no-lineal es la receta ganadora: <code>35-20-2-20-35</code>, activaciones <code>tanh / identity /
+      sigmoid</code>, loss <code>BCE</code>, optimizador <code>Adam(0.01)</code>, 6000 épocas. El AE lineal usa
+      <code>hidden=()</code>, todo <code>identity</code> y loss <code>MSE</code>. El PCA(2) se calcula
+      analíticamente por SVD: <code>Xc = X − mean(X)</code>, se proyecta sobre los 2 primeros vectores singulares.</p>
+      <p>Que el AE lineal+MSE converja <em>exactamente</em> al 7.188 px del SVD analítico demuestra empíricamente
+      el teorema de que un autoencoder lineal recupera el subespacio de PCA.</p>
+    </div></details>
+  </section>
+
+  <!-- E2 -->
+  <section class="exp" id="e2">
+    <div class="eyebrow">Parte 1a · Experimento E2</div>
+    <h3>¿Cuántos números por letra hacen falta?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿2 dimensiones de cuello alcanzan, o necesitamos más?</p>
+    <p><span class="qlabel">Qué probamos.</span> El mismo modelo no-lineal, variando el ancho del cuello:
+      <strong>1, 2, 3, 5 y 8</strong> dimensiones.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e2_latent_elbow.png" alt="el codo de la dimensión latente">
+      <figcaption>El "codo": el error se desploma al pasar de 1 a 2 dimensiones, y después ya está perfecto.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">cuello</th><th>px máximo</th><th>px promedio</th><th>letras perfectas</th></tr>
+      <tr><td class="k">1 dimensión</td><td>5</td><td>1.281</td><td>18 / 32</td></tr>
+      <tr class="win"><td class="k">2 dimensiones</td><td>0</td><td>0.000</td><td>32 / 32 ✓</td></tr>
+      <tr><td class="k">3 / 5 / 8</td><td>0</td><td>0.000</td><td>32 / 32</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>Con <strong>1 sola dimensión</strong> solo salen 18/32
+      letras perfectas: la red tiene que ordenar las 32 letras sobre una <strong>recta</strong>, y letras distintas
+      terminan amontonadas en valores parecidos que el decoder ya no puede separar.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>2D es el <strong>mínimo justo</strong> (el "codo"): es exactamente
+      lo que pide el enunciado y ya alcanza para 0 px. Agregar más dimensiones no mejora nada porque ya es perfecto.</div>
+  </section>
+
+  <!-- E3 -->
+  <section class="exp" id="e3">
+    <div class="eyebrow">Parte 1a · Experimento E3</div>
+    <h3>¿Qué tan grande tiene que ser la red?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Hace falta la capa oculta? ¿Cuántas neuronas?</p>
+    <p><span class="qlabel">Qué probamos.</span> Distintos tamaños de capa oculta: <strong>ninguna, 10, 20, 30,
+      y dos capas de 20</strong>.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="barrido de arquitectura">
+      <figcaption>Izq: error según el tamaño de la red. Der: qué tan rápido y bajo converge cada una.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">capa oculta</th><th>px máximo</th><th>letras perfectas</th></tr>
+      <tr><td class="k">ninguna ()</td><td>14</td><td>1 / 32</td></tr>
+      <tr><td class="k">10 neuronas</td><td>2</td><td>19 / 32</td></tr>
+      <tr class="win"><td class="k">20 neuronas</td><td>0</td><td>32 / 32 ✓</td></tr>
+      <tr><td class="k">30 neuronas</td><td>0</td><td>32 / 32</td></tr>
+      <tr><td class="k">20 + 20</td><td>0</td><td>32 / 32</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4><strong>Sin capa oculta</strong> el encoder vuelve a ser
+      lineal y choca con la misma barrera de PCA (14 px máximo, 1 sola letra perfecta). Con 10 neuronas mejora pero
+      todavía no llega (2 px, 19/32).</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Hace falta la capa oculta no-lineal, y <strong>20 neuronas es la
+      capacidad mínima</strong> para 0 px. De acá sale el "20" de la receta ganadora.</div>
+    <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
+      <p>El caso sin capa oculta (14 px máx) es la <strong>misma barrera lineal</strong> de E1, vista con otra
+      métrica (E1 reportaba el promedio 7.19; acá el máximo). Un <code>diagnostics.py</code> aparte lo confirma con
+      3 semillas: el px máximo del encoder lineal da <code>[14, 15, 16]</code> — o sea es una barrera
+      <strong>estructural, no un mínimo local</strong> donde quedó atascado el entrenamiento. Lo que la rompe es
+      la capa oculta no-lineal: con <code>(20,)</code> → 0 px. La de 30 converge un toque más rápido pero 20 ya
+      es suficiente; más neuronas no agregan.</p>
+    </div></details>
+  </section>
+
+  <!-- E4 -->
+  <section class="exp" id="e4">
+    <div class="eyebrow">Parte 1a · Experimento E4</div>
+    <h3>¿Con qué optimizador entrenar?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Qué algoritmo de entrenamiento llega adonde los
+      otros se estancan?</p>
+    <p><span class="qlabel">Qué probamos.</span> <strong>SGD, Momentum y Adam</strong> (cada uno con su mejor
+      paso de aprendizaje).</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="comparación de optimizadores">
+      <figcaption>Curva de error durante el entrenamiento (escala logarítmica). Más abajo = mejor.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">optimizador</th><th>px máximo</th><th>letras perfectas</th></tr>
+      <tr><td class="k">SGD</td><td>5</td><td>10 / 32</td></tr>
+      <tr><td class="k">Momentum</td><td>1</td><td>30 / 32</td></tr>
+      <tr class="win"><td class="k">Adam</td><td>0</td><td>32 / 32 ✓</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4><strong>SGD se queda clavado en 5 px</strong> (solo 10
+      letras perfectas): cae en una meseta y no baja más. Momentum mejora bastante (1 px) pero todavía deja 2
+      letras imperfectas.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4><strong>Adam gana</strong>: llega a 0 px con un error ~100 veces
+      más bajo que SGD. Adapta el paso para cada parámetro y escapa de la meseta donde los otros se atascan.</div>
+  </section>
+
+  <!-- E5 -->
+  <section class="exp" id="e5">
+    <div class="eyebrow">Parte 1a · Experimento E5</div>
+    <h3>¿Qué tan grande tiene que ser el paso (learning rate)?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cuán sensible es al tamaño del paso? (y mostrar a
+      propósito un caso que NO funciona)</p>
+    <p><span class="qlabel">Qué probamos.</span> Con Adam, tres pasos: <strong>0.0003 (chico), 0.01 (justo) y
+      0.3 (grande)</strong>.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="barrido de learning rate">
+      <figcaption>El paso chico baja lento; el justo llega abajo; el grande queda atascado arriba.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">paso</th><th>px máximo</th><th>letras perfectas</th></tr>
+      <tr><td class="k">0.0003 (chico)</td><td>3</td><td>14 / 32</td></tr>
+      <tr class="win"><td class="k">0.01 (justo)</td><td>0</td><td>32 / 32 ✓</td></tr>
+      <tr><td class="k">0.3 (grande)</td><td>33</td><td>0 / 32</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El paso <strong>0.3 directamente no aprende</strong>: 33
+      píxeles de error máximo, cero letras perfectas, el error queda atascado casi donde empezó. El paso es tan
+      grande que la red salta de un lado a otro sin poder bajar. El paso chico (0.0003) sí aprende pero es
+      demasiado lento para 6000 épocas.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>El learning rate tiene un punto justo: muy chico = lento, muy
+      grande = no converge. <span class="accent">0.01</span> es el equilibrio.</div>
+  </section>
+
+  <!-- E6 -->
+  <section class="exp" id="e6">
+    <div class="eyebrow">Parte 1a · Experimento E6</div>
+    <h3>¿Qué tipo de neurona (activación)?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cambia el resultado según la no-linealidad concreta?</p>
+    <p><span class="qlabel">Qué probamos.</span> Tres activaciones en la capa oculta: <strong>tanh, relu y
+      sigmoid</strong>.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="comparación de activaciones">
+      <figcaption>Las tres llegan a 0 px; lo único que cambia es la velocidad de convergencia.</figcaption>
+    </figure>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Las <strong>tres llegan a 0 px</strong> — cualquier no-linealidad
+      razonable sirve. La diferencia es solo la velocidad: <strong>relu</strong> es la más rápida, <strong>sigmoid</strong>
+      la más lenta (se le saturan los gradientes), <strong>tanh</strong> queda en el medio. Por eso esta figura es de
+      curvas y no de barras: el resultado final en píxeles es idéntico. Para la receta elegimos <span class="accent">tanh</span>.</div>
+    <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
+      <p>Velocidad medida como la época en que la loss baja de 1e-2: <strong>relu en la época 609</strong> (y la
+      loss final más baja, 2.5e-5), <strong>tanh en 1485</strong>, <strong>sigmoid en 3593</strong>. Este test usa
+      Adam con <code>eps=1e-4</code> (en vez del default 1e-8) para estabilizar la comparación y evitar el
+      "dying relu", así las tres curvas se ven limpias.</p>
+    </div></details>
+  </section>
+
+  <!-- E7 -->
+  <section class="exp" id="e7">
+    <div class="eyebrow">Parte 1a · Experimento E7</div>
+    <h3>¿Cómo medir el error (la loss)?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> Para imágenes en blanco y negro, ¿qué función de
+      pérdida conviene?</p>
+    <p><span class="qlabel">Qué probamos.</span> <strong>BCE</strong> (entropía cruzada binaria) vs
+      <strong>MSE</strong> (error cuadrático).</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="BCE vs MSE">
+      <figcaption>Izq: error final de cada loss. Der: cómo converge cada una.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">loss</th><th>px máximo</th><th>letras perfectas</th></tr>
+      <tr class="win"><td class="k">BCE</td><td>0</td><td>32 / 32 ✓</td></tr>
+      <tr><td class="k">MSE</td><td>2</td><td>26 / 32</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El <strong>MSE deja 2 px</strong> de error (solo 26/32
+      perfectas): trata los píxeles como números continuos y su gradiente se "apaga" cerca de 0 y 1, dejando
+      píxeles ambiguos sin decidir.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Para imágenes binarias, <strong>BCE</strong>. Los píxeles son
+      0 o 1 (Bernoulli) y BCE es su medida natural: castiga fuerte el error confiado (decir 0.99 cuando era 0).
+      De acá sale "BCE" en la receta.</div>
+  </section>
+
+  <!-- E8 -->
+  <section class="exp" id="e8">
+    <div class="eyebrow">Parte 1a · Experimento E8 · EL GANADOR</div>
+    <h3>El modelo ganador en acción</h3>
+    <p class="lead"><span class="qlabel">La receta.</span> Juntando lo mejor de cada experimento:
+      <strong>no-lineal</strong> (E1) + <strong>cuello 2D</strong> (E2) + <strong>20 neuronas</strong> (E3) +
+      <strong>Adam 0.01</strong> (E4, E5) + <strong>tanh</strong> (E6) + <strong>BCE</strong> (E7)
+      → <code>35-20-2-20-35</code> → <span class="accent">0 px en las 32 letras</span>.</p>
+    <p>Con el ganador entrenado, mostramos las cuatro cosas que pedía el enunciado:</p>
+
+    <p style="margin-top:22px"><strong class="azul">1) Reconstrucción perfecta</strong> — la red devuelve las 32
+      letras idénticas a las originales.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="reconstrucciones del ganador">
+      <figcaption>Arriba cada letra original, abajo la reconstrucción de la red. Iguales: 0 píxeles de error.</figcaption>
+    </figure>
+
+    <p><strong class="azul">2) El mapa de 2 números</strong> — dónde ubica cada letra en el espacio latente 2D.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="espacio latente 2D">
+      <figcaption>Las 32 letras en el mapa de 2 dimensiones; el recuadro de la derecha es un zoom del centro.</figcaption>
+    </figure>
+
+    <p><strong class="azul">3) Inventar letras nuevas</strong> — recorriendo el mapa aparecen formas que no estaban
+      en el dataset.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="grilla de generación">
+      <figcaption>Cada celda es un punto del mapa decodificado. En las zonas pobladas salen letras nuevas.</figcaption>
+    </figure>
+
+    <p><strong class="azul">4) De la <code>a</code> a la <code>o</code></strong> — caminar en línea recta entre dos
+      letras genera mezclas continuas.</p>
+    <figure>
+      <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="interpolación a → o">
+      <figcaption>9 pasos del mapa, de la <code>a</code> a la <code>o</code>: los del medio son glifos intermedios nuevos.</figcaption>
+    </figure>
+
+    <div class="box teach"><h4>💡 Qué enseña</h4>El ganador cumple las cuatro consignas. <strong>Pero ojo:</strong>
+      el mapa tiene huecos y una escala arbitraria (va de −16 a +16). Un punto al azar puede caer en una "zona
+      muerta" y salir basura. Esa limitación —el AE no sabe <em>dónde</em> están los puntos válidos— es justo lo
+      que va a resolver el VAE en la Parte 2.</div>
+    <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
+      <p>La loss BCE final del ganador es ≈ 5.6e-4. El latente va de z1∈[−15.6, +15.7] y z2∈[−16.2, +13.9]:
+      <code>DEL</code> queda como outlier a la izquierda, las letras "casi idénticas" del E0 (como <code>l</code> y
+      <code>|</code>) quedan bien separadas. La generación (punto 3) es una grilla 14×14 decodificada; la
+      interpolación (punto 4) son 9 pasos <code>(1−t)·z_a + t·z_o</code>. Nada de esto reentrena: carga el modelo
+      guardado. Detalle conceptual: acá el "overfitting" (memorizar las 32 letras) <strong>es el objetivo</strong>,
+      no un problema — son el universo completo, no una muestra a generalizar.</p>
+    </div></details>
+  </section>
+</div>
+
+<!-- ===================== PARTE 1b ===================== -->
+<div class="part" id="p1b">
+  <span class="badge">Parte 1b</span>
+  <h2>Denoising: enseñarle a limpiar manchas</h2>
+  <p class="pintro">Misma idea de antes, pero con un giro clave: ahora le damos a la red la imagen
+    <span class="accent">sucia</span> (con ruido) y le pedimos que devuelva la <span class="accent">limpia</span>.
+    La red ya no aprende "copiá la entrada" sino <strong>"sacale las manchas"</strong>.</p>
+</div>
+
+<div class="wrap">
+  <div class="read">
+    <h3>La diferencia con el autoencoder normal</h3>
+    <p>Es un cambio chiquito en el código pero enorme en concepto:</p>
+    <ul>
+      <li><span class="azul">AE normal (1a):</span> entrada limpia → target la misma entrada limpia. Aprende
+        <strong>"x → x"</strong>. Sirve para comprimir.</li>
+      <li><span class="accent">Denoising AE (1b):</span> entrada con ruido → target el patrón limpio. Aprende
+        <strong>"sucio → limpio"</strong>. Sirve para limpiar.</li>
+    </ul>
+    <p>El ruido es <strong>bit-flip</strong>: cada píxel se da vuelta (0↔1) con cierta probabilidad <code>p</code>,
+      y es <strong>fresco en cada época</strong> (la red nunca ve dos veces la misma mancha). Usamos las mismas 32
+      letras, pero con una arquitectura un poco distinta: <code>35-25-{cuello}-25-35</code>.</p>
+  </div>
+
+  <!-- E9 -->
+  <section class="exp" id="e9">
+    <div class="eyebrow">Parte 1b · Experimento E9</div>
+    <h3>¿Por qué un cuello más ancho que en 1a?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿El cuello de 2 que usamos en 1a sirve para limpiar,
+      o limpiar necesita más capacidad?</p>
+    <p><span class="qlabel">Qué probamos.</span> Anchos de cuello <strong>2, 5, 10 y 20</strong> (entrenando todos
+      con 15% de ruido).</p>
+    <figure>
+      <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="barrido de ancho de cuello">
+      <figcaption>Izq: error según el ancho del cuello. Der: % de letras bien recuperadas a 20% de ruido.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">cuello</th><th>error px (a 20% ruido)</th><th>% letras recuperadas (≤1px)</th></tr>
+      <tr><td class="k">2 (el de 1a)</td><td>4.22</td><td>48.4%</td></tr>
+      <tr><td class="k">5</td><td>3.05</td><td>52.9%</td></tr>
+      <tr class="win"><td class="k">10</td><td>2.64</td><td>59.4% ✓</td></tr>
+      <tr><td class="k">20</td><td>2.59</td><td>58.0%</td></tr>
+    </table></div>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El <strong>cuello 2 de 1a limpia mal</strong>: a 20% de
+      ruido solo recupera el 48% de las letras. Ese cuello estaba optimizado para <em>comprimir</em> patrones
+      limpios, no para <em>limpiar</em>.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Limpiar ruido necesita <strong>más capacidad latente</strong> que
+      comprimir. Ensanchar a <span class="accent">10</span> sube la recuperación a 59%. Pasar de 10 a 20 ya casi no
+      mejora (satura), así que el ganador usa 10 — sin neuronas de más.</div>
+  </section>
+
+  <!-- E10 -->
+  <section class="exp" id="e10">
+    <div class="eyebrow">Parte 1b · Experimento E10</div>
+    <h3>¿Cuánto ruido conviene poner al entrenar?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Hay un nivel de ruido de entrenamiento "óptimo", o
+      es un compromiso?</p>
+    <p><span class="qlabel">Qué probamos.</span> Tres denoisers entrenados con <strong>5%, 15% y 30%</strong> de
+      ruido, cada uno probado contra todos los niveles de ruido.</p>
+    <figure>
+      <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="trade-off del ruido de entrenamiento">
+      <figcaption>Cada curva es un denoiser. Lo importante: <strong>las curvas se cruzan</strong>.</figcaption>
+    </figure>
+    <div class="box fail"><h4>⚠️ El trade-off (no hay un único "mejor")</h4>
+      <ul style="margin:.3em 0">
+        <li><strong>Entrenar con poco ruido (5%)</strong> → lo mejor en imágenes limpias o poco sucias, pero
+          <strong>se rompe ante mucho ruido</strong> (8.4 px de error a 30%).</li>
+        <li><strong>Entrenar con mucho ruido (30%)</strong> → robusto ante mucha mancha, pero
+          <strong>empeora en limpio</strong>: deja 1 px de error ¡incluso con la imagen sin ruido! (le "inventa"
+          manchas donde no hay).</li>
+      </ul>
+      Las curvas se cruzan: cada nivel es el mejor en su propio rango.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>El ruido de entrenamiento es un <strong>hiperparámetro con
+      compromiso</strong>, no algo para maximizar. <span class="accent">15%</span> es el punto de equilibrio:
+      gana en la franja media sin pagar el costo del 30% en limpio. Por eso es el del ganador.</div>
+    <details class="tech"><summary>🔬 En detalle (técnico) — la tabla completa</summary><div class="body">
+      <p>Error en píxeles según ruido de test (filas) × ruido de entrenamiento (columnas). En <strong>negrita</strong>
+      el mejor de cada fila:</p>
+      <div class="tbl"><table>
+        <tr><th class="k">ruido test</th><th>train 5%</th><th>train 15%</th><th>train 30%</th></tr>
+        <tr><td class="k">0% (limpio)</td><td><b>0.00</b></td><td>0.06</td><td>1.00</td></tr>
+        <tr><td class="k">10%</td><td>0.94</td><td><b>0.45</b></td><td>1.57</td></tr>
+        <tr><td class="k">15%</td><td>2.42</td><td><b>1.33</b></td><td>2.25</td></tr>
+        <tr><td class="k">20%</td><td>4.18</td><td>2.45</td><td><b>3.14</b></td></tr>
+        <tr><td class="k">30%</td><td>8.43</td><td>6.68</td><td><b>6.53</b></td></tr>
+      </table></div>
+      <p>Se ve el cruce: <code>train 5%</code> gana arriba (poco ruido), <code>train 30%</code> gana abajo (mucho
+      ruido), <code>train 15%</code> domina la franja media.</p>
+    </div></details>
+  </section>
+
+  <!-- E11 -->
+  <section class="exp" id="e11">
+    <div class="eyebrow">Parte 1b · Experimento E11</div>
+    <h3>Ver el denoiser en acción</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Realmente reconstruye el patrón limpio desde la
+      versión sucia? (evidencia visual)</p>
+    <p><span class="qlabel">Qué mostramos.</span> Para 5 letras (<code>a e g r s</code>) y tres niveles de ruido:
+      la letra limpia, la sucia, y la que recupera la red.</p>
+    <figure>
+      <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="tripletes limpio/sucio/recuperado">
+      <figcaption>Para cada nivel de ruido: fila limpia, fila con ruido, fila recuperada por el denoiser.</figcaption>
+    </figure>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Se ve directo el "sucio → limpio": a 10% y 20% recupera muy bien;
+      a 30% empieza a costarle (consistente con los números). Es la prueba visual de que la red aprendió a reparar,
+      no a copiar.</div>
+  </section>
+
+  <!-- ganador 1b -->
+  <section class="exp" id="ganador1b">
+    <div class="eyebrow">Parte 1b · EL GANADOR REFORZADO</div>
+    <h3>El número final del denoiser</h3>
+    <p class="lead"><span class="qlabel">La receta.</span> Cuello <strong>10</strong> (de E9) + ruido de
+      entrenamiento <strong>15%</strong> (de E10), reentrenado a fondo (<strong>15000 épocas</strong>) para dar un
+      número contundente.</p>
+    <figure>
+      <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="resultados del denoiser ganador">
+      <figcaption>% de letras recuperadas por el denoiser ganador, según el nivel de ruido.</figcaption>
+    </figure>
+    <div class="chips">
+      <div class="chip hot"><div class="n">92%</div><div class="l">letras recuperadas a 10% de ruido</div></div>
+      <div class="chip hot"><div class="n">81%</div><div class="l">a 15% (su nivel de entrenamiento)</div></div>
+      <div class="chip"><div class="n">64%</div><div class="l">a 20% de ruido</div></div>
+    </div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Con la arquitectura justa y el ruido balanceado, el denoiser
+      limpia muy bien: <strong>~81% de las letras casi perfectas a su nivel de ruido</strong>, degradándose suave
+      al subir el ruido. Es el resumen de toda la Parte 1b en un número.</div>
+    <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
+      <p>Evaluación robusta: 50 realizaciones de ruido × 32 letras por nivel. Números exactos — a 10%: 0.42 px
+      promedio, 91.9% ≤1px, 85.2% perfectas; a 15%: 1.08 px, 81.1% ≤1px, 71.8% perfectas; a 20%: 2.44 px, 63.8%
+      ≤1px, 53.2% perfectas. El reentrenamiento a 15000 épocas (vs 6000 de los barridos) mejora todos los niveles.
+      Técnica clave del denoising: no usa el <code>fit()</code> estándar porque necesita ruido nuevo cada época y
+      un target distinto de la entrada; se orquesta <code>forward</code>/<code>backward</code> a mano pasando la
+      entrada sucia pero el target limpio.</p>
+    </div></details>
+  </section>
+</div>
+
+<!-- ===================== PARTE 2 · VAE ===================== -->
+<div class="part" id="pvae">
+  <span class="badge">Parte 2 · VAE</span>
+  <h2>Generar imágenes nuevas de verdad</h2>
+  <p class="pintro">El autoencoder variacional (VAE) cambia una cosa fundamental: el cuello ya no guarda
+    <strong>un punto</strong> por imagen, sino <strong>una zona</strong> (una distribución). Eso, más un ingrediente
+    nuevo en la pérdida, es lo que le permite <span class="accent">inventar</span> imágenes desde cero.</p>
+</div>
+
+<div class="wrap">
+  <div class="read">
+    <h3>La diferencia con el autoencoder de 1a</h3>
+    <p>En 1a vimos que el AE puede generar interpolando <em>entre</em> letras conocidas. Pero tiene un problema:
+      su mapa tiene huecos y escala arbitraria, así que si elegís un punto al azar podés caer en zona muerta y sale
+      basura. El AE <strong>no te dice dónde están los puntos válidos</strong>.</p>
+    <p>El VAE resuelve eso con dos cambios:</p>
+    <ul>
+      <li><strong>El encoder da una distribución</strong> (una media μ y una dispersión σ) en vez de un punto.
+        Cada imagen es una "nubecita" en el mapa.</li>
+      <li><strong>Un término nuevo en la loss (el "KL")</strong> que <strong>empuja todo el mapa a tener forma de
+        campana de Gauss estándar</strong> centrada en 0. Así sabemos exactamente de dónde samplear.</li>
+    </ul>
+    <p style="text-align:center; font-size:1.08rem; color:var(--azul); font-weight:700; margin:18px 0">
+      AE = navegar a mano entre puntos conocidos &nbsp;·&nbsp; VAE = samplear al azar de un prior conocido</p>
+    <p>El peso de ese término KL se llama <strong>β (beta)</strong>, y es lo único que barrimos en toda la Parte 2.</p>
+    <details class="tech"><summary>🔬 En detalle (técnico) — arquitectura y loss</summary><div class="body">
+      <p>Arquitectura: <code>400 → 128 → (μ, logσ²) en Z=2 → 128 → 400</code>, con sigmoid en la salida. El
+      <strong>reparametrization trick</strong> escribe <code>z = μ + σ·ε</code> con <code>ε~N(0,I)</code>: deja el
+      azar <em>fuera</em> del grafo para poder backpropagar a través del muestreo. La loss es
+      <code>reconstrucción(BCE) + β·KL</code>, donde el KL =
+      <code>−0.5·Σ(1 + logσ² − μ² − σ²)</code> mide cuánto se aleja cada nube de la campana estándar N(0,I). Todo
+      el backprop (incluido el KL) está derivado a mano en numpy y verificado con un gradient check numérico de
+      error 5e-08. Entrenamiento: Adam lr=1e-3, 3500 épocas, batch 128.</p>
+    </div></details>
+  </div>
+
+  <!-- dataset emojis -->
+  <section class="exp" id="emojis">
+    <div class="eyebrow">Parte 2 · El dataset</div>
+    <h3>Datos nuevos: 5 emojis</h3>
+    <p class="lead"><span class="qlabel">Por qué.</span> El enunciado pide un dataset nuevo. Elegimos
+      <strong>5 emojis</strong> con siluetas bien distintas: corazón, estrella, gota, luna y rayo.</p>
+    <p><span class="qlabel">Cómo.</span> Imágenes de 20×20 píxeles, sacando la <strong>silueta</strong> de cada
+      emoji (el canal de transparencia). Generamos 140 variantes por clase (= 700 imágenes) con rotaciones y
+      corrimientos chiquitos, para que la red vea variedad continua.</p>
+    <figure>
+      <img src="../ej2_vae/figs/contact_sheet.png" alt="dataset de emojis">
+      <figcaption>Arriba la silueta base de cada clase; abajo una variante aumentada.</figcaption>
+    </figure>
+    <div class="box fail"><h4>⚠️ La primera versión NO funcionó</h4>Probamos primero los emojis de contorno
+      (line-art): a 20×20 los contornos se confunden y las clases no se distinguen (una métrica de "¿se reconoce la
+      clase?" daba apenas ~0.5). Cambiamos a la <strong>silueta rellena</strong> (canal alpha) y saltó a
+      <strong>0.95</strong>: ahí sí las 5 clases son claramente distinguibles. También descartamos formas
+      geométricas (triángulo, círculo…) por confundibles y "poco emoji".</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>La calidad del dataset importa tanto como el modelo: siluetas
+      limpias y bien separadas hacen que el VAE pueda aprender un mapa ordenado. El dataset queda guardado en el
+      repo, así que es reproducible sin internet.</div>
+  </section>
+
+  <!-- E12 -->
+  <section class="exp" id="e12">
+    <div class="eyebrow">Parte 2 · Experimento E12 · el central</div>
+    <h3>¿Qué pasa al samplear según β?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> Si elijo un punto al azar de la campana N(0,I) y lo
+      decodifico, ¿sale un emoji válido o basura? ¿Y cómo depende eso de β (cuánto ordenamos el mapa)?</p>
+    <p><span class="qlabel">Qué probamos.</span> Cuatro VAEs con <strong>β = 0, 0.5, 1 y 4</strong>, decodificando
+      las mismas 10 muestras al azar con cada uno.</p>
+    <figure>
+      <img src="../ej2_vae/figs/fig_e12_beta_sampling.png" alt="sampleo según beta">
+      <figcaption>Cada fila es un β. Arriba (β=0, sin el ingrediente KL) sale ruido; con KL salen emojis.</figcaption>
+    </figure>
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>Con <strong>β=0 (sin el término KL) salen manchas de
+      ruido</strong>. Sin ese ingrediente, el mapa se desparrama (escala enorme, hasta ±49) y un punto de la
+      campana N(0,I) cae en una zona que la red nunca entrenó.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>El término KL es <strong>lo que hace generable</strong> el mapa.
+      Desde β=0.5 en adelante, samplear al azar produce emojis válidos y reconocibles. Es el experimento que
+      justifica todo el VAE.</div>
+  </section>
+
+  <!-- E16 -->
+  <section class="exp" id="e16">
+    <div class="eyebrow">Parte 2 · Experimento E16</div>
+    <h3>¿Por qué uno genera y el otro no? (AE vs VAE)</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> Ver lado a lado el mapa del AE (β=0) y el del VAE
+      (β=1) para entender visualmente la diferencia.</p>
+    <figure>
+      <img src="../ej2_vae/figs/fig_e16_ae_vs_vae.png" alt="AE vs VAE">
+      <figcaption>Izq: el mapa del AE, desparramado. Der: el mapa del VAE, compacto y centrado en 0.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k"></th><th>AE (β=0)</th><th>VAE (β=1)</th></tr>
+      <tr><td class="k">dispersión del mapa</td><td>enorme (±49)</td><td>compacta (±3.3)</td></tr>
+      <tr><td class="k">¿parece campana N(0,I)?</td><td>no</td><td>sí (std 1.17)</td></tr>
+      <tr><td class="k">¿se puede samplear al azar?</td><td>no → ruido</td><td>sí → emojis ✓</td></tr>
+    </table></div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Samplear N(0,I) solo funciona si el mapa <em>es</em> N(0,I). En el
+      AE los puntos quedan a escala ±49 (la campana es un puntito en el medio, todo lo demás cae afuera); el KL del
+      VAE los junta en torno al 0. <strong>Esa es la razón de ser del VAE.</strong></div>
+  </section>
+
+  <!-- E13 -->
+  <section class="exp" id="e13">
+    <div class="eyebrow">Parte 2 · Experimento E13</div>
+    <h3>¿Cómo quedó el mapa del VAE por clase?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿El mapa del VAE (β=1) realmente ordenó las clases y
+      quedó con forma de campana?</p>
+    <figure>
+      <img src="../ej2_vae/figs/fig_e13_latent.png" alt="latente del VAE por clase">
+      <figcaption>Cada emoji codificado, coloreado por clase. Los círculos marcan la campana N(0,I) (radio 1 y 2).</figcaption>
+    </figure>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Las 5 clases quedan <strong>agrupadas (cada tipo en su zona)
+      pero todas dentro de la campana</strong> N(0,I). Es la combinación mágica: un mapa a la vez ordenado por
+      significado <em>y</em> con la forma conocida que permite generar. Detalle honesto: las clases no ocupan áreas
+      iguales (corazón y luna ocupan más), lo que explica un pequeño sesgo al generar.</div>
+  </section>
+
+  <!-- E14 -->
+  <section class="exp" id="e14">
+    <div class="eyebrow">Parte 2 · Experimento E14 · el entregable generativo</div>
+    <h3>Reconstruir y generar emojis nuevos</h3>
+    <p class="lead"><span class="qlabel">La prueba final.</span> Que el VAE (a) reconstruye fiel, y (b) genera
+      emojis <strong>nuevos</strong> —no copias— desde la campana al azar.</p>
+    <figure>
+      <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="reconstrucción y generación del VAE">
+      <figcaption>Fila 1: emojis reales. Fila 2: sus reconstrucciones. Fila 3: emojis nuevos generados desde N(0,I).</figcaption>
+    </figure>
+    <div class="box teach"><h4>💡 Qué enseña</h4>La reconstrucción es casi idéntica al original, y la última fila
+      son <strong>emojis nuevos y reconocibles</strong> que no estaban en el dataset: corazones, lunas, gotas,
+      estrellas y rayos en variaciones propias. Es la evidencia central de que el VAE <strong>genera</strong>.</div>
+  </section>
+
+  <!-- E17 -->
+  <section class="exp" id="e17">
+    <div class="eyebrow">Parte 2 · Experimento E17</div>
+    <h3>El mapa completo, decodificado</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿El mapa del VAE es continuo (sin huecos) o tiene
+      zonas muertas como el AE?</p>
+    <p><span class="qlabel">Qué hicimos.</span> Barrimos el mapa en una grilla y decodificamos cada punto, armando
+      un "atlas".</p>
+    <figure>
+      <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="atlas del latente del VAE">
+      <figcaption>Grilla del mapa decodificada: los emojis se transforman de a poco uno en otro.</figcaption>
+    </figure>
+    <div class="box teach"><h4>💡 Qué enseña</h4>El mapa es un <strong>continuo navegable</strong>: los emojis se
+      transforman suavemente entre sí, con mezclas en las fronteras (no copias de los 5 originales). Confirma que lo
+      que genera son imágenes nuevas legítimas, no memorización. Es el "espejo" de la grilla de letras del AE
+      (E8), pero acá <em>sin</em> zonas muertas.</div>
+  </section>
+
+  <!-- E15 -->
+  <section class="exp" id="e15">
+    <div class="eyebrow">Parte 2 · Experimento E15</div>
+    <h3>El equilibrio: reconstrucción vs orden (las dos partes de la loss)</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cómo se pelean los dos términos de la pérdida
+      (reconstruir bien vs ordenar el mapa) según β?</p>
+    <figure>
+      <img src="../ej2_vae/figs/fig_e15_recon_kl.png" alt="curvas recon vs KL">
+      <figcaption>Izq: error de reconstrucción. Der: el término KL (qué tan ordenado está el mapa) en el tiempo.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">β</th><th>reconstrucción (% px mal)</th><th>orden del mapa (KL)</th></tr>
+      <tr><td class="k">0 (sin KL)</td><td>2.6% (la mejor)</td><td>se dispara (283) ✗</td></tr>
+      <tr class="win"><td class="k">1 (equilibrio)</td><td>3.2%</td><td>6.1 (ordenado) ✓</td></tr>
+      <tr><td class="k">4 (mucho orden)</td><td>3.7% (la peor)</td><td>4.1 (el más ordenado)</td></tr>
+    </table></div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>β es una <strong>perilla con compromiso</strong>: más β = mapa
+      más ordenado (mejor para generar) pero reconstrucción un poco peor. Con β=0 el orden del mapa se descontrola
+      por completo (el KL se dispara a 283: el mapa "se escapa"). <span class="accent">β=1</span> es el equilibrio
+      que elegimos: mapa bien ordenado con reconstrucción casi tan buena como sin KL.</div>
+  </section>
+</div>
+
+<!-- ===================== CIERRE ===================== -->
+<div class="part" id="cierre">
+  <span class="badge">Cierre</span>
+  <h2>Las tres conclusiones</h2>
+</div>
+<div class="wrap">
+  <div class="read">
+    <ul style="font-size:1.05rem">
+      <li style="margin:.6em 0"><span class="azul">Parte 1a —</span> con una red <strong>no-lineal</strong> y solo
+        <strong>2 números</strong> guardamos las 32 letras a la perfección (0 px). Un método clásico (PCA) no llega.
+        Cada decisión de la receta salió de aislar un experimento.</li>
+      <li style="margin:.6em 0"><span class="azul">Parte 1b —</span> el mismo tipo de red, entrenada con
+        <strong>"sucio → limpio"</strong>, aprende a quitar ruido. Limpiar necesita un cuello más ancho que comprimir,
+        y el ruido de entrenamiento es un <strong>compromiso</strong> (ni mucho ni poco).</li>
+      <li style="margin:.6em 0"><span class="azul">Parte 2 (VAE) —</span> al hacer que el mapa tenga forma de
+        <strong>campana conocida</strong> (el término KL), el modelo pasa de <em>resumir</em> a
+        <strong>generar</strong> imágenes nuevas desde cero.</li>
+    </ul>
+    <p style="margin-top:18px; color:var(--gris)">El hilo conductor de todo el TP: un autoencoder es un cuello
+      angosto que obliga a resumir. Según <em>qué</em> le pidas reconstruir (lo mismo, lo limpio, o una distribución
+      entera), obtenés compresión, limpieza o generación.</p>
+  </div>
+</div>
+
+<footer>
+  TP5 · Autoencoders — Sistemas de Inteligencia Artificial · ITBA · 1Q 2026<br>
+  Todo en numpy desde cero · semillas fijas · números reales de los experimentos.
+</footer>
+
+<script>
+  // barra de progreso de lectura
+  var bar = document.getElementById('progress');
+  function upd(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max>0 ? (h.scrollTop/max*100) : 0) + '%';
+  }
+  document.addEventListener('scroll', upd, {passive:true});
+  window.addEventListener('resize', upd); upd();
+</script>
+</body>
+</html>
