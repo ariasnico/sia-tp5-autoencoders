@@ -94,7 +94,7 @@
     <h2>Capacidad del encoder</h2>
     <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="E3">
     <ul><li>Sin capa oculta el encoder es lineal (≈PCA, 14 px); con <span class="accent">≥20 unidades → 0 px</span>.</li></ul>
-    <aside class="notes">Ojo defensa: el "14 px" de E3 es el MÁXIMO; el "7.19" de E1 es el PROMEDIO. Son la misma barrera de PCA, no que uno sea peor.</aside>
+    <aside class="notes">Ojo defensa: el "14 px" de E3 es el MÁXIMO; el "7.19" de E1 es el PROMEDIO. Son la misma barrera de PCA, no que uno sea peor. — Los picos abruptos en las curvas son inestabilidad transitoria de Adam (ver E4); la red se recupera sola.</aside>
   </section>
 
   <!-- 9 · E4 -->
@@ -103,7 +103,7 @@
     <h2>Optimizadores</h2>
     <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="E4">
     <ul><li><span class="accent">Adam</span> converge ~100× más bajo que SGD (0 vs 5 px).</li></ul>
-    <aside class="notes">Adam adapta el paso por parámetro y escapa de la meseta donde SGD se estanca.</aside>
+    <aside class="notes">Adam adapta el paso por parámetro y escapa de la meseta donde SGD se estanca. — Sobre los picos abruptos que aparecen en varias curvas: son inestabilidad transitoria de Adam. En una meseta el segundo momento (promedio del gradiente²) se hace minúsculo; si aparece un gradiente algo mayor, el paso lr·m/√v se dispara y la loss salta de golpe. La red se recupera en pocas épocas. Es típico con full-batch sobre 32 muestras.</aside>
   </section>
 
   <!-- 10a · E5 (opcional) -->
@@ -112,7 +112,7 @@
     <h2>Learning rate</h2>
     <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
     <ul><li>Muy bajo = lento; muy alto (<span class="accent">0.3 no aprende</span>, 33 px); 0.01 es el justo.</li></ul>
-    <aside class="notes">Opcional. Muestra una config que falla: el lr alto queda atascado arriba.</aside>
+    <aside class="notes">Opcional. Muestra una config que falla: el lr alto queda atascado arriba. — Los picos en las curvas son inestabilidad transitoria de Adam (ver E4); se recupera solo.</aside>
   </section>
 
   <!-- 10b · E6 (opcional) -->
@@ -121,7 +121,7 @@
     <h2>Activación oculta</h2>
     <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
     <ul><li>tanh / relu / sigmoid llegan <span class="accent">todas a 0 px</span>, difieren en velocidad de convergencia.</li></ul>
-    <aside class="notes">Opcional. Por eso es una figura de curvas: el resultado final es el mismo, cambia la velocidad.</aside>
+    <aside class="notes">Opcional. Por eso es una figura de curvas: el resultado final es el mismo, cambia la velocidad. relu se estabilizó subiendo el ε de Adam (evita el dying-relu); los picos chicos de tanh/sigmoid son inestabilidad transitoria de Adam y se recuperan. Las 3 llegan a 0 px.</aside>
   </section>
 
   <!-- 11 · E7 -->
@@ -130,7 +130,7 @@
     <h2>Función de pérdida: BCE vs MSE</h2>
     <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="E7">
     <ul><li>Para píxeles binarios, <span class="accent">BCE</span> reconstruye perfecto (0 px); MSE deja 2 px.</li></ul>
-    <aside class="notes">Los píxeles son Bernoulli; BCE es su log-verosimilitud natural y castiga el error confiado. MSE los trata como continuos.</aside>
+    <aside class="notes">Los píxeles son Bernoulli; BCE es su log-verosimilitud natural y castiga el error confiado. MSE los trata como continuos. — El pico en la curva BCE es inestabilidad transitoria de Adam (ver E4); se recupera solo.</aside>
   </section>
 
   <!-- 12 · E8 recon -->
