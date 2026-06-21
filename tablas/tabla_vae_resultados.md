@@ -10,11 +10,13 @@ nuevos** — son **dos formas de mirar el mismo barrido**.
 - **`—` recon (% px) por β · `0 / 1 / 4`** — la misma corrida, mirada por el **error de reconstrucción**:
   **2.6 % · 3.2 % · 3.7 %**. → a más β, peor reconstrucción.
 - **`—` latente std por β · `0 / 1 / 4`** — la misma corrida, mirada por **cuán N(0,I) es el latente** (su desvío):
-  **11.5 · 1.17 · 1.06**. → a más β, el latente se parece más a N(0,I) (std → 1).
+  **11.5 · 1.17 · 1.06**. → a más β, el **desvío marginal** del latente tiende a 1 (ojo: std→1 no es lo mismo
+  que el agregado *sea* N(0,I) — conserva 5 cúmulos de clase; ver E13/`fig_e13`).
 
 El `—` en la columna Exp significa "misma corrida que E12, otra métrica" (no un experimento aparte).
 
 ## La gran conclusión
-β es una **perilla con trade-off**: subirlo organiza el latente como N(0,I) (permite generar) pero empeora la
+β es una **perilla con trade-off**: subirlo hace que el KL empuje cada `q(z|x)` individual hacia N(0,I) (el
+agregado conserva 5 cúmulos de clase, no es una sola gaussiana), lo que permite generar, pero empeora la
 reconstrucción. **β=1** es el punto de equilibrio: reconstruye bien y genera. β=0 reconstruye mejor pero **no
-puede generar** (su latente no es N(0,I)) — esa es la razón de ser del VAE.
+puede generar** (sin KL, cada `q(z|x)` queda dispersa lejos de N(0,I)) — esa es la razón de ser del VAE.

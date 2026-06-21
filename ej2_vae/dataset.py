@@ -28,7 +28,7 @@ CLASSES = [
 URL = "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/{variant}/72x72/{code}.png"
 
 
-def fetch(code, variant="black"):
+def fetch(code, variant="color"):
     """Descarga (y cachea) el PNG de OpenMoji. Devuelve path local o None si falla."""
     dst = ASSETS / f"{variant}_{code}.png"
     if dst.exists():
@@ -54,7 +54,7 @@ def silhouette(path, SZ, margin=2):
     return out
 
 
-def build_bases(SZ, variant="black"):
+def build_bases(SZ, variant="color"):
     """dict nombre -> bitmap base (silueta SZxSZ). Omite clases que no se pudieron bajar."""
     bases = {}
     for name, code in CLASSES:
@@ -71,7 +71,7 @@ def augment(base, rng):
     return np.clip(img + rng.normal(0, 0.03, img.shape), 0, 1)
 
 
-def make_dataset(SZ=20, per_class=140, seed=0, variant="black"):
+def make_dataset(SZ=20, per_class=140, seed=0, variant="color"):
     """Devuelve X (N, SZ*SZ), y (N,), names (list), bases (dict)."""
     bases = build_bases(SZ, variant)
     names = list(bases)
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     FIGS = HERE / "figs"; FIGS.mkdir(exist_ok=True)
 
     SZ = int(sys.argv[1]) if len(sys.argv) > 1 else 20
-    variant = sys.argv[2] if len(sys.argv) > 2 else "black"
+    variant = sys.argv[2] if len(sys.argv) > 2 else "color"
     X, y, names, bases = make_dataset(SZ=SZ, per_class=140, seed=0, variant=variant)
     print(f"dataset: {X.shape} | clases ({len(names)}): {names}")
     acc = nn_accuracy(X, y, bases, names)

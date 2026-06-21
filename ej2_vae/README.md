@@ -16,6 +16,13 @@ círculo (convexos compactos, confundibles entre sí). No hizo falta el fallback
 **VAE:** `tp5lib.vae_core` (D=400, He=128, **Z=2**, Hd=128 · Adam lr=1e-3 · 3500 épocas). Backprop
 derivado a mano y **verificado por gradient check (5e-08)** — no se modificó.
 
+**Referencia (cátedra):** implementa en **numpy desde cero** el VAE de `KerasAutoencoders.ipynb` / Langr
+*"GANs in action"* (Keras sobre MNIST), porque el enunciado prohíbe Keras/TF. **Mismas fórmulas**:
+reparam `z = μ + exp(½·logvar)·ε`, KL `−½·Σ(1 + logvar − μ² − exp(logvar))`, recon **BCE sumada** sobre
+los píxeles, loss = recon + KL (con β=1 es idéntica), latente 2D. **Extendido** con barrido de β (β-VAE)
+y dataset propio de emojis; backprop verificado con gradient check 5e-08. Diferencias justificadas: tanh
+vs relu, emojis 20×20 vs MNIST 28×28. Ver `DEFENSA.md`.
+
 ## Cómo correr
 ```bash
 python3 ej2_vae/dataset.py 20 color     # (opcional) regenera assets + contact-sheet
@@ -36,19 +43,24 @@ python3 ej2_vae/make_figures.py         # genera figs/
 
 | Exp | Qué | Resultado clave | Figura |
 |-----|-----|-----------------|--------|
-| **E12** | sampleo z~N(0,I) por β | β=0 ruido; β≥0.5 emojis válidos | `fig_e12` |
-| **E13** | latente β=1 por clase | 5 clases agrupadas dentro de N(0,I) | `fig_e13` |
-| **E14** | recon + generación β=1 | **emojis nuevos juzgables** (req. 2c) | `fig_e14` |
+| **E12** | sampleo z~N(0,I) por β | β=0 ruido; β≥0.5 muestras reconocibles | `fig_e12` |
+| **E13** | latente β=1 por clase | KL empuja cada q(z\|x) a N(0,I); el agregado conserva 5 cúmulos | `fig_e13` |
+| **E14** | recon + generación β=1 | **muestras nuevas (no copias) reconocibles** (req. 2c) | `fig_e14` |
 | **E15** | curvas recon vs KL | más β ⇒ menos KL, más recon-loss | `fig_e15` |
-| **E16** | AE (β=0) vs VAE (β=1) | latente disperso (±30) vs compacto ~N(0,I) | `fig_e16` |
+| **E16** | AE (β=0) vs VAE (β=1) | latente disperso vs compacto (cada q(z\|x)→N(0,I)) | `fig_e16` |
 | **E17** | atlas del latente β=1 | cobertura continua del latente (espejo de fig_e8c) | `fig_e17` |
+| **E18** | sampleo honesto (semilla 0) | cobertura media 85 % de clases (4.3/5) sobre 200 semillas | `fig_e18` |
 
 ### Lo que enseña
 - **E16 / E12 — la razón de ser del VAE (req. 2b):** el AE común (β=0) reconstruye mejor pero su
-  latente tiene escala ±30; samplear N(0,I) cae en zona no entrenada → ruido. El término KL organiza
-  el latente como N(0,I), y por eso el VAE **sí** genera muestras válidas desde N(0,I).
+  latente queda disperso; samplear N(0,I) cae en zona no entrenada → ruido. El término KL empuja cada
+  q(z|x) **individual** hacia N(0,I) (el agregado conserva estructura de clases, no es una sola nube),
+  y por eso el VAE **sí** genera muestras válidas desde N(0,I).
 - **E15:** el β es una perilla con trade-off explícito recon↔KL. β=1 es el punto de equilibrio.
-- **E14:** generación de emojis nuevos juzgables como del conjunto — cumple el Generative Autoencoder.
+- **E14:** genera muestras **nuevas (no copias) reconocibles** — variaciones continuas de los 5
+  prototipos — cumple el Generative Autoencoder.
 - **E17 (atlas) + semilla de sampleo:** la grilla decodificada muestra la cobertura continua del latente.
-  Las muestras de E12/E14 usan una semilla (26) que cubre las 5 clases: la densidad del latente no es
-  uniforme (corazón/luna ocupan más área), por eso se elige la semilla — ver `DEFENSA.md`.
+  Las muestras de E12/E14 usan una semilla (26) elegida y documentada que cubre las 5 clases. La densidad
+  del latente no es uniforme: medido sobre 200 semillas (E18, `fig_e18`), una tirada cubre en promedio el
+  **85 % de las clases (4.3/5)** y el reparto es desigual (estrella ≈33 %, luna ≈23 %, gota ≈19 %,
+  rayo ≈14 %, corazón ≈12 %). Por eso se elige la semilla para ilustrar — ver `DEFENSA.md` y `fig_e18`.

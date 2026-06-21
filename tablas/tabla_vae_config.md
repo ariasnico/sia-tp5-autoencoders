@@ -19,12 +19,14 @@ juntos. El único barrido está en `tabla_vae_resultados.png` (el de β).
   ruido **chicos y seedeados** para tener variedad (si no, el VAE vería 5 imágenes fijas). Moderadas a propósito,
   para que las muestras sigan siendo "juzgables".
 - **Sampleo `semilla 26`** — para las figuras de generación elegimos (entre varias) la semilla que cubre las 5
-  clases, porque el latente no es uniforme (corazón/luna ocupan más área).
+  clases, porque las clases **no ocupan áreas iguales** del latente: medido sobre 200 semillas, al samplear
+  N(0,I) el reparto es desigual (estrella ~33 %, luna ~23 %, gota ~19 %, rayo ~14 %, corazón ~12 %).
 - **Seed `0`** — semilla fija del entrenamiento.
 
 ## Qué nos dio
-Con β=1, el VAE reconstruye bien (3.2 % px) y su latente queda ~N(0,I), así que **genera emojis nuevos juzgables
-desde N(0,I)** (el objetivo del enunciado, 2c).
+Con β=1, el VAE reconstruye bien (3.2 % px) y el KL empuja cada `q(z|x)` individual hacia N(0,I) (el agregado
+conserva 5 cúmulos de clase, no es una sola gaussiana), lo bastante compacto y cubierto como para **generar
+emojis nuevos juzgables muestreando N(0,I)** (el objetivo del enunciado, 2c).
 
 ## Cómo conecta con los experimentos
 El único hiperparámetro que barrimos es **β** (E12); el resto de la receta queda fijo. Ver `tabla_vae_resultados.png`.
