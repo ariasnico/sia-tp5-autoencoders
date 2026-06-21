@@ -4,7 +4,7 @@ Trabajo Práctico 5 de **Sistemas de Inteligencia Artificial** (ITBA). Tres mode
 sobre la librería MLP del TP3 — **sin PyTorch, sin TensorFlow, sin Keras**:
 
 1. **Autoencoder básico** (`ej1a`) — comprime las 32 letras de `font.h` a un mapa de **2 números** y las reconstruye con **0 píxeles de error**.
-2. **Denoising Autoencoder** (`ej1b`) — recibe letras con ruido y las limpia: **81 % perfectas con 15 % de ruido**.
+2. **Denoising Autoencoder** (`ej1b`) — recibe letras con ruido y las limpia: **81 % de las letras a ≤1 px de error con 15 % de ruido**.
 3. **VAE generativo** (`ej2_vae`) — aprende un mapa ordenado de 5 emojis y **genera muestras nuevas** (no copias) pidiéndole puntos al azar.
 
 > **Este README es un manual de reproducción.** Cualquier persona (o agente) puede, **sin leer el código**,
@@ -48,7 +48,7 @@ pip install numpy scipy matplotlib pillow pandas pytest
 
 ## 2. Reproducir TODO
 
-Parado en la raíz del repo (`/home/narias/sia/tp5`):
+Parado en la raíz del repo:
 
 ```bash
 # (0) Validar la librería y el VAE
@@ -65,12 +65,13 @@ done
 python3 tools/tablas_setup.py            # -> tablas/*.png
 ```
 
-⏱️ **Tiempo total ≈ 50 min**, y casi todo es **`ej1b`** (≈ 40 min, ver abajo). El resto junto son ~9 min.
+⏱️ **Tiempo total ≈ 55 min**, y casi todo es **`ej1b`** (≈ 40 min, ver abajo). El resto junto son ~12 min.
 Si querés una corrida rápida, salteá `ej1b/run_experiments.py` (sus resultados ya están commiteados) y corré
-sólo `ej1a` y `ej2_vae` (~6 min).
+sólo `ej1a` y `ej2_vae` (~10 min — el VAE solo ya son ~4–6 min según la máquina).
 
 > **No hace falta correr nada para ver los resultados:** `results/` (CSV + modelos) y `figs/` (PNG) ya están
-> en el repo. Correr los scripts sólo los regenera, idénticos (semillas fijas).
+> en el repo. Correr los scripts los regenera: **idénticos** en 1a y 1b; el **VAE** puede variar levemente
+> entre corridas (su muestreo es estocástico, ver §8 — las conclusiones se mantienen).
 
 ---
 
@@ -84,7 +85,7 @@ Si reprodujiste todo, estos son los números que tienen que salir (están fijado
 | Cuentas del VAE | `python3 tp5lib/vae_core.py` | `MAX REL ERR GLOBAL = 5.02e-08  (OK)` |
 | **Campeón 1a** | (al final de `ej1a/run_experiments.py`) | `px_max=0  perfectas=32/32` |
 | **Campeón denoiser** | (al final de `ej1b/run_experiments.py`) | `81 % ≤1px @ 15 % ruido` (92 % @ 10 %) |
-| **VAE** | (al final de `ej2_vae/run_experiments.py`) | recon β=1 ≈ 3.2 % · cobertura sampleo ≈ 85 % |
+| **VAE** | recon: `run_experiments.py` · cobertura (E18): `make_figures.py` | recon β=1 ≈ 3.2 % · cobertura ≈ 85 % *(varían levemente, muestreo estocástico)* |
 
 Si alguno no coincide, algo del entorno cambió (versión de numpy, semilla, etc.).
 
@@ -121,8 +122,8 @@ Siempre se corre `run_experiments` **antes** que `make_figures`.
 | Comando | Genera | Tarda | Imprime |
 |---------|--------|-------|---------|
 | `python3 ej2_vae/dataset.py 20 color` | `figs/contact_sheet.png` (y cachea emojis en `assets/`) | ~2 s | `dataset: (700, 400)` · `1-NN acc 0.95` |
-| `python3 ej2_vae/run_experiments.py` | `results/` (1 CSV + 4 modelos `.npz` + curvas + `config_used.json`) | ~150 s | el barrido de β + `OK VAE` |
-| `python3 ej2_vae/make_figures.py` | `figs/` (8 PNG `fig_e12…e18` + atlas) | ~30 s | métricas de E18 (cobertura ~85 %) |
+| `python3 ej2_vae/run_experiments.py` | `results/` (1 CSV + 4 modelos `.npz` + curvas + `config_used.json`) | ~4–6 min | el barrido de β + `OK VAE` |
+| `python3 ej2_vae/make_figures.py` | `figs/` (8 PNG `fig_e12…e18`, incl. el atlas `e17`) | ~30 s | métricas de E18 (cobertura ~85 %) |
 
 > `dataset.py` es opcional: los emojis ya están cacheados. El primer argumento es el tamaño (20×20) y el
 > segundo la variante (`color` — usa la silueta del canal alpha, que se distingue mejor que `black`).
@@ -158,7 +159,7 @@ Para entender qué prueba cada experimento sin leer el código. Cada uno deja un
 | **E9** | ¿qué tan angosto el cuello? | 2 = 48 % · **10 = 59 %** · 20 satura → cuello 10. |
 | **E10** | ¿cuánto ruido en el entrenamiento? | es un **equilibrio**: cada nivel rinde mejor en su rango. |
 | **E11** | ejemplos visuales | limpia bien a 10–15 %, se degrada a 30 %. |
-| **Campeón** | cuello 10, 15 000 épocas | **81 % perfectas con 15 % de ruido** (92 % con 10 %). |
+| **Campeón** | cuello 10, 15 000 épocas | **81 % de las letras a ≤1 px con 15 % de ruido** (92 % con 10 %). |
 
 ### 2 — VAE (5 emojis, mapa de 2 números)
 | Exp | Qué prueba | Conclusión |
@@ -220,7 +221,11 @@ y tiene su propio `README.md` con el detalle.
 ## 8. Notas importantes
 
 - **Todo es numpy puro.** `scipy`/`pillow` se usan sólo para preparar las imágenes de los emojis, nunca para los modelos.
-- **Semillas fijas** en todo: las corridas son reproducibles al dígito.
+- **Reproducibilidad.** 1a y 1b tienen **semillas fijas → reproducibles al dígito** en la misma máquina. El
+  **VAE** usa muestreo estocástico (el ruido ε del reparam no fija la semilla global de numpy): sus números
+  varían **levemente** entre corridas (p. ej. recon β=1 ≈ 3.2–3.5 %), pero las conclusiones (recon sube con β,
+  el modelo genera muestras nuevas) se mantienen — y el control honesto es **E18**. Entre versiones de
+  numpy/BLAS también pueden moverse los últimos dígitos.
 - **`tp5lib/vae_core.py` no se toca.** Su backprop (el reparam y la KL) está derivado a mano y verificado con un
   chequeo numérico de gradientes (`5.02e-08`, muy por debajo del umbral `1e-5`).
 - **El VAE sigue la referencia de la cátedra.** Es el VAE de `KerasAutoencoders.ipynb` (libro de Langr,
