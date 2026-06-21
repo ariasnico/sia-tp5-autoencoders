@@ -56,6 +56,14 @@
 
   <!-- 4 -->
   <section>
+    <span class="tag">1a · RESUMEN</span>
+    <h2>Todo lo que probamos</h2>
+    <img src="../tablas/tabla_1a_resultados.png" alt="resumen 1a">
+    <ul><li>Cada fila: un experimento, <span class="accent">para qué</span> lo hicimos y qué dio.</li></ul>
+  </section>
+
+  <!-- 5 -->
+  <section>
     <span class="tag">E1</span>
     <h2>¿Hacen falta las curvas?</h2>
     <div class="duo">
@@ -65,7 +73,7 @@
     <ul><li>Modelo recto (PCA): <span class="accent">7 píxeles</span> de error, concentrados en el <span class="accent">centro del glifo</span>. Con curvas: <span class="accent">0</span>.</li></ul>
   </section>
 
-  <!-- 5 -->
+  <!-- 6 -->
   <section>
     <span class="tag">E2</span>
     <h2>¿Cuántos números por letra?</h2>
@@ -73,7 +81,7 @@
     <ul><li>Con 1 no alcanza; <span class="accent">con 2 ya salen perfectas</span>.</li></ul>
   </section>
 
-  <!-- 6 -->
+  <!-- 7 -->
   <section>
     <span class="tag">E3</span>
     <h2>¿Qué tan grande la red?</h2>
@@ -81,7 +89,7 @@
     <ul><li>Red muy chica falla; con <span class="accent">20 neuronas</span> ya sale perfecto.</li></ul>
   </section>
 
-  <!-- 7 -->
+  <!-- 8 -->
   <section>
     <span class="tag">E4</span>
     <h2>¿Cómo entrenar?</h2>
@@ -89,7 +97,7 @@
     <ul><li>Adam es el que <span class="accent">llega más abajo</span>; los otros se quedan a mitad de camino.</li></ul>
   </section>
 
-  <!-- 8 -->
+  <!-- 9 -->
   <section>
     <span class="tag">E5 — opcional</span>
     <h2>¿Qué tan grande el paso?</h2>
@@ -97,7 +105,7 @@
     <ul><li>Paso muy chico tarda; muy grande <span class="accent">no aprende</span>; el del medio anda.</li></ul>
   </section>
 
-  <!-- 9 -->
+  <!-- 10 -->
   <section>
     <span class="tag">E6 — opcional</span>
     <h2>¿Qué tipo de neurona?</h2>
@@ -105,20 +113,12 @@
     <ul><li>Las tres terminan perfectas; solo cambia <span class="accent">qué tan rápido</span> llegan.</li></ul>
   </section>
 
-  <!-- 10 -->
+  <!-- 11 -->
   <section>
     <span class="tag">E7</span>
     <h2>¿Cómo medir el error?</h2>
     <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="E7">
     <ul><li>Una forma (BCE) queda <span class="accent">perfecta</span> para blanco y negro; la otra deja 2 errores.</li></ul>
-  </section>
-
-  <!-- 11 -->
-  <section>
-    <span class="tag">1a · RESUMEN</span>
-    <h2>Todo lo que probamos</h2>
-    <img src="../tablas/tabla_1a_resultados.png" alt="resumen 1a">
-    <ul><li>Cada fila: un experimento, <span class="accent">para qué</span> lo hicimos y qué dio.</li></ul>
   </section>
 
   <!-- 12 -->
@@ -145,7 +145,7 @@
     <ul><li>Las 32 letras ubicadas en el mapa; el recuadro de la derecha es un <span class="accent">zoom</span> del centro.</li></ul>
   </section>
 
-  <!-- 14b (nueva) · ¿se preserva el parecido? -->
+  <!-- 15 -->
   <section>
     <span class="tag">1a · ¿SE PRESERVA EL PARECIDO?</span>
     <h2>El mapa, ¿respeta las similitudes?</h2>
@@ -156,7 +156,7 @@
     </ul>
   </section>
 
-  <!-- 15 -->
+  <!-- 16 -->
   <section>
     <span class="tag">1a · GANADOR</span>
     <h2>Inventar letras nuevas</h2>
@@ -164,7 +164,7 @@
     <ul><li>Recorriendo el mapa aparecen <span class="accent">letras que no estaban</span>.</li></ul>
   </section>
 
-  <!-- 16 -->
+  <!-- 17 -->
   <section>
     <span class="tag">1a · GANADOR</span>
     <h2>De la 'a' a la 'o'</h2>
@@ -172,7 +172,7 @@
     <ul><li>Caminamos en el mapa de la 'a' a la 'o': los pasos del medio son <span class="accent">mezclas continuas</span>.</li></ul>
   </section>
 
-  <!-- 17 -->
+  <!-- 18 -->
   <section>
     <span class="tag">PARTE 2</span>
     <h2>Limpiar ruido</h2>
@@ -180,23 +180,7 @@
     <ul><li>Misma idea de antes, pero la red aprende a <strong>sacar las manchas</strong>.</li></ul>
   </section>
 
-  <!-- 18 -->
-  <section>
-    <span class="tag">E9</span>
-    <h2>¿Por qué un cuello más ancho?</h2>
-    <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="E9">
-    <ul><li>Cuello 2 limpia mal; <span class="accent">cuello 10</span> mucho mejor; más de 10 no suma.</li></ul>
-  </section>
-
   <!-- 19 -->
-  <section>
-    <span class="tag">E10</span>
-    <h2>¿Cuánto ruido al entrenar?</h2>
-    <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="E10">
-    <ul><li>Poco ruido: bien con poco, mal con mucho. Mucho: al revés. <span class="accent">No hay un único mejor</span>.</li></ul>
-  </section>
-
-  <!-- 20 -->
   <section>
     <span class="tag">1b · RESUMEN</span>
     <h2>Todo lo que probamos</h2>
@@ -204,7 +188,23 @@
     <ul><li>Los dos experimentos, <span class="accent">para qué</span> y qué dieron.</li></ul>
   </section>
 
+  <!-- 20 -->
+  <section>
+    <span class="tag">E9</span>
+    <h2>¿Por qué un cuello más ancho?</h2>
+    <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="E9">
+    <ul><li>Cuello 2 limpia mal; <span class="accent">cuello 10</span> mucho mejor; más de 10 no suma.</li></ul>
+  </section>
+
   <!-- 21 -->
+  <section>
+    <span class="tag">E10</span>
+    <h2>¿Cuánto ruido al entrenar?</h2>
+    <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="E10">
+    <ul><li>Poco ruido: bien con poco, mal con mucho. Mucho: al revés. <span class="accent">No hay un único mejor</span>.</li></ul>
+  </section>
+
+  <!-- 22 -->
   <section>
     <span class="tag">1b · LA RECETA GANADORA</span>
     <h2>Juntando lo mejor</h2>
@@ -212,7 +212,7 @@
     <ul><li>La receta del limpiador: <span class="accent">cuello 10</span> y el ruido de entrenamiento justo.</li></ul>
   </section>
 
-  <!-- 22 -->
+  <!-- 23 -->
   <section>
     <span class="tag">1b · GANADOR</span>
     <h2>Resultado del limpiador</h2>
@@ -220,7 +220,7 @@
     <ul><li>Deja <span class="accent">≤1 px de error en el 81% de las letras</span> a 15% de ruido (92% a 10%).</li></ul>
   </section>
 
-  <!-- 23 -->
+  <!-- 24 -->
   <section>
     <span class="tag">1b · GANADOR</span>
     <h2>Limpio / sucio / recuperado</h2>
@@ -228,7 +228,7 @@
     <ul><li>Se ve la letra <span class="accent">limpia, la sucia y la que recupera</span> la red.</li></ul>
   </section>
 
-  <!-- 24 -->
+  <!-- 25 -->
   <section>
     <span class="tag">PARTE 3</span>
     <h2>Generar imágenes nuevas</h2>
@@ -236,7 +236,7 @@
     <ul><li>Eso es justo lo que después le permite <strong>inventar</strong>.</li></ul>
   </section>
 
-  <!-- 25 -->
+  <!-- 26 -->
   <section>
     <span class="tag">VAE · DATOS</span>
     <h2>Datos nuevos: emojis</h2>
@@ -244,7 +244,15 @@
     <ul><li>Elegimos 5 emojis como <span class="accent">siluetas claras</span> (descartamos una versión de contornos que se confundía).</li></ul>
   </section>
 
-  <!-- 26 -->
+  <!-- 27 -->
+  <section>
+    <span class="tag">VAE · RESUMEN</span>
+    <h2>El experimento y la receta</h2>
+    <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
+    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con las cuentas de la red <span class="accent">verificadas a mano, una por una</span>.</li></ul>
+  </section>
+
+  <!-- 28 -->
   <section>
     <span class="tag">E12</span>
     <h2>El ingrediente que ordena el mapa</h2>
@@ -252,7 +260,7 @@
     <ul><li>Sin ese ingrediente salen <span class="accent">manchas</span>; con él salen emojis de verdad.</li></ul>
   </section>
 
-  <!-- 27 -->
+  <!-- 29 -->
   <section>
     <span class="tag">E16</span>
     <h2>Por qué uno genera y el otro no</h2>
@@ -260,15 +268,7 @@
     <ul><li>Sin ordenar, los puntos quedan <span class="accent">desparramados</span>; ordenados, agrupados en el centro.</li></ul>
   </section>
 
-  <!-- 28 -->
-  <section>
-    <span class="tag">VAE · CÓMO LO CORRIMOS</span>
-    <h2>El experimento y la receta</h2>
-    <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
-    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con las cuentas de la red <span class="accent">verificadas a mano, una por una</span>.</li></ul>
-  </section>
-
-  <!-- 29 -->
+  <!-- 30 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa de los emojis</h2>
@@ -276,7 +276,7 @@
     <ul><li>Cada tipo de emoji ocupa <span class="accent">su zona</span>, agrupadas y compactas cerca del centro.</li></ul>
   </section>
 
-  <!-- 30 -->
+  <!-- 31 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>Generar muestras nuevas</h2>
@@ -284,7 +284,15 @@
     <ul><li>Reconstruye y además genera <span class="accent">muestras nuevas (no copias)</span>, reconocibles: variaciones continuas de los 5 prototipos.</li></ul>
   </section>
 
-  <!-- 31 -->
+  <!-- 32 -->
+  <section>
+    <span class="tag">VAE · CONTROL HONESTO</span>
+    <h2>Sampleo honesto del VAE (semilla al azar, sin elegir)</h2>
+    <img src="../ej2_vae/figs/fig_e18_sampleo_honesto.png" alt="E18 sampleo honesto" style="max-height:60vh;">
+    <ul><li>Semilla 0 fija (no elegida); en promedio aparece <span class="accent">~85 % de las clases (4.3/5)</span> por tirada sobre 200 semillas — el muestreo no siempre cubre las 5.</li></ul>
+  </section>
+
+  <!-- 33 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa completo decodificado</h2>
@@ -292,7 +300,7 @@
     <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: genera mezclas continuas, no copia.</li></ul>
   </section>
 
-  <!-- 32 -->
+  <!-- 34 -->
   <section>
     <span class="tag">E15 — opcional</span>
     <h2>El equilibrio</h2>
@@ -300,46 +308,13 @@
     <ul><li>Más orden = mapa más prolijo pero imágenes un poco <span class="accent">peores</span>. Hay que equilibrar.</li></ul>
   </section>
 
-  <!-- 33 -->
+  <!-- 35 -->
   <section>
     <h2>Conclusiones</h2>
     <ul class="big" style="font-size:0.8em">
       <li><strong>1a:</strong> con curvas y 2 números guardamos las 32 letras perfecto; un método clásico no llega.</li>
       <li><strong>1b:</strong> limpiar ruido necesita un cuello más ancho, y el ruido de entrenamiento es un equilibrio.</li>
       <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> muestras nuevas (no copias) reconocibles.</li>
-    </ul>
-  </section>
-
-  <!-- BACKUP -->
-  <section>
-    <span class="tag">BACKUP</span>
-    <h2>Sampleo honesto del VAE (semilla al azar, sin elegir)</h2>
-    <img src="../ej2_vae/figs/fig_e18_sampleo_honesto.png" alt="E18 sampleo honesto" style="max-height:60vh;">
-    <ul><li>Semilla 0 fija (no elegida); en promedio aparece <span class="accent">~85 % de las clases (4.3/5)</span> por tirada sobre 200 semillas — el muestreo no siempre cubre las 5.</li></ul>
-  </section>
-
-  <!-- BACKUP — fidelidad a la referencia -->
-  <section>
-    <span class="tag">BACKUP</span>
-    <h2>Fidelidad a la referencia de la cátedra (Keras → numpy)</h2>
-    <table style="font-size:0.42em; width:88%; margin:0.3em auto; border-collapse:collapse;">
-      <thead><tr style="border-bottom:2px solid var(--azul); color:var(--azul);">
-        <th style="text-align:left; padding:0.3em;">Componente</th>
-        <th style="text-align:left; padding:0.3em;">Referencia (Keras/MNIST · Langr)</th>
-        <th style="text-align:left; padding:0.3em;">Nuestro (numpy/emojis)</th>
-        <th style="text-align:center; padding:0.3em;">¿Coincide?</th>
-      </tr></thead>
-      <tbody>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Muestreo al azar <small>(reparam)</small></td><td style="padding:0.3em;"><code>z_mean + exp(z_log_var/2)·ε</code></td><td style="padding:0.3em;"><code>μ + exp(½·lv)·ε</code></td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Ordenar el mapa <small>(KL)</small></td><td style="padding:0.3em;"><code>−½·Σ(1+lv−μ²−e^lv)</code></td><td style="padding:0.3em;"><code>−½·Σ(1+lv−μ²−e^lv)</code></td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Medir el error <small>(recon)</small></td><td style="padding:0.3em;">BCE <strong>sumada</strong> sobre 784 px</td><td style="padding:0.3em;">BCE-logits <strong>sumada</strong> sobre px</td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Error total <small>(loss)</small></td><td style="padding:0.3em;">recon + KL</td><td style="padding:0.3em;">recon + β·KL <em>(β=1 idéntica)</em></td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
-        <tr><td style="padding:0.3em;">El mapa</td><td style="padding:0.3em;">2D</td><td style="padding:0.3em;">2D</td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
-      </tbody>
-    </table>
-    <ul style="font-size:0.5em;">
-      <li><strong>Es la referencia de la cátedra</strong> (<code>KerasAutoencoders.ipynb</code>, Langr <em>"GANs in action"</em>) <span class="accent">reimplementada en numpy desde cero</span> — el enunciado prohíbe Keras/TF.</li>
-      <li><strong>Lo que cambiamos a propósito:</strong> el tipo de neurona · emojis 20×20 en vez de los números de MNIST · <span class="accent">probamos varios valores de β</span> · <span class="accent">verificamos las cuentas a mano</span> (ellos dejan que la librería las calcule sola).</li>
     </ul>
   </section>
 
