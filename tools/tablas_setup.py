@@ -89,7 +89,7 @@ render_table(
         ["E2", "¿cuántas dim. latentes?", "latente: 1,2,3,5,8", "1→18/32;  ≥2→0px  (codo)"],
         ["E3", "¿cuánta capacidad de red?", "oculta: (),(10),(20),(30),(20,20)", "()→14px (=PCA);  ≥20→0px"],
         ["E4", "¿qué optimizador converge?", "SGD/Momentum/Adam", "Adam 0 · Mom 1 · SGD 5 px"],
-        ["E5", "¿sensibilidad al learning rate?", "lr: 0.0003/0.01/0.3", "0.3 no aprende(33px); 0.01 justo"],
+        ["E5", "¿sensibilidad al learning rate?", "lr: 0.0003/0.01/0.3", "0.3 no aprende(28px); 0.01 justo"],
         ["E6", "¿qué activación oculta?", "tanh/relu/sigmoid", "las 3 → 0px (distinta velocidad)"],
         ["E7", "¿qué pérdida para binario?", "BCE/MSE", "BCE 0px · MSE 2px"],
     ], RES, "tabla_1a_resultados.png")
@@ -136,7 +136,7 @@ render_table(
     [
         ["E12", "¿cuánto pesa el KL?", "beta: 0/0.5/1/4", "β=0 ruido; β=1 equilibrio; β=4 sobre-reg."],
         ["—", "ídem, visto por reconstrucción", "recon % por β: 0/1/4", "2.6% · 3.2% · 3.7%  (peor con β↑)"],
-        ["—", "ídem, visto por el latente", "std por β: 0/1/4", "11.5 · 1.17 · 1.06  (→N(0,I) con β↑)"],
+        ["—", "ídem, visto por el latente", "std q(z|x) indiv. por β: 0/1/4", "11.5 · 1.17 · 1.06  (desvío marginal →1; el agregado conserva 5 cúmulos, no es N(0,I))"],
     ], RES, "tabla_vae_resultados.png")
 
 print("OK ->", OUT)

@@ -217,12 +217,16 @@ detalle; elegimos el **punto del medio** (beta 1) como equilibrio.
 en **su propia zona**, y todas agrupadas cerca del centro (que es lo que el "ingrediente" logró). Justo
 lo que buscábamos.
 
-## Diapo 31 — Generar emojis nuevos  ⭐ (la que te confundía)
+## Diapo 31 — Generar muestras nuevas  ⭐ (la que te confundía)
 **Qué se ve:** 3 filas. **Ojo, no son lo mismo:**
 - **Fila 1 (original)** y **fila 2 (reconstruido)** van **emparejadas**: a la red le entró *esa* imagen
   (fila 1) y devolvió *esto* (fila 2). Muestra que reconstruye bien.
-- **Fila 3 (generado nuevo)** **NO** está emparejada con las de arriba: son 10 emojis **inventados de
-  cero**, pidiéndole al modelo **10 puntos al azar del mapa**. No salieron de ninguna imagen de entrada.
+- **Fila 3 (generado nuevo)** **NO** está emparejada con las de arriba: son 10 muestras **nuevas (no
+  copias)**, pidiéndole al modelo **10 puntos al azar del mapa**. No salieron de ninguna imagen de entrada;
+  son variaciones continuas de los 5 prototipos que vio (no una sexta clase inventada).
+- **Honesto:** una tirada al azar no siempre saca las 5 clases — en promedio cubre el 85 % (≈4 de 5,
+  medido sobre 200 semillas, ver `fig_e18`). Por eso para esta figura se eligió una semilla que muestra
+  las cinco; el control sin elegir es `fig_e18`.
 
 **Qué quiere decir "nuevo":** NO una clase que nunca vio (sí vio lunas). Quiere decir **una luna que el
 modelo dibujó él, que no es ninguna de las lunas del dataset**. Analogía: le mostrás a un nene 140 lunas
@@ -235,8 +239,8 @@ medio camino entre dos (mitad luna, mitad rayo) — mezclas que **no existen en 
 ## Diapo 32 — El mapa completo decodificado (atlas)
 **Qué se ve:** una grilla gigante donde recorrimos TODO el mapa y dibujamos qué hay en cada punto.
 **La idea:** los emojis se **transforman de a poco** uno en otro (corazón → estrella → gota → rayo → luna),
-suavemente. Esto confirma que el modelo **inventa mezclas nuevas**, no que copia los que ya tenía. Es la
-prueba más fuerte de generación de verdad.
+suavemente. Esto confirma que el modelo **genera mezclas continuas nuevas** de los 5 prototipos, no que
+copia los que ya tenía. Es la prueba más fuerte de generación de verdad.
 
 ## Diapo 33 — El equilibrio (opcional)
 **Qué se ve:** dos curvas según beta. **La idea:** cuanto más ordenás el mapa (beta más alto), más prolijo

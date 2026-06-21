@@ -26,7 +26,7 @@
 | E2 | dim. latente | 1, 2, 3, 5, 8 | 1→18/32; **≥2→0 px** (codo) |
 | E3 | capa oculta | (), (10,), (20,), (30,), (20,20) | ()→14 px (=PCA); **≥20→0 px** |
 | E4 | optimizador | SGD(0.5) · Momentum(0.1) · Adam(0.01) | Adam 0 · Mom 1 · SGD 5 px |
-| E5 | learning rate | 0.0003 · 0.01 · 0.3 | 0.3 **no aprende** (33 px); 0.01 justo |
+| E5 | learning rate | 0.0003 · 0.01 · 0.3 | 0.3 **no aprende** (28 px); 0.01 justo (0 px) |
 | E6 | activación oculta | tanh · relu · sigmoid | las 3 → 0 px (difieren en velocidad) |
 | E7 | loss | BCE · MSE | BCE 0 · MSE 2 px |
 
@@ -60,7 +60,8 @@
 | Épocas / batch | `3500` / `128` | |
 | Dataset | 5 emojis OpenMoji, 140/clase = **700**, 20×20 grises | canal alpha (siluetas rellenas; acc 1-NN 0.95) |
 | Augmentación | rot ±15° · trasl ±2 px · ruido σ=0.03 (seedeadas) | variedad intra-clase (que el latente sea continuo) |
-| Sampleo | semilla **26** (elegida por cubrir las 5 clases) | el latente no es uniforme (corazón/luna ocupan más área) |
+| Sampleo (E12/E14) | semilla **26**, elegida y documentada para ilustrar las 5 clases | densidad no uniforme; control honesto en E18 (semilla 0) |
+| Sampleo honesto (E18) | semilla **0** fija, sin elegir | cobertura media 85 % de clases (4.3/5) sobre 200 semillas |
 
 ### Barrido y resultados
 | Exp | Qué variamos | Valores | Resultado / lectura |
