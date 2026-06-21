@@ -9,9 +9,8 @@ nuevos** — son **dos formas de mirar el mismo barrido**.
   **ruido**; **β=1** equilibrio (emojis válidos); **β=4** sobre-regularizado. → el KL es lo que hace generable el latente.
 - **`—` recon (% px) por β · `0 / 1 / 4`** — la misma corrida, mirada por el **error de reconstrucción**:
   **2.6 % · 3.2 % · 3.7 %**. → a más β, peor reconstrucción.
-- **`—` latente std por β · `0 / 1 / 4`** — la misma corrida, mirada por **cuán N(0,I) es el latente** (su desvío):
-  **11.5 · 1.17 · 1.06**. → a más β, el **desvío marginal** del latente tiende a 1 (ojo: std→1 no es lo mismo
-  que el agregado *sea* N(0,I) — conserva 5 cúmulos de clase; ver E13/`fig_e13`).
+- *(La fila "desvío del latente por β" —11.5 / 1.17 / 1.06— se quitó de la tabla-resumen por ser jerga poco
+  legible al proyectar; el matiz q(z\|x) individual vs agregado vive en `DEFENSA.md` y en el título de `fig_e13`.)*
 
 El `—` en la columna Exp significa "misma corrida que E12, otra métrica" (no un experimento aparte).
 

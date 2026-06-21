@@ -121,6 +121,7 @@ render_table(
     [
         ["Arquitectura", "D=400·He=128·Z=2·Hd=128", "z=μ+σ·ε, decoder → sigmoid"],
         ["Loss", "recon(BCE) + beta·KL", "reparam + KL a mano (grad check 5e-08)"],
+        ["β (ganador)", "1", "equilibrio: ordena el mapa sin perder calidad (E12)"],
         ["Optimizador", "Adam (lr=1e-3)", ""],
         ["Épocas / batch", "3500 / 128", ""],
         ["Dataset", "5 emojis · 700 · 20x20", "canal alpha (siluetas); acc 0.95"],

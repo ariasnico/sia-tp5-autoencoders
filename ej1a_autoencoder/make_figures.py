@@ -50,7 +50,7 @@ def e0b():
     im = a1.imshow(hm, cmap="magma"); a1.grid(False)
     a1.set_xticks(range(N)); a1.set_xticklabels(LABELS, fontsize=7)
     a1.set_yticks(range(N)); a1.set_yticklabels(LABELS, fontsize=7)
-    a1.set_title("Distancia Hamming entre letras (# píxeles distintos)")
+    a1.set_title("Distancia Hamming entre caracteres (# píxeles distintos)")
     fig.colorbar(im, ax=a1, fraction=0.046)
     hmoff = hm + np.eye(N, dtype=int) * 999
     i, j = np.unravel_index(np.argmin(hmoff), hm.shape)
@@ -58,7 +58,7 @@ def e0b():
     a2.bar(range(N), dens, color=SECONDARY)
     a2.set_xticks(range(N)); a2.set_xticklabels(LABELS, fontsize=7)
     a2.set_ylabel("# píxeles encendidos (de 35)"); a2.set_title("Densidad de píxeles por letra")
-    fig.suptitle("E0 · Dificultad: comprimir 35D→2D con letras casi idénticas")
+    fig.suptitle("E0 · Dificultad: comprimir 35D→2D con caracteres casi idénticos")
     save(fig, "fig_e0b_dataset_stats.png")
 
 
@@ -252,7 +252,7 @@ def e0c_hamming():
     ax.set_yticks(range(N)); ax.set_yticklabels(LABELS, fontsize=7)
     hmoff = hm + np.eye(N, dtype=int) * 999
     i, j = np.unravel_index(np.argmin(hmoff), hm.shape)
-    ax.set_title("Qué tan distintas son las letras entre sí\n(# de píxeles en que difieren)")
+    ax.set_title("Qué tan distintos son los caracteres entre sí\n(# de píxeles en que difieren)")
     ax.set_xlabel(f"hay pares casi idénticos: '{LABELS[i]}' ~ '{LABELS[j]}' a sólo {hm[i, j]} px",
                   color=PRIMARY)
     fig.colorbar(im, ax=ax, fraction=0.046)

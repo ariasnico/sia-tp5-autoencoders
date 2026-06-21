@@ -46,12 +46,12 @@
   <!-- 3 -->
   <section>
     <span class="tag">EXPLORACIÓN · E0</span>
-    <h2>El dataset: 32 letras</h2>
+    <h2>El dataset: 32 caracteres</h2>
     <div class="duo">
       <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
       <img src="../ej1a_autoencoder/figs/fig_e0c_hamming.png" alt="distancias entre letras">
     </div>
-    <ul><li>32 letras de 7×5, a guardar con <span class="accent">solo 2 números</span>. Difícil: hay pares casi idénticos (<span class="accent">l y | a 2 px</span>) que igual hay que separar.</li></ul>
+    <ul><li>32 caracteres de 7×5 (casi todos letras), a guardar con <span class="accent">solo 2 números</span>. Difícil: hay pares casi idénticos (<span class="accent">l y | a 2 px</span>) que igual hay que separar.</li></ul>
   </section>
 
   <!-- 4 -->
@@ -152,7 +152,7 @@
     <img src="../ej1a_autoencoder/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
     <ul>
       <li>El AE <span class="accent">distingue las 32 letras a la perfección</span> (tiene que, para reconstruir a 0 px).</li>
-      <li>El <span class="accent">parecido</span>, en cambio, lo conserva <span class="accent">solo a medias (ρ = 0.57)</span>: las parecidas tienden a quedar cerca, pero los casi idénticos (l y |) los <strong>separa a propósito</strong> para poder distinguirlos.</li>
+      <li>El <span class="accent">parecido</span>, en cambio, lo conserva <span class="accent">solo a medias (ρ = 0.57)</span>: las parecidas tienden a quedar cerca, y a los casi idénticos (l y |) los deja <strong>muy juntos</strong> — apenas lo justo para reconstruir ambos sin error.</li>
     </ul>
   </section>
 
@@ -281,7 +281,7 @@
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa de los emojis</h2>
     <img src="../ej2_vae/figs/fig_e13_latent.png" alt="E13">
-    <ul><li>Cada tipo de emoji ocupa <span class="accent">su zona</span>, ordenadas en su zona alrededor del centro (no una sola nube: conserva 5 cúmulos).</li></ul>
+    <ul><li>Cada tipo de emoji ocupa <span class="accent">su propia zona</span>, todas alrededor del centro (no una sola nube: conserva 5 cúmulos).</li></ul>
   </section>
 
   <!-- 32 -->

@@ -200,7 +200,7 @@ def atlas():
         for c, xx in enumerate(g):
             canvas[r * SZ:(r + 1) * SZ, c * SZ:(c + 1) * SZ] = vae.generate([[xx, yy]])[0].reshape(SZ, SZ)
     fig, ax = plt.subplots(figsize=(9, 9)); ax.imshow(canvas, vmin=0, vmax=1); ax.axis("off")
-    ax.set_title("Atlas del latente del VAE (β=1): grilla z∈[-2.5, 2.5]² decodificada (espejo de fig_e8c)")
+    ax.set_title("Atlas del latente del VAE (β=1): grilla z∈[-2.5, 2.5]² decodificada")
     save(fig, "fig_e17_vae_atlas.png")
 
 
