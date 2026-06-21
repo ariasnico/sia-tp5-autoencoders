@@ -291,10 +291,13 @@ def e1_pca_pixel_error():
     _, _, Vt = np.linalg.svd(Xc, full_matrices=False)
     Xr = (Xc @ Vt[:2].T) @ Vt[:2] + mu                # reconstrucción PCA(2)
     err = np.abs((Xr > 0.5).astype(float) - X).mean(0).reshape(H, W)
-    fig, ax = plt.subplots(figsize=(5.0, 6.0))
+    dens = X.mean(0).reshape(H, W)                    # dónde suele haber tinta: la "forma típica" del glifo
+    fig, ax = plt.subplots(figsize=(5.2, 6.7))
     im = ax.imshow(err, cmap="magma", vmin=0); ax.grid(False); ax.set_xticks([]); ax.set_yticks([])
-    ax.set_title("E1 · Dónde falla PCA(2)\n(error por píxel, prom. 32 letras)")
-    fig.colorbar(im, ax=ax, fraction=0.05, label="frac. de letras con ese píxel mal")
+    ax.contour(dens, levels=[0.35], colors="#22D3EE", linewidths=2.5)   # contorno de la forma típica del glifo
+    ax.set_title("E1 · En qué parte del glifo (7×5) se equivoca PCA\n"
+                 "cada celda = un píxel (no una letra) · contorno cian = dónde van los trazos", fontsize=10.5)
+    fig.colorbar(im, ax=ax, fraction=0.05, label="frac. de las 32 letras con ese píxel mal")
     save(fig, "fig_e1_pca_pixel_error.png")
 
 
