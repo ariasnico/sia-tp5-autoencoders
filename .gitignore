@@ -11,6 +11,7 @@ fonts.ipynb
 # andamiaje de trabajo interno (no son entregables)
 PROGRESO.md
 RESUMEN.md
+GUIA_DIAPOS.md
 
 # material de referencia del refactor (scripts/figuras originales de partida)
 ref/
@@ -29,6 +30,3 @@ PRESENTACION.md
 # material de catedra (referencia, no se redistribuye) y debug
 kerasautoencoders.py
 nobrain.png
-
-# guía de estudio personal del alumno (no entregable)
-GUIA_DIAPOS.md
