@@ -226,8 +226,8 @@ def e8():
     ax.set_title("E8 · Generación: barrido del espacio latente (cada celda = letra decodificada, req. 1a-4)")
     ax.text(0.5, -0.045,
             f"Recuadro rojo = la celda reproduce (≤{THR_PX} px) una de las 32 letras reales "
-            f"({n_known}/{NG*NG}); el resto son glifos NUEVOS\n"
-            f"(combinaciones continuas interpoladas por el decoder, no copias del dataset).",
+            f"({n_known}/{NG*NG}). El resto son combinaciones continuas del decoder:\n"
+            f"cerca de las letras aparecen glifos nuevos; en zonas alejadas el decoder satura.",
             transform=ax.transAxes, ha="center", va="top", fontsize=11, color="#333333")
     fig.subplots_adjust(bottom=0.10)
     save(fig, "fig_e8c_generation_grid.png")

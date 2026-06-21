@@ -114,6 +114,6 @@ if __name__ == "__main__":
     for k, n in enumerate(names):
         axes[0, k].imshow(bases[n], cmap="binary", vmin=0, vmax=1); axes[0, k].set_title(n, fontsize=9); axes[0, k].axis("off")
         axes[1, k].imshow(X[y == k][3].reshape(SZ, SZ), cmap="binary", vmin=0, vmax=1); axes[1, k].axis("off")
-    fig.suptitle(f"Emojis OpenMoji '{variant}' {SZ}×{SZ} — base (arriba) / augmentada (abajo) · 1-NN acc={acc:.2f}", fontsize=11)
+    fig.suptitle(f"Emojis OpenMoji '{variant}' — siluetas del canal alpha, {SZ}×{SZ} — base (arriba) / augmentada (abajo) · 1-NN acc={acc:.2f}", fontsize=11)
     fig.savefig(FIGS / "contact_sheet.png", dpi=110, bbox_inches="tight"); plt.close(fig)
     print("contact_sheet.png guardado")

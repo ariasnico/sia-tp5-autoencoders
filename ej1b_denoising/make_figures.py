@@ -32,11 +32,12 @@ def e9():
     for col, lab, c in [("px@0.1", "test 10%", "#2563EB"), ("px@0.2", "test 20%", PRIMARY), ("px@0.3", "test 30%", "#7C3AED")]:
         a1.plot(df["cuello"], df[col], "o-", label=lab, color=c, lw=2, ms=8)
     a1.set_xlabel("ancho del cuello (dim latente)"); a1.set_ylabel("px incorrectos tras limpiar (prom)")
-    a1.set_title("denoising mejora al ensanchar el cuello"); a1.legend(); a1.set_xticks(df["cuello"])
+    a1.set_title("px de error vs ancho del cuello"); a1.legend(); a1.set_xticks(df["cuello"])
     a2.bar(df["cuello"].astype(str), df["%<=1px@0.2"], color=SECONDARY)
     a2.set_xlabel("ancho del cuello"); a2.set_ylabel("% letras recuperadas (≤1px) @ test 20%")
     a2.set_title("% recuperadas vs cuello")
     fig.suptitle("E9 · El cuello 2D (de 1a) denoisa mal; ensanchar a 10 ayuda (20 ya no mejora)")
+    fig.subplots_adjust(top=0.85)
     save(fig, "fig_e9_bottleneck.png")
 
 
