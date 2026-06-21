@@ -4,7 +4,10 @@ E12  barrido de beta {0, 0.5, 1, 4}  -> error de reconstrucción + estructura de
 E15  curvas recon-loss vs KL-loss por época (por beta)
 E13/E14/E16 usan los modelos guardados (scatter del latente, recon+generación, AE vs VAE)
 
-Reusa tp5lib.vae_core.VAE (backprop verificado por gradient check, NO se modifica). Semillas fijas.
+Reusa tp5lib.vae_core.VAE (backprop verificado por gradient check, NO se modifica).
+Semillas fijas en pesos y barajado, PERO el muestreo del reparam (eps) usa el RNG global de
+numpy: el VAE NO es bit-a-bit reproducible entre corridas (los .npz commiteados son los de las
+figuras; las conclusiones se mantienen — ver README §8). 1a y 1b sí reproducen al dígito.
 """
 import sys
 import json

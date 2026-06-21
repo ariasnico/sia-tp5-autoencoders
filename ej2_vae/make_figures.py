@@ -99,14 +99,14 @@ def e14():
     rec = vae.reconstruct(X[samp])
     gen = vae.generate(np.random.default_rng(SEED_SAMPLE).standard_normal((10, 2)))
     fig, axes = plt.subplots(3, 10, figsize=(12, 4.2))
-    rows = [(0, "original", X[samp]), (1, "reconstruido", rec), (2, "generado\n(nuevo, no copia)", gen)]
+    rows = [(0, "original", X[samp]), (1, "reconstruido", rec), (2, "generado\n(nuevo)", gen)]
     for r, lab, imgs in rows:
         for ci in range(10):
             ax = axes[r, ci]; ax.imshow(imgs[ci].reshape(SZ, SZ), vmin=0, vmax=1)
             ax.set_xticks([]); ax.set_yticks([]); ax.grid(False)
         axes[r, 0].set_ylabel(lab, rotation=0, ha="right", va="center", fontsize=12)
-    fig.suptitle(f"E14 · VAE β=1: reconstrucción y muestras nuevas (no copias) desde N(0,I) "
-                 f"(semilla {SEED_SAMPLE}, elegida para mostrar las 5 clases; req. 2c)")
+    fig.suptitle(f"E14 · VAE β=1: reconstrucción y muestras nuevas desde N(0,I)\n"
+                 f"(interpolan, no recuperan ningún emoji exacto del train; semilla {SEED_SAMPLE}, elegida para mostrar las 5; req. 2c)")
     save(fig, "fig_e14_recon_gen.png")
 
 

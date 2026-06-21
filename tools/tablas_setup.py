@@ -89,7 +89,7 @@ render_table(
         ["E2", "¿cuántas dim. latentes?", "latente: 1,2,3,5,8", "1→18/32;  ≥2→0px  (codo)"],
         ["E3", "¿cuánta capacidad de red?", "oculta: (),(10),(20),(30),(20,20)", "()→15px máx (encoder lineal≈PCA); ≥20→0px"],
         ["E4", "¿qué optimizador converge?", "SGD/Momentum/Adam", "Adam 0 · Mom 2 · SGD 5 px (máx)"],
-        ["E5", "¿sensibilidad al learning rate?", "lr: 0.0003/0.01/0.3", "0.0003 lento(5px); 0.3 no aprende(28px); 0.01 justo(0px)"],
+        ["E5", "¿sensibilidad al learning rate?", "lr: 0.0003/0.01/0.3", "solo 0.01 llega a 0px (extremos: 5 y 28px)"],
         ["E6", "¿qué activación oculta?", "tanh/relu/sigmoid", "las 3 → 0px (distinta velocidad)"],
         ["E7", "¿qué pérdida para binario?", "BCE/MSE", "BCE 0px · MSE 2px"],
     ], RES, "tabla_1a_resultados.png")
