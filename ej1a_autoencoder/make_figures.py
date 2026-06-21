@@ -203,30 +203,30 @@ def e8():
     NG = 14
     gx = np.linspace(x0 - dx, x1 + dx, NG); gy = np.linspace(y1 + dy, y0 - dy, NG)
     canvas = np.ones((len(gy) * H, len(gx) * W))
+    cell_bits = np.zeros((NG, NG, H * W))     # decodificación BINARIZADA de cada celda
     for r, yy in enumerate(gy):
         for c2, xx in enumerate(gx):
-            canvas[r * H:(r + 1) * H, c2 * W:(c2 + 1) * W] = decode(ae, [[xx, yy]])[0].reshape(H, W)
+            dec = decode(ae, [[xx, yy]])[0]
+            canvas[r * H:(r + 1) * H, c2 * W:(c2 + 1) * W] = dec.reshape(H, W)
+            cell_bits[r, c2] = (dec > 0.5).astype(float)
     fig, ax = plt.subplots(figsize=(9.5, 9.8)); ax.imshow(canvas); ax.axis("off")
-    # Anotación: marcar las celdas de la grilla que caen sobre una letra REAL del dataset
-    # (su z más cercano es esa letra) para distinguir las "copias" de las letras NUEVAS.
-    gxv, gyv = np.meshgrid(gx, gy)            # (NG, NG)
-    grid_pts = np.stack([gxv.ravel(), gyv.ravel()], 1)        # (NG*NG, 2)
-    d2 = ((grid_pts[:, None, :] - Z[None, :, :]) ** 2).sum(-1)  # (cells, N letras)
-    nearest = d2.min(1)
-    # umbral: una celda "es una letra del dataset" si está muy cerca de un z conocido
-    thr = np.percentile(nearest, 12)
+    # Anotación HONESTA: una celda es "copia" si su imagen decodificada REPRODUCE en PÍXELES
+    # (Hamming <= THR_PX) alguna de las 32 letras reales. Conteo real (no un percentil).
+    Xbits = (X > 0.5).astype(float)           # las 32 letras del dataset, binarizadas
+    THR_PX = 1
     n_known = 0
-    for idx, dmin in enumerate(nearest):
-        if dmin <= thr:
-            rr, cc = idx // NG, idx % NG
-            rect = plt.Rectangle((cc * W - 0.5, rr * H - 0.5), W, H,
-                                 fill=False, edgecolor="#d62728", lw=2.0, zorder=5)
-            ax.add_patch(rect)
-            n_known += 1
+    for r in range(NG):
+        for c2 in range(NG):
+            ham = np.abs(cell_bits[r, c2][None, :] - Xbits).sum(1).min()  # px vs la letra más parecida
+            if ham <= THR_PX:
+                rect = plt.Rectangle((c2 * W - 0.5, r * H - 0.5), W, H,
+                                     fill=False, edgecolor="#d62728", lw=2.0, zorder=5)
+                ax.add_patch(rect)
+                n_known += 1
     ax.set_title("E8 · Generación: barrido del espacio latente (cada celda = letra decodificada, req. 1a-4)")
     ax.text(0.5, -0.045,
-            f"Recuadro rojo = celda que coincide con una de las 32 letras de entrenamiento "
-            f"({n_known}/{NG*NG}); las celdas SIN recuadro son glifos NUEVOS\n"
+            f"Recuadro rojo = la celda reproduce (≤{THR_PX} px) una de las 32 letras reales "
+            f"({n_known}/{NG*NG}); el resto son glifos NUEVOS\n"
             f"(combinaciones continuas interpoladas por el decoder, no copias del dataset).",
             transform=ax.transAxes, ha="center", va="top", fontsize=11, color="#333333")
     fig.subplots_adjust(bottom=0.10)
