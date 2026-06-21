@@ -265,7 +265,7 @@
     <span class="tag">VAE · CÓMO LO CORRIMOS</span>
     <h2>El experimento y la receta</h2>
     <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
-    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con el backprop <span class="accent">verificado (gradient check 5e-08)</span>.</li></ul>
+    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con las cuentas de la red <span class="accent">verificadas a mano, una por una</span>.</li></ul>
   </section>
 
   <!-- 29 -->
@@ -279,9 +279,9 @@
   <!-- 30 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
-    <h2>Generar emojis nuevos</h2>
+    <h2>Generar muestras nuevas</h2>
     <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="E14">
-    <ul><li>Reconstruye y además <span class="accent">inventa emojis nuevos</span>, reconocibles.</li></ul>
+    <ul><li>Reconstruye y además genera <span class="accent">muestras nuevas (no copias)</span>, reconocibles: variaciones continuas de los 5 prototipos.</li></ul>
   </section>
 
   <!-- 31 -->
@@ -289,7 +289,7 @@
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa completo decodificado</h2>
     <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="E17">
-    <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: inventa mezclas, no copia.</li></ul>
+    <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: genera mezclas continuas, no copia.</li></ul>
   </section>
 
   <!-- 32 -->
@@ -306,7 +306,40 @@
     <ul class="big" style="font-size:0.8em">
       <li><strong>1a:</strong> con curvas y 2 números guardamos las 32 letras perfecto; un método clásico no llega.</li>
       <li><strong>1b:</strong> limpiar ruido necesita un cuello más ancho, y el ruido de entrenamiento es un equilibrio.</li>
-      <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> cosas nuevas.</li>
+      <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> muestras nuevas (no copias) reconocibles.</li>
+    </ul>
+  </section>
+
+  <!-- BACKUP -->
+  <section>
+    <span class="tag">BACKUP</span>
+    <h2>Sampleo honesto del VAE (semilla al azar, sin elegir)</h2>
+    <img src="../ej2_vae/figs/fig_e18_sampleo_honesto.png" alt="E18 sampleo honesto" style="max-height:60vh;">
+    <ul><li>Semilla 0 fija (no elegida); en promedio aparece <span class="accent">~85 % de las clases (4.3/5)</span> por tirada sobre 200 semillas — el muestreo no siempre cubre las 5.</li></ul>
+  </section>
+
+  <!-- BACKUP — fidelidad a la referencia -->
+  <section>
+    <span class="tag">BACKUP</span>
+    <h2>Fidelidad a la referencia de la cátedra (Keras → numpy)</h2>
+    <table style="font-size:0.42em; width:88%; margin:0.3em auto; border-collapse:collapse;">
+      <thead><tr style="border-bottom:2px solid var(--azul); color:var(--azul);">
+        <th style="text-align:left; padding:0.3em;">Componente</th>
+        <th style="text-align:left; padding:0.3em;">Referencia (Keras/MNIST · Langr)</th>
+        <th style="text-align:left; padding:0.3em;">Nuestro (numpy/emojis)</th>
+        <th style="text-align:center; padding:0.3em;">¿Coincide?</th>
+      </tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Muestreo al azar <small>(reparam)</small></td><td style="padding:0.3em;"><code>z_mean + exp(z_log_var/2)·ε</code></td><td style="padding:0.3em;"><code>μ + exp(½·lv)·ε</code></td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Ordenar el mapa <small>(KL)</small></td><td style="padding:0.3em;"><code>−½·Σ(1+lv−μ²−e^lv)</code></td><td style="padding:0.3em;"><code>−½·Σ(1+lv−μ²−e^lv)</code></td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Medir el error <small>(recon)</small></td><td style="padding:0.3em;">BCE <strong>sumada</strong> sobre 784 px</td><td style="padding:0.3em;">BCE-logits <strong>sumada</strong> sobre px</td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:0.3em;">Error total <small>(loss)</small></td><td style="padding:0.3em;">recon + KL</td><td style="padding:0.3em;">recon + β·KL <em>(β=1 idéntica)</em></td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
+        <tr><td style="padding:0.3em;">El mapa</td><td style="padding:0.3em;">2D</td><td style="padding:0.3em;">2D</td><td style="text-align:center; padding:0.3em;"><span class="accent">✓</span></td></tr>
+      </tbody>
+    </table>
+    <ul style="font-size:0.5em;">
+      <li><strong>Es la referencia de la cátedra</strong> (<code>KerasAutoencoders.ipynb</code>, Langr <em>"GANs in action"</em>) <span class="accent">reimplementada en numpy desde cero</span> — el enunciado prohíbe Keras/TF.</li>
+      <li><strong>Lo que cambiamos a propósito:</strong> el tipo de neurona · emojis 20×20 en vez de los números de MNIST · <span class="accent">probamos varios valores de β</span> · <span class="accent">verificamos las cuentas a mano</span> (ellos dejan que la librería las calcule sola).</li>
     </ul>
   </section>
 

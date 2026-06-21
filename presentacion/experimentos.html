@@ -323,11 +323,11 @@
     </figure>
     <div class="tbl"><table>
       <tr><th class="k">paso</th><th>px máximo</th><th>letras perfectas</th></tr>
-      <tr><td class="k">0.0003 (chico)</td><td>3</td><td>14 / 32</td></tr>
+      <tr><td class="k">0.0003 (chico)</td><td>5</td><td>10 / 32</td></tr>
       <tr class="win"><td class="k">0.01 (justo)</td><td>0</td><td>32 / 32 ✓</td></tr>
-      <tr><td class="k">0.3 (grande)</td><td>33</td><td>0 / 32</td></tr>
+      <tr><td class="k">0.3 (grande)</td><td>28</td><td>0 / 32</td></tr>
     </table></div>
-    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El paso <strong>0.3 directamente no aprende</strong>: 33
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El paso <strong>0.3 directamente no aprende</strong>: 28
       píxeles de error máximo, cero letras perfectas, el error queda atascado casi donde empezó. El paso es tan
       grande que la red salta de un lado a otro sin poder bajar. El paso chico (0.0003) sí aprende pero es
       demasiado lento para 6000 épocas.</div>
@@ -687,9 +687,11 @@
       <tr><td class="k">¿parece campana N(0,I)?</td><td>no</td><td>sí (std 1.17)</td></tr>
       <tr><td class="k">¿se puede samplear al azar?</td><td>no → ruido</td><td>sí → emojis ✓</td></tr>
     </table></div>
-    <div class="box teach"><h4>💡 Qué enseña</h4>Samplear N(0,I) solo funciona si el mapa <em>es</em> N(0,I). En el
-      AE los puntos quedan a escala ±49 (la campana es un puntito en el medio, todo lo demás cae afuera); el KL del
-      VAE los junta en torno al 0. <strong>Esa es la razón de ser del VAE.</strong></div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>Samplear N(0,I) solo funciona si el mapa cae <em>dentro</em> de la
+      zona N(0,I). En el AE los puntos quedan a escala ±49 (la campana es un puntito en el medio, todo lo demás cae
+      afuera); el KL del VAE empuja cada nube q(z|x) hacia N(0,I) y las junta en torno al 0. Ojo: el mapa entero no
+      es <em>exactamente</em> N(0,I) (conserva 5 cúmulos de clase), pero queda lo bastante compacto y cubierto para
+      que un punto al azar caiga en zona válida. <strong>Esa es la razón de ser del VAE.</strong></div>
   </section>
 
   <!-- E13 -->
@@ -702,25 +704,29 @@
       <img src="../ej2_vae/figs/fig_e13_latent.png" alt="latente del VAE por clase">
       <figcaption>Cada emoji codificado, coloreado por clase. Los círculos marcan la campana N(0,I) (radio 1 y 2).</figcaption>
     </figure>
-    <div class="box teach"><h4>💡 Qué enseña</h4>Las 5 clases quedan <strong>agrupadas (cada tipo en su zona)
-      pero todas dentro de la campana</strong> N(0,I). Es la combinación mágica: un mapa a la vez ordenado por
-      significado <em>y</em> con la forma conocida que permite generar. Detalle honesto: las clases no ocupan áreas
-      iguales (corazón y luna ocupan más), lo que explica un pequeño sesgo al generar.</div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>El KL empuja cada nube q(z|x) hacia N(0,I), pero el agregado
+      <strong>conserva 5 cúmulos de clase</strong> (no es una sola nube): cada tipo en su zona, todos dentro de la
+      campana. Es la combinación: un mapa a la vez ordenado por significado <em>y</em> con la forma conocida que
+      permite generar. Detalle honesto: las clases no ocupan áreas iguales, así que al samplear N(0,I) algunas salen
+      más seguido — medido sobre 200 semillas (E18), una tirada cubre en promedio el 85 % de las clases (4.3/5),
+      con reparto desigual (estrella ≈33 %, luna ≈23 %, gota ≈19 %, rayo ≈14 %, corazón ≈12 %).</div>
   </section>
 
   <!-- E14 -->
   <section class="exp" id="e14">
     <div class="eyebrow">Parte 2 · Experimento E14 · el entregable generativo</div>
-    <h3>Reconstruir y generar emojis nuevos</h3>
+    <h3>Reconstruir y generar muestras nuevas</h3>
     <p class="lead"><span class="qlabel">La prueba final.</span> Que el VAE (a) reconstruye fiel, y (b) genera
-      emojis <strong>nuevos</strong> —no copias— desde la campana al azar.</p>
+      muestras <strong>nuevas —no copias—</strong> desde la campana al azar: variaciones continuas de los 5 prototipos.</p>
     <figure>
       <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="reconstrucción y generación del VAE">
-      <figcaption>Fila 1: emojis reales. Fila 2: sus reconstrucciones. Fila 3: emojis nuevos generados desde N(0,I).</figcaption>
+      <figcaption>Fila 1: emojis reales. Fila 2: sus reconstrucciones. Fila 3: muestras nuevas (no copias) generadas desde N(0,I).</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>La reconstrucción es casi idéntica al original, y la última fila
-      son <strong>emojis nuevos y reconocibles</strong> que no estaban en el dataset: corazones, lunas, gotas,
-      estrellas y rayos en variaciones propias. Es la evidencia central de que el VAE <strong>genera</strong>.</div>
+      son <strong>muestras nuevas (no copias) y reconocibles</strong> que no estaban en el dataset: variaciones
+      continuas de los 5 prototipos (corazón, luna, gota, estrella, rayo), no una sexta clase inventada. Es la
+      evidencia central de que el VAE <strong>genera</strong>. Honesto: una tirada al azar no siempre saca las 5
+      clases (≈85 % en promedio, ver E18); para esta figura se eligió una semilla que muestra las cinco.</div>
   </section>
 
   <!-- E17 -->
