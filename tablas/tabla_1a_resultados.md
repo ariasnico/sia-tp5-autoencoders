@@ -22,7 +22,7 @@ para ver qué pasa. Esta es la tabla de "qué valores probamos y qué dio cada u
 - **E4 · optimizador · `SGD · Momentum · Adam`** — misma red, 3 optimizadores. **Adam 0** · Momentum 1 · SGD 5 px.
   → Adam gana.
 - **E5 · learning rate · `0.0003, 0.01, 0.3`** — 3 tamaños de paso con Adam. Muy bajo = lento; **0.01** justo (0 px);
-  **0.3 no aprende** (33 px). → sensibilidad al lr; mostramos uno que falla.
+  **0.3 no aprende** (28 px). → sensibilidad al lr; mostramos uno que falla.
 - **E6 · activación oculta · `tanh, relu, sigmoid`** — 3 activaciones. Las 3 llegan a **0 px**, difieren en
   *velocidad* de convergencia (por eso la figura es de curvas).
 - **E7 · loss · `BCE, MSE`** — 2 pérdidas. **BCE 0 px** · MSE 2 px. → para binario, BCE.

@@ -1,4 +1,4 @@
-optimizer,px_max,px_mean,perfectas,leq1,loss_final
-SGD(0.5),5,1.375,10,17,0.1368
-Momentum(0.1),1,0.062,30,32,0.06836
-Adam(0.01),0,0.0,32,32,0.00056
+optimizer,px_max_mean,px_max_std,perfectas_mean,perfectas_std,leq1_mean,leq1_std,px_mean_mean,px_mean_std,loss_final_mean,loss_final_std,n_seeds
+SGD(0.5),4.667,0.471,11.0,0.816,20.667,2.625,1.24,0.103,0.13797,0.00365,3
+Momentum(0.1),2.333,1.886,28.667,1.247,31.333,0.943,0.156,0.111,0.06655,0.00189,3
+Adam(0.01),0.0,0.0,32.0,0.0,32.0,0.0,0.0,0.0,0.00132,1e-05,3

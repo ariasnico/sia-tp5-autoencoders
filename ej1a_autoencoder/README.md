@@ -25,20 +25,22 @@ Semilla fija (`SEED=0`). Lógica reutilizable en `tp5lib/`, métricas en `result
 | **E2** | latente {1,2,3,5,8} | 1D falla (5 px, 18/32); **≥2D → 0 px** (codo) | `fig_e2` |
 | **E3** | arquitectura `hidden` | sin capa oculta 14 px; **≥20 u → 0 px** | `fig_e3` |
 | **E4** | SGD / Momentum / Adam | **Adam 0 px**, Momentum 1 px, SGD 5 px | `fig_e4` |
-| **E5** | learning rate | 0.0003 lento (3 px), 0.01 justo (0 px), **0.3 no aprende (33 px)** | `fig_e5` |
+| **E5** | learning rate | 0.0003 lento (5 px), 0.01 justo (0 px), **0.3 no aprende (28 px)** | `fig_e5` |
 | **E6** | activación oculta | tanh/relu/sigmoid → todas 0 px, distinta **velocidad** | `fig_e6` |
 | **E7** | BCE vs MSE | **BCE 0 px**, MSE 2 px | `fig_e7` |
 | **E8** | ganador | reconstrucción · latente 2D · generación · interpolación | `fig_e8a`–`fig_e8d` |
 
 ### Lo que enseña cada cosa (incluido lo que NO funcionó)
 - **E1 — conexión con TP4 (PCA):** el AE lineal y PCA(2) dan *exactamente* el mismo error (7.188 px).
-  Un autoencoder lineal **es** PCA; sólo la no-linealidad del encoder/decoder permite bajar a 0 px.
-  PCA / AE lineal **no cumplen** el objetivo → motivan el modelo no-lineal.
+  Un autoencoder lineal **converge al mismo subespacio que PCA** (mismo error de reconstrucción), pero
+  **NO recupera los mismos ejes/componentes principales** — sus pesos son otra base de ese subespacio.
+  Sólo la no-linealidad del encoder/decoder permite bajar a 0 px. PCA / AE lineal **no cumplen** el
+  objetivo → motivan el modelo no-lineal.
 - **E2 — el codo / caso "subconjunto":** con latente=1 sólo 18/32 perfectas (1D no puede meter las 32);
   es el caso que el enunciado permite documentar como "por qué no se aprende el set completo". 2D es el mínimo viable.
 - **E3 — sin capa oculta = PCA:** `()` tiene encoder lineal → reconstrucción ≈ PCA (max 14 px / prom 6.84).
   *No* es "peor que E1": es la misma barrera lineal (E1 prom 7.19 / max 15) vista con otra métrica. El
   diagnóstico multi-semilla (`diagnostics.py`, px_max `[14,15,16]`) confirma que es **estructural, no mínimo
   local**; lo que rompe la barrera es la capa oculta no-lineal (≥20 unidades → 0 px).
-- **E5 — config que diverge:** `lr=0.3` queda atascado arriba (33 px) → se muestra explícitamente un caso que no funciona.
+- **E5 — config que no aprende / queda atascado arriba:** `lr=0.3` no aprende — queda atascado arriba (28 px, media de 3 semillas; loss final 0.580 finito, no diverge a infinito) → se muestra explícitamente un caso que no funciona.
 - **E8 — generación (req. 1a-4):** letras nuevas por barrido del latente e interpolación `a → o`.

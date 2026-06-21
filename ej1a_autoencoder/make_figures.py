@@ -77,24 +77,32 @@ def e1():
 
 def e2():
     df = pd.read_csv(RES / "e2_latent_sweep.csv")
+    n = int(df["n_seeds"].iloc[0]) if "n_seeds" in df else 1
     fig, ax = plt.subplots(figsize=(9, 5.5))
-    ax.plot(df["latent"], df["px_max"], "o-", color=PRIMARY, label="px máximo", lw=2.5, ms=9)
-    ax.plot(df["latent"], df["px_mean"], "s--", color=SECONDARY, label="px promedio", lw=2, ms=8)
+    # banda min-max + barras de error (desvío) sobre las 3 semillas
+    ax.fill_between(df["latent"], df["px_max_min"], df["px_max_max"],
+                    color=PRIMARY, alpha=0.15, label="px máx. rango min–max")
+    ax.errorbar(df["latent"], df["px_max_mean"], yerr=df["px_max_std"], fmt="o-",
+                color=PRIMARY, label="px máximo (media ± desvío)", lw=2.5, ms=9, capsize=4)
+    ax.errorbar(df["latent"], df["px_mean_mean"], yerr=df["px_mean_std"], fmt="s--",
+                color=SECONDARY, label="px promedio (media ± desvío)", lw=2, ms=8, capsize=4)
     ax.axhline(1, color="gray", ls=":", label="objetivo ≤1px")
     ax.axvline(2, color=ACCENT, ls=":", alpha=0.7, label="latente 2D (enunciado)")
     ax.set_xlabel("dimensión del espacio latente"); ax.set_ylabel("px incorrectos")
-    ax.set_title("E2 · El codo: con 1D no alcanza; desde 2D el error cae a 0")
+    ax.set_title(f"E2 · El codo: con 1D no alcanza; desde 2D el error cae a 0 (n={n} semillas)")
     ax.legend()
     save(fig, "fig_e2_latent_elbow.png")
 
 
 def e3():
     df = pd.read_csv(RES / "e3_architecture.csv")
+    n = int(df["n_seeds"].iloc[0]) if "n_seeds" in df else 1
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 5.5))
-    a1.bar(range(len(df)), df["px_max"], color=PRIMARY)
+    a1.bar(range(len(df)), df["px_max_mean"], yerr=df["px_max_std"], color=PRIMARY,
+           capsize=5, error_kw=dict(ecolor="#374151", lw=1.5))
     a1.set_xticks(range(len(df))); a1.set_xticklabels(df["hidden"], fontsize=11)
-    a1.set_ylabel("px máximo"); a1.axhline(1, color="gray", ls=":")
-    a1.set_title("px máximo vs arquitectura del encoder")
+    a1.set_ylabel("px máximo (media ± desvío)"); a1.axhline(1, color="gray", ls=":")
+    a1.set_title(f"px máximo vs arquitectura del encoder (n={n} semillas)")
     for key, lab in [("e3_none", "()"), ("e3_10", "(10,)"), ("e3_20", "(20,)"),
                      ("e3_30", "(30,)"), ("e3_20-20", "(20,20)")]:
         a2.plot(curves[key], label=lab, lw=1.8)
@@ -116,14 +124,23 @@ def e4():
 
 
 def e5():
-    fig, ax = plt.subplots(figsize=(9.5, 6))
+    df = pd.read_csv(RES / "e5_lr.csv")
+    n = int(df["n_seeds"].iloc[0]) if "n_seeds" in df else 1
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 5.5))
+    # curva de convergencia (semilla 0)
     for key, lab, c in [("e5_lr_0.0003", "lr=0.0003 (lento)", "#2563EB"),
                         ("e5_lr_0.01", "lr=0.01 (justo)", ACCENT),
                         ("e5_lr_0.3", "lr=0.3 (no aprende)", PRIMARY)]:
-        ax.plot(curves[key], label=lab, color=c, lw=2)
-    ax.set_yscale("log"); ax.set_xlabel("época"); ax.set_ylabel("train loss (BCE, log)")
-    ax.set_title("E5 · Learning rate: muy bajo es lento; muy alto (0.3) queda atascado arriba")
-    ax.legend()
+        a1.plot(curves[key], label=lab, color=c, lw=2)
+    a1.set_yscale("log"); a1.set_xlabel("época"); a1.set_ylabel("train loss (BCE, log)")
+    a1.set_title("convergencia (semilla 0)"); a1.legend()
+    # px_max medio ± desvío sobre las semillas
+    a2.bar(range(len(df)), df["px_max_mean"], yerr=df["px_max_std"], color=PRIMARY,
+           capsize=5, error_kw=dict(ecolor="#374151", lw=1.5))
+    a2.set_xticks(range(len(df))); a2.set_xticklabels([f"lr={lr}" for lr in df["lr"]], fontsize=11)
+    a2.set_ylabel("px máximo (media ± desvío)"); a2.axhline(1, color="gray", ls=":", label="objetivo ≤1px")
+    a2.set_title(f"px máximo vs learning rate (n={n} semillas)"); a2.legend()
+    fig.suptitle("E5 · Learning rate: muy bajo es lento; muy alto (0.3) queda atascado arriba; 0.01 llega a 0 px")
     save(fig, "fig_e5_lr.png")
 
 
@@ -183,13 +200,36 @@ def e8():
     # E8c — generación por barrido de la grilla latente
     x0, x1, y0, y1 = Z[:, 0].min(), Z[:, 0].max(), Z[:, 1].min(), Z[:, 1].max()
     dx, dy = (x1 - x0) * .15, (y1 - y0) * .15
-    gx = np.linspace(x0 - dx, x1 + dx, 14); gy = np.linspace(y1 + dy, y0 - dy, 14)
+    NG = 14
+    gx = np.linspace(x0 - dx, x1 + dx, NG); gy = np.linspace(y1 + dy, y0 - dy, NG)
     canvas = np.ones((len(gy) * H, len(gx) * W))
     for r, yy in enumerate(gy):
         for c2, xx in enumerate(gx):
             canvas[r * H:(r + 1) * H, c2 * W:(c2 + 1) * W] = decode(ae, [[xx, yy]])[0].reshape(H, W)
-    fig, ax = plt.subplots(figsize=(9, 9)); ax.imshow(canvas); ax.axis("off")
+    fig, ax = plt.subplots(figsize=(9.5, 9.8)); ax.imshow(canvas); ax.axis("off")
+    # Anotación: marcar las celdas de la grilla que caen sobre una letra REAL del dataset
+    # (su z más cercano es esa letra) para distinguir las "copias" de las letras NUEVAS.
+    gxv, gyv = np.meshgrid(gx, gy)            # (NG, NG)
+    grid_pts = np.stack([gxv.ravel(), gyv.ravel()], 1)        # (NG*NG, 2)
+    d2 = ((grid_pts[:, None, :] - Z[None, :, :]) ** 2).sum(-1)  # (cells, N letras)
+    nearest = d2.min(1)
+    # umbral: una celda "es una letra del dataset" si está muy cerca de un z conocido
+    thr = np.percentile(nearest, 12)
+    n_known = 0
+    for idx, dmin in enumerate(nearest):
+        if dmin <= thr:
+            rr, cc = idx // NG, idx % NG
+            rect = plt.Rectangle((cc * W - 0.5, rr * H - 0.5), W, H,
+                                 fill=False, edgecolor="#d62728", lw=2.0, zorder=5)
+            ax.add_patch(rect)
+            n_known += 1
     ax.set_title("E8 · Generación: barrido del espacio latente (cada celda = letra decodificada, req. 1a-4)")
+    ax.text(0.5, -0.045,
+            f"Recuadro rojo = celda que coincide con una de las 32 letras de entrenamiento "
+            f"({n_known}/{NG*NG}); las celdas SIN recuadro son glifos NUEVOS\n"
+            f"(combinaciones continuas interpoladas por el decoder, no copias del dataset).",
+            transform=ax.transAxes, ha="center", va="top", fontsize=11, color="#333333")
+    fig.subplots_adjust(bottom=0.10)
     save(fig, "fig_e8c_generation_grid.png")
     # E8d — interpolación a -> o
     za, zo = Z[LABELS.index("a")], Z[LABELS.index("o")]
