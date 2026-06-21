@@ -113,7 +113,6 @@ render_table(
     [
         ["E9", "¿qué cuello para limpiar?", "cuello: 2,5,10,20", "2→48% · 10→59% · 20 satura"],
         ["E10", "¿cuánto ruido en el train?", "p_train: 0.05/0.15/0.30", "curvas se cruzan: trade-off"],
-        ["ganador", "número final del denoiser", "cuello 10 · 15000 ep", "81% ≤1px @15% (92% @10%)"],
     ], RES, "tabla_1b_resultados.png")
 
 render_table(
@@ -136,7 +135,6 @@ render_table(
     [
         ["E12", "¿cuánto pesa el KL?", "beta: 0/0.5/1/4", "β=0 ruido; β=1 equilibrio; β=4 sobre-reg."],
         ["—", "ídem, visto por reconstrucción", "recon % por β: 0/1/4", "2.6% · 3.2% · 3.7%  (peor con β↑)"],
-        ["—", "ídem, visto por el latente", "std MARGINAL del latente por β: 0/1/4", "11.5 · 1.17 · 1.06  (el desvío marginal →1 con β↑; el agregado conserva 5 cúmulos, no es N(0,I))"],
     ], RES, "tabla_vae_resultados.png")
 
 print("OK ->", OUT)
