@@ -18,8 +18,8 @@ para ver qué pasa. Esta es la tabla de "qué valores probamos y qué dio cada u
 - **E2 · dim. latente · `1, 2, 3, 5, 8`** — probamos 5 tamaños de cuello. Con **1** solo aprende 18/32; desde
   **2** ya da **0 px**; más no mejora. → 2D es el mínimo viable (el "codo").
 - **E3 · capa oculta · `(), (10), (20), (30), (20,20)`** — probamos 5 arquitecturas del encoder. **Sin** capa
-  oculta queda en 14 px (=PCA); con **≥20** unidades → 0 px. → hace falta la capa oculta no-lineal.
-- **E4 · optimizador · `SGD · Momentum · Adam`** — misma red, 3 optimizadores. **Adam 0** · Momentum 1 · SGD 5 px.
+  oculta queda en 15 px máx (encoder lineal≈PCA); con **≥20** unidades → 0 px. → hace falta la capa oculta no-lineal.
+- **E4 · optimizador · `SGD · Momentum · Adam`** — misma red, 3 optimizadores. **Adam 0** · Momentum 2 · SGD 5 px (máx).
   → Adam gana.
 - **E5 · learning rate · `0.0003, 0.01, 0.3`** — 3 tamaños de paso con Adam. Muy bajo = lento; **0.01** justo (0 px);
   **0.3 no aprende** (28 px). → sensibilidad al lr; mostramos uno que falla.

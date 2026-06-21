@@ -267,7 +267,7 @@
       <tr><td class="k">20 + 20</td><td>0</td><td>32 / 32</td></tr>
     </table></div>
     <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4><strong>Sin capa oculta</strong> el encoder vuelve a ser
-      lineal y choca con la misma barrera de PCA (14 px máximo, 1 sola letra perfecta). Con 10 neuronas mejora pero
+      lineal y choca con la misma barrera de PCA (15 px máximo, 1 sola letra perfecta). Con 10 neuronas mejora pero
       todavía no llega (2 px, 19/32).</div>
     <div class="box teach"><h4>💡 Qué enseña</h4>Hace falta la capa oculta no-lineal, y <strong>20 neuronas es la
       capacidad mínima</strong> para 0 px. De acá sale el "20" de la receta ganadora.</div>
@@ -298,13 +298,13 @@
     </figure>
     <div class="tbl"><table>
       <tr><th class="k">optimizador</th><th>px máximo</th><th>letras perfectas</th></tr>
-      <tr><td class="k">SGD</td><td>5</td><td>10 / 32</td></tr>
-      <tr><td class="k">Momentum</td><td>1</td><td>30 / 32</td></tr>
+      <tr><td class="k">SGD</td><td>5</td><td>11 / 32</td></tr>
+      <tr><td class="k">Momentum</td><td>2</td><td>29 / 32</td></tr>
       <tr class="win"><td class="k">Adam</td><td>0</td><td>32 / 32 ✓</td></tr>
     </table></div>
     <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4><strong>SGD se queda clavado en 5 px</strong> (solo 10
-      letras perfectas): cae en una meseta y no baja más. Momentum mejora bastante (1 px) pero todavía deja 2
-      letras imperfectas.</div>
+      letras perfectas): cae en una meseta y no baja más. Momentum mejora bastante (2 px máximo) pero todavía
+      deja algunas letras imperfectas.</div>
     <div class="box teach"><h4>💡 Qué enseña</h4><strong>Adam gana</strong>: llega a 0 px con un error ~100 veces
       más bajo que SGD. Adapta el paso para cada parámetro y escapa de la meseta donde los otros se atascan.</div>
   </section>
