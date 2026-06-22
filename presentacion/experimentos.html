@@ -89,6 +89,34 @@
   details.tech[open] summary::before{content:"▾ "}
   details.tech .body{padding:2px 18px 16px; font-size:.95rem; color:#312E81}
   details.tech .body code{background:#fff; border:1px solid #C7D2FE; border-radius:5px; padding:1px 5px; font-size:.88em}
+  /* panel de configuración desplegable (a la derecha de cada sección) */
+  .exp, .read, .part{position:relative}
+  .cfg-panel.base{border-left-color:var(--naranja); background:#FFFCF8}
+  .cfg-panel.base .cfg-h{color:var(--naranja)}
+  .cfg{margin:14px 0 2px}
+  .cfg-btn{cursor:pointer; border:1px solid #C7D2FE; background:var(--techbg); color:var(--tech);
+    font-weight:700; font-size:13px; letter-spacing:.3px; padding:7px 14px; border-radius:999px;
+    font-family:inherit; display:inline-flex; align-items:center; gap:6px; transition:background .15s}
+  .cfg-btn:hover{background:#E0E7FF}
+  .cfg-btn::before{content:"⚙"; font-size:14px}
+  .cfg-btn .car{transition:transform .2s; font-size:11px}
+  .cfg-btn.on .car{transform:rotate(90deg)}
+  .cfg-panel{display:none; margin-top:12px; background:#FAFAFF; border:1px solid #C7D2FE;
+    border-left:4px solid var(--tech); border-radius:10px; padding:14px 16px; font-size:.9rem}
+  .cfg-panel.show{display:block}
+  .cfg-panel .cfg-h{font-weight:800; color:var(--tech); font-size:.78rem; letter-spacing:1px;
+    text-transform:uppercase; margin-bottom:8px}
+  .cfg-panel dl{margin:0; display:grid; grid-template-columns:auto 1fr; gap:5px 12px}
+  .cfg-panel dt{color:var(--gris2); font-weight:700; font-size:.82rem; white-space:nowrap}
+  .cfg-panel dd{margin:0; color:var(--tinta)}
+  .cfg-panel dd code{background:#fff; border:1px solid #C7D2FE; border-radius:4px; padding:1px 4px; font-size:.86em}
+  .cfg-panel .note{margin:10px 0 0; padding-top:9px; border-top:1px dashed #C7D2FE; color:var(--gris);
+    font-size:.82rem; line-height:1.5}
+  /* en pantallas anchas, el panel se despliega flotando a la derecha de la tarjeta */
+  @media(min-width:1440px){
+    .cfg{position:absolute; top:24px; left:calc(100% + 16px); width:228px; margin:0; z-index:5}
+    .cfg-panel{margin-top:10px}
+  }
   /* misc */
   code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:#F1F5F9; border-radius:5px; padding:1px 5px; font-size:.9em}
   .accent{color:var(--naranja); font-weight:700}
@@ -159,6 +187,21 @@
     <code>font.h</code> usando un cuello de <strong>solo 2 dimensiones</strong>, con un error máximo de
     <strong>1 píxel</strong> por letra. Además, graficar ese mapa 2D y generar letras nuevas. Spoiler: lo logramos
     con <span class="accent">0 px de error</span>. Pero antes de llegar ahí, probamos todo esto 👇</p>
+  <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Receta base 1a <span class="car">▸</span></button>
+    <div class="cfg-panel base"><div class="cfg-h">Config común · E1–E8</div><dl>
+      <dt>Dataset</dt><dd><code>font.h</code>: 32 letras, 7×5 = 35 px binarios <code>{0,1}</code></dd>
+      <dt>Arquitectura</dt><dd><code>35-20-2-20-35</code> (capas <code>[35,20,2,20,35]</code>)</dd>
+      <dt>Activaciones</dt><dd>tanh (oculta enc) · identity (cuello) · tanh (oculta dec) · sigmoid (salida)</dd>
+      <dt>Init pesos</dt><dd>auto por capa: Xavier <code>N(0,1/fan_in)</code> (tanh/sigmoid), He <code>N(0,2/fan_in)</code> (relu), uniforme <code>[−0.1,0.1]</code> (identity)</dd>
+      <dt>Bias</dt><dd>incluido (bias trick), mismo init que la capa</dd>
+      <dt>Loss</dt><dd>BCE</dd>
+      <dt>Optimizador</dt><dd><code>Adam(lr=0.01, β1=0.9, β2=0.999, eps=1e-4)</code></dd>
+      <dt>Épocas</dt><dd>6000</dd>
+      <dt>Batch</dt><dd>32 (= dataset completo ⇒ full-batch)</dd>
+      <dt>Train/Val</dt><dd>ambos = <code>X</code> (memorizar las 32 letras <em>es</em> el objetivo)</dd>
+      <dt>Pesos finales</dt><dd>los del mejor <code>val_loss</code> (restaurados al cerrar <code>fit()</code>)</dd>
+      <dt>Semilla</dt><dd><code>seed=0</code></dd>
+    </dl><p class="note"><code>eps=1e-4</code> (en vez del default 1e-8) se unifica en todo 1a para estabilizar comparaciones y evitar el "dying relu" de E6.</p></div></div>
 </div>
 
 <div class="wrap">
@@ -166,17 +209,23 @@
   <!-- E0 -->
   <section class="exp" id="e0">
     <div class="eyebrow">Parte 1a · Exploración E0</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E0 · setup</div><dl>
+        <dt>Tipo</dt><dd>solo análisis (no entrena)</dd>
+        <dt>Datos</dt><dd>32 letras de <code>font.h</code>, 7×5 = 35&nbsp;px binarios</dd>
+        <dt>Mide</dt><dd>distancias de Hamming entre pares + píxeles encendidos por letra</dd>
+      </dl></div></div>
     <h3>¿Con qué dataset estamos trabajando?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> Antes de comprimir, ¿qué tan difícil es esto?
       ¿Cuán parecidas son las letras entre sí?</p>
     <p><span class="qlabel">Qué miramos.</span> Las 32 letras (7×5 = 35 píxeles, blanco y negro), la distancia
       entre cada par (cuántos píxeles las diferencian) y cuántos píxeles tiene encendidos cada una.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="las 32 letras del dataset">
+      <img src="../ej1a_secuencial/figs/fig_e0a_dataset_letters.png" alt="las 32 letras del dataset">
       <figcaption>Las 32 letras del dataset (<code>` a…z { | } ~ DEL</code>), cada una de 7×5 píxeles.</figcaption>
     </figure>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e0b_dataset_stats.png" alt="estadísticas del dataset">
+      <img src="../ej1a_secuencial/figs/fig_e0b_dataset_stats.png" alt="estadísticas del dataset">
       <figcaption>Izq: matriz de distancias entre letras. Der: cuántos píxeles encendidos tiene cada una.</figcaption>
     </figure>
     <div class="chips">
@@ -192,13 +241,21 @@
   <!-- E1 -->
   <section class="exp" id="e1">
     <div class="eyebrow">Parte 1a · Experimento E1</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E1 · 3 modelos comparados</div><dl>
+        <dt>AE no-lineal</dt><dd><code>35-20-2-20-35</code>, tanh/identity/tanh/sigmoid, init auto, BCE</dd>
+        <dt>AE lineal</dt><dd><code>35-2-35</code> (<code>hidden=()</code>), todo identity, init uniforme <code>[−0.1,0.1]</code>, <strong>MSE</strong></dd>
+        <dt>PCA(2)</dt><dd>analítico por SVD sobre <code>X−mean(X)</code>, 2 primeras componentes</dd>
+        <dt>Optimizador</dt><dd>(los dos AE) <code>Adam(0.01, β1=.9, β2=.999, eps=1e-4)</code></dd>
+        <dt>Comunes</dt><dd>6000 ep, full-batch (32), <code>seed=0</code></dd>
+      </dl><p class="note">AE lineal+MSE converge al mismo error que el SVD analítico (≈7.19 px): confirma "AE lineal ≡ PCA". E3/E6/E7 aíslan cada factor por separado.</p></div></div>
     <h3>¿Hacen falta las "curvas" (la no-linealidad)?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Alcanza con un método lineal clásico —que es
       justo el PCA del TP4— o hace falta una red no-lineal?</p>
     <p><span class="qlabel">Qué probamos.</span> Tres modelos comprimiendo a 2D: un autoencoder
       <strong>no-lineal</strong>, un autoencoder <strong>lineal</strong>, y <strong>PCA</strong> de 2 componentes.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="lineal vs PCA vs no-lineal">
+      <img src="../ej1a_secuencial/figs/fig_e1_linear_vs_pca.png" alt="lineal vs PCA vs no-lineal">
       <figcaption>Error de reconstrucción (en píxeles) de cada modelo. Menos es mejor.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -226,12 +283,18 @@
   <!-- E2 -->
   <section class="exp" id="e2">
     <div class="eyebrow">Parte 1a · Experimento E2</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E2 · barrido latente</div><dl>
+        <dt>Variable</dt><dd><code>latent ∈ {1, 2, 3, 5, 8}</code></dd>
+        <dt>Hereda</dt><dd>← receta base 1a (arq <code>35-20-·-20-35</code>, tanh/id/tanh/sigmoid, init auto, BCE, Adam(0.01, eps=1e-4), 6000 ep, full-batch)</dd>
+        <dt>Robustez</dt><dd>promedio sobre <strong>3 semillas</strong> (<code>[0,1,2]</code>), media ± desvío</dd>
+      </dl></div></div>
     <h3>¿Cuántos números por letra hacen falta?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿2 dimensiones de cuello alcanzan, o necesitamos más?</p>
     <p><span class="qlabel">Qué probamos.</span> El mismo modelo no-lineal, variando el ancho del cuello:
       <strong>1, 2, 3, 5 y 8</strong> dimensiones.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e2_latent_elbow.png" alt="el codo de la dimensión latente">
+      <img src="../ej1a_secuencial/figs/fig_e2_latent_elbow.png" alt="el codo de la dimensión latente">
       <figcaption>El "codo": el error se desploma al pasar de 1 a 2 dimensiones, y después ya está perfecto.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -250,12 +313,19 @@
   <!-- E3 -->
   <section class="exp" id="e3">
     <div class="eyebrow">Parte 1a · Experimento E3</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E3 · barrido arquitectura</div><dl>
+        <dt>Variable</dt><dd><code>hidden ∈ {(), (10,), (20,), (30,), (20,20)}</code></dd>
+        <dt>Hereda</dt><dd>← receta base 1a, <code>latent=2</code>, BCE, Adam(0.01, eps=1e-4), 6000 ep, full-batch</dd>
+        <dt>Caso <code>()</code></dt><dd><code>35-2-35</code>, identity/sigmoid ⇒ encoder lineal (techo de PCA)</dd>
+        <dt>Robustez</dt><dd>promedio sobre <strong>3 semillas</strong> (<code>[0,1,2]</code>)</dd>
+      </dl><p class="note"><code>diagnostics.py</code> corre 3 semillas (px máx <code>[14,15,16]</code>): la barrera lineal es estructural, no un mínimo local.</p></div></div>
     <h3>¿Qué tan grande tiene que ser la red?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Hace falta la capa oculta? ¿Cuántas neuronas?</p>
     <p><span class="qlabel">Qué probamos.</span> Distintos tamaños de capa oculta: <strong>ninguna, 10, 20, 30,
       y dos capas de 20</strong>.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="barrido de arquitectura">
+      <img src="../ej1a_secuencial/figs/fig_e3_architecture.png" alt="barrido de arquitectura">
       <figcaption>Izq: error según el tamaño de la red. Der: qué tan rápido y bajo converge cada una.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -287,13 +357,21 @@
   <!-- E4 -->
   <section class="exp" id="e4">
     <div class="eyebrow">Parte 1a · Experimento E4</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E4 · optimizadores</div><dl>
+        <dt>SGD</dt><dd><code>lr = 0.5</code></dd>
+        <dt>Momentum</dt><dd><code>lr = 0.1, β = 0.9</code></dd>
+        <dt>Adam</dt><dd><code>lr = 0.01, β1=.9, β2=.999, eps = 1e-4</code></dd>
+        <dt>Hereda</dt><dd>← receta base 1a (arq, init, BCE, 6000 ep, full-batch)</dd>
+        <dt>Robustez</dt><dd><strong>3 semillas</strong> (<code>[0,1,2]</code>); optimizador fresco por semilla (son stateful)</dd>
+      </dl></div></div>
     <h3>¿Con qué optimizador entrenar?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Qué algoritmo de entrenamiento llega adonde los
       otros se estancan?</p>
     <p><span class="qlabel">Qué probamos.</span> <strong>SGD, Momentum y Adam</strong> (cada uno con su mejor
       paso de aprendizaje).</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="comparación de optimizadores">
+      <img src="../ej1a_secuencial/figs/fig_e4_optimizers.png" alt="comparación de optimizadores">
       <figcaption>Curva de error durante el entrenamiento (escala logarítmica). Más abajo = mejor.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -312,13 +390,20 @@
   <!-- E5 -->
   <section class="exp" id="e5">
     <div class="eyebrow">Parte 1a · Experimento E5</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E5 · learning rate</div><dl>
+        <dt>Variable</dt><dd><code>lr ∈ {0.0003, 0.01, 0.3}</code> con <code>Adam(β1=.9, β2=.999, eps=1e-4)</code></dd>
+        <dt>Hereda</dt><dd>← receta base 1a (arq, init, BCE, 6000 ep, full-batch)</dd>
+        <dt>Robustez</dt><dd>promedio sobre <strong>3 semillas</strong> (<code>[0,1,2]</code>)</dd>
+        <dt>"No aprende"</dt><dd><code>px_max_mean &gt; 1</code> (no llega a ≤1px)</dd>
+      </dl><p class="note">Se ignoran overflow/invalid de numpy: <code>lr=0.3</code> puede desbordar (es justamente el punto).</p></div></div>
     <h3>¿Qué tan grande tiene que ser el paso (learning rate)?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cuán sensible es al tamaño del paso? (y mostrar a
       propósito un caso que NO funciona)</p>
     <p><span class="qlabel">Qué probamos.</span> Con Adam, tres pasos: <strong>0.0003 (chico), 0.01 (justo) y
       0.3 (grande)</strong>.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="barrido de learning rate">
+      <img src="../ej1a_secuencial/figs/fig_e5_lr.png" alt="barrido de learning rate">
       <figcaption>El paso chico baja lento; el justo llega abajo; el grande queda atascado arriba.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -338,12 +423,20 @@
   <!-- E6 -->
   <section class="exp" id="e6">
     <div class="eyebrow">Parte 1a · Experimento E6</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E6 · activación oculta</div><dl>
+        <dt>Variable</dt><dd><code>act_hidden ∈ {tanh, relu, sigmoid}</code> (afecta las dos ocultas enc+dec)</dd>
+        <dt>Init asociado</dt><dd>cambia con la activación: tanh/sigmoid → Xavier, relu → He</dd>
+        <dt>Hereda</dt><dd>← receta base 1a, <code>Adam(0.01, eps=1e-4)</code>, BCE, 6000 ep, full-batch</dd>
+        <dt>Semillas</dt><dd>1 (<code>seed=0</code>)</dd>
+        <dt>Métrica extra</dt><dd>época en que <code>loss &lt; 1e-2</code> (velocidad)</dd>
+      </dl><p class="note"><code>eps=1e-4</code> estabiliza la comparación y evita el "dying relu".</p></div></div>
     <h3>¿Qué tipo de neurona (activación)?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cambia el resultado según la no-linealidad concreta?</p>
     <p><span class="qlabel">Qué probamos.</span> Tres activaciones en la capa oculta: <strong>tanh, relu y
       sigmoid</strong>.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="comparación de activaciones">
+      <img src="../ej1a_secuencial/figs/fig_e6_activation.png" alt="comparación de activaciones">
       <figcaption>Las tres llegan a 0 px; lo único que cambia es la velocidad de convergencia.</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>Las <strong>tres llegan a 0 px</strong> — cualquier no-linealidad
@@ -361,13 +454,19 @@
   <!-- E7 -->
   <section class="exp" id="e7">
     <div class="eyebrow">Parte 1a · Experimento E7</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E7 · función de pérdida</div><dl>
+        <dt>Variable</dt><dd><code>loss ∈ {bce, mse}</code></dd>
+        <dt>Hereda</dt><dd>← receta base 1a completa (arq, init, Adam(0.01, eps=1e-4), 6000 ep, full-batch)</dd>
+        <dt>Semillas</dt><dd>1 (<code>seed=0</code>)</dd>
+      </dl></div></div>
     <h3>¿Cómo medir el error (la loss)?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> Para imágenes en blanco y negro, ¿qué función de
       pérdida conviene?</p>
     <p><span class="qlabel">Qué probamos.</span> <strong>BCE</strong> (entropía cruzada binaria) vs
       <strong>MSE</strong> (error cuadrático).</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="BCE vs MSE">
+      <img src="../ej1a_secuencial/figs/fig_e7_loss.png" alt="BCE vs MSE">
       <figcaption>Izq: error final de cada loss. Der: cómo converge cada una.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -386,6 +485,15 @@
   <!-- E8 -->
   <section class="exp" id="e8">
     <div class="eyebrow">Parte 1a · Experimento E8 · EL GANADOR</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E8 · el ganador</div><dl>
+        <dt>Modelo</dt><dd><code>35-20-2-20-35</code>, tanh/identity/tanh/sigmoid, init auto, BCE, <code>Adam(0.01, eps=1e-4)</code></dd>
+        <dt>Entrenamiento</dt><dd>6000 ep, full-batch (32), <code>seed=0</code>, pesos del mejor <code>val_loss</code></dd>
+        <dt>Reentrena</dt><dd>no — reusa <code>champion_1a.npz</code></dd>
+        <dt>Generación</dt><dd>grilla 14×14 del latente, cada punto decodificado</dd>
+        <dt>Interpolación</dt><dd>9 pasos <code>(1−t)·z_a + t·z_o</code>, de <code>a</code> a <code>o</code></dd>
+        <dt>Métrica mapa</dt><dd>Hamming vs dist. latente → Spearman ρ = 0.57</dd>
+      </dl></div></div>
     <h3>El modelo ganador en acción</h3>
     <p class="lead"><span class="qlabel">La receta.</span> Juntando lo mejor de cada experimento:
       <strong>no-lineal</strong> (E1) + <strong>cuello 2D</strong> (E2) + <strong>20 neuronas</strong> (E3) +
@@ -396,20 +504,20 @@
     <p style="margin-top:22px"><strong class="azul">1) Reconstrucción perfecta</strong> — la red devuelve las 32
       letras idénticas a las originales.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="reconstrucciones del ganador">
+      <img src="../ej1a_secuencial/figs/fig_e8a_reconstructions.png" alt="reconstrucciones del ganador">
       <figcaption>Arriba cada letra original, abajo la reconstrucción de la red. Iguales: 0 píxeles de error.</figcaption>
     </figure>
 
     <p><strong class="azul">2) El mapa de 2 números</strong> — dónde ubica cada letra en el espacio latente 2D.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="espacio latente 2D">
+      <img src="../ej1a_secuencial/figs/fig_e8b_latent2d.png" alt="espacio latente 2D">
       <figcaption>Las 32 letras en el mapa de 2 dimensiones; el recuadro de la derecha es un zoom del centro.</figcaption>
     </figure>
 
     <p><strong class="azul">2b) ¿El mapa preservó el parecido entre letras?</strong> — comparamos la distancia
       entre cada par de letras en píxeles (Hamming) vs en el mapa latente.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
+      <img src="../ej1a_secuencial/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
       <figcaption>Distancia en píxeles (izq.) vs en el mapa 2D (der.), mismas letras y orden. Spearman ρ = 0.57.</figcaption>
     </figure>
     <div class="box teach"><h4>💡 El contraste (un insight fino)</h4>El AE preserva la <strong>distinguibilidad
@@ -423,14 +531,14 @@
     <p><strong class="azul">3) Inventar letras nuevas</strong> — recorriendo el mapa aparecen formas que no estaban
       en el dataset.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="grilla de generación">
+      <img src="../ej1a_secuencial/figs/fig_e8c_generation_grid.png" alt="grilla de generación">
       <figcaption>Cada celda es un punto del mapa decodificado. En las zonas pobladas salen letras nuevas.</figcaption>
     </figure>
 
     <p><strong class="azul">4) De la <code>a</code> a la <code>o</code></strong> — caminar en línea recta entre dos
       letras genera mezclas continuas.</p>
     <figure>
-      <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="interpolación a → o">
+      <img src="../ej1a_secuencial/figs/fig_e8d_interpolation.png" alt="interpolación a → o">
       <figcaption>9 pasos del mapa, de la <code>a</code> a la <code>o</code>: los del medio son glifos intermedios nuevos.</figcaption>
     </figure>
 
@@ -471,11 +579,31 @@
     <p>El ruido es <strong>bit-flip</strong>: cada píxel se da vuelta (0↔1) con cierta probabilidad <code>p</code>,
       y es <strong>fresco en cada época</strong> (la red nunca ve dos veces la misma mancha). Usamos las mismas 32
       letras, pero con una arquitectura un poco distinta: <code>35-25-{cuello}-25-35</code>.</p>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Receta base 1b <span class="car">▸</span></button>
+      <div class="cfg-panel base"><div class="cfg-h">Config común · E9–ganador</div><dl>
+        <dt>Dataset</dt><dd>mismas 32 letras de <code>font.h</code> (35 px binarios)</dd>
+        <dt>Arquitectura</dt><dd><code>35-25-{cuello}-25-35</code> (capas <code>[35,25,cuello,25,35]</code>)</dd>
+        <dt>Activaciones</dt><dd>tanh / identity (cuello) / tanh / sigmoid (salida)</dd>
+        <dt>Init pesos</dt><dd>auto por capa (Xavier para tanh/sigmoid, uniforme para el cuello)</dd>
+        <dt>Loss</dt><dd>BCE</dd>
+        <dt>Optimizador</dt><dd><code>Adam(lr=0.01, β1=0.9, β2=0.999, eps=1e-8)</code> ← eps default</dd>
+        <dt>Entrenamiento</dt><dd><code>train_denoising</code>: full-batch, bit-flip <strong>fresco c/época</strong> (target limpio); no usa <code>fit()</code>, sin best-weights</dd>
+        <dt>Semilla</dt><dd><code>seed=0</code>; RNG de ruido propio por corrida</dd>
+        <dt>Evaluación</dt><dd>por nivel de test: px medio + frac ≤1px sobre <em>trials</em> realizaciones × 32 letras (RNG <code>seed=123</code>)</dd>
+      </dl></div></div>
   </div>
 
   <!-- E9 -->
   <section class="exp" id="e9">
     <div class="eyebrow">Parte 1b · Experimento E9</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E9 · ancho de cuello</div><dl>
+        <dt>Variable</dt><dd><code>cuello ∈ {2, 5, 10, 20}</code></dd>
+        <dt>Hereda</dt><dd>← receta base 1b (<code>35-25-·-25-35</code>, tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8))</dd>
+        <dt>Ruido entren.</dt><dd><code>p_train = 0.15</code> (bit-flip fresco c/época, target limpio)</dd>
+        <dt>Épocas</dt><dd>6000, full-batch, <code>seed=0</code></dd>
+        <dt>Evaluación</dt><dd><strong>30</strong> realizaciones × 32 letras, test <code>p ∈ {0.1, 0.2, 0.3}</code></dd>
+      </dl></div></div>
     <h3>¿Por qué un cuello más ancho que en 1a?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿El cuello de 2 que usamos en 1a sirve para limpiar,
       o limpiar necesita más capacidad?</p>
@@ -503,6 +631,14 @@
   <!-- E10 -->
   <section class="exp" id="e10">
     <div class="eyebrow">Parte 1b · Experimento E10</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E10 · ruido de entrenamiento</div><dl>
+        <dt>Variable</dt><dd><code>p_train ∈ {0.05, 0.15, 0.30}</code></dd>
+        <dt>Cuello</dt><dd>10</dd>
+        <dt>Hereda</dt><dd>← receta base 1b (tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8))</dd>
+        <dt>Épocas</dt><dd>6000, full-batch, <code>seed=0</code></dd>
+        <dt>Evaluación</dt><dd><strong>30</strong> realizaciones × 32 letras, test <code>p ∈ {0, .05, .10, .15, .20, .30, .40}</code></dd>
+      </dl><p class="note">El modelo con <code>p_train=0.15</code> se guarda para los tripletes de E11.</p></div></div>
     <h3>¿Cuánto ruido conviene poner al entrenar?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Hay un nivel de ruido de entrenamiento "óptimo", o
       es un compromiso?</p>
@@ -543,6 +679,12 @@
   <!-- E11 -->
   <section class="exp" id="e11">
     <div class="eyebrow">Parte 1b · Experimento E11</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E11 · tripletes</div><dl>
+        <dt>Modelo</dt><dd>DAE ganador reforzado (<code>dae_champion.npz</code>)</dd>
+        <dt>Letras</dt><dd><code>a e g r s</code></dd>
+        <dt>Niveles</dt><dd>3 (cualitativo: limpio / sucio / recuperado)</dd>
+      </dl></div></div>
     <h3>Ver el denoiser en acción</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Realmente reconstruye el patrón limpio desde la
       versión sucia? (evidencia visual)</p>
@@ -560,6 +702,13 @@
   <!-- ganador 1b -->
   <section class="exp" id="ganador1b">
     <div class="eyebrow">Parte 1b · EL GANADOR REFORZADO</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">Ganador 1b</div><dl>
+        <dt>Config</dt><dd>cuello = <strong>10</strong>, <code>p_train = 0.15</code></dd>
+        <dt>Arquitectura</dt><dd><code>35-25-10-25-35</code>, tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8)</dd>
+        <dt>Épocas</dt><dd><strong>15000</strong> (vs 6000 de los barridos), full-batch, <code>seed=0</code></dd>
+        <dt>Evaluación</dt><dd><strong>50</strong> realizaciones × 32 letras, test <code>p ∈ {0.10, 0.15, 0.20}</code></dd>
+      </dl></div></div>
     <h3>El número final del denoiser</h3>
     <p class="lead"><span class="qlabel">La receta.</span> Cuello <strong>10</strong> (de E9) + ruido de
       entrenamiento <strong>15%</strong> (de E10), reentrenado a fondo (<strong>15000 épocas</strong>) para dar un
@@ -626,11 +775,32 @@
       el backprop (incluido el KL) está derivado a mano en numpy y verificado con un gradient check numérico de
       error 5e-08. Entrenamiento: Adam lr=1e-3, 3500 épocas, batch 128.</p>
     </div></details>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Receta base VAE <span class="car">▸</span></button>
+      <div class="cfg-panel base"><div class="cfg-h">Config común · E12–E17</div><dl>
+        <dt>Dataset</dt><dd>OpenMoji <code>color</code> (canal alpha), 5 clases, 20×20 px, 700 imágenes</dd>
+        <dt>Augment</dt><dd>rotación ±15°, traslación ±2px, ruido <code>σ=0.03</code> (seedeado)</dd>
+        <dt>Arquitectura</dt><dd><code>400→128→(μ,logσ²) Z=2→128→400</code> (<code>D=400, He=128, Z=2, Hd=128</code>)</dd>
+        <dt>Encoder/Decoder</dt><dd>tanh en ocultas; cabezas μ/logσ² lineales; sigmoid en salida</dd>
+        <dt>Reparam</dt><dd><code>z = μ + σ·ε</code>, <code>ε~N(0,I)</code>, <code>σ=exp(½·logσ²)</code></dd>
+        <dt>Init pesos</dt><dd>He <code>N(0,2/fan_in)</code>; bias en 0; <code>W_lv=0</code> (⇒ σ=1 al inicio)</dd>
+        <dt>Loss</dt><dd><code>BCE-con-logits + β·KL</code>, <code>KL = −0.5·Σ(1+logσ²−μ²−σ²)/B</code></dd>
+        <dt>Optimizador</dt><dd><code>Adam(lr=1e-3, β1=0.9, β2=0.999, eps=1e-8)</code></dd>
+        <dt>Épocas/batch</dt><dd>3500 ep, batch 128, shuffle por época</dd>
+        <dt>Semilla</dt><dd><code>seed=0</code> (el <code>ε</code> usa RNG global → no bit-a-bit reproducible)</dd>
+      </dl><p class="note">Backprop (KL + reparam) a mano, verificado por gradient check numérico (error 5e-08).</p></div></div>
   </div>
 
   <!-- dataset emojis -->
   <section class="exp" id="emojis">
     <div class="eyebrow">Parte 2 · El dataset</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">Dataset · emojis</div><dl>
+        <dt>Fuente</dt><dd>OpenMoji, variante <code>color</code> → canal <strong>alpha</strong> como silueta</dd>
+        <dt>Clases</dt><dd>corazón (2764), estrella (2B50), gota (1F4A7), luna (1F319), rayo (26A1)</dd>
+        <dt>Preproceso</dt><dd>crop al bounding box, centrado cuadrado, resize a 20×20 (margen 2px)</dd>
+        <dt>Tamaño</dt><dd>140 variantes/clase = <strong>700</strong> imágenes</dd>
+        <dt>Augment</dt><dd>rotación ±15°, traslación ±2px, ruido <code>σ=0.03</code> (seedeado), recorte [0,1]</dd>
+      </dl><p class="note">Descartados: line-art (contornos se confunden a 20×20, 1-NN ~0.5) y formas geométricas.</p></div></div>
     <h3>Datos nuevos: 5 emojis</h3>
     <p class="lead"><span class="qlabel">Por qué.</span> El enunciado pide un dataset nuevo. Elegimos
       <strong>5 emojis</strong> con siluetas bien distintas: corazón, estrella, gota, luna y rayo.</p>
@@ -654,6 +824,12 @@
   <!-- E12 -->
   <section class="exp" id="e12">
     <div class="eyebrow">Parte 2 · Experimento E12 · el central</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E12 · barrido de β</div><dl>
+        <dt>Variable</dt><dd><code>β ∈ {0, 0.5, 1, 4}</code> (4 VAEs entrenados)</dd>
+        <dt>Hereda</dt><dd>← receta base VAE (<code>400→128→Z=2→128→400</code>, BCE+β·KL, Adam(1e-3), 3500 ep, batch 128, <code>seed=0</code>)</dd>
+        <dt>Sampleo</dt><dd>10 muestras de N(0,I); semilla elegida (búsqueda en <code>range(400)</code>) por máxima diversidad de clases</dd>
+      </dl></div></div>
     <h3>¿Qué pasa al samplear según β?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> Si elijo un punto al azar de la campana N(0,I) y lo
       decodifico, ¿sale un emoji válido o basura? ¿Y cómo depende eso de β (cuánto ordenamos el mapa)?</p>
@@ -674,6 +850,13 @@
   <!-- E16 -->
   <section class="exp" id="e16">
     <div class="eyebrow">Parte 2 · Experimento E16</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E16 · AE vs VAE</div><dl>
+        <dt>Modelos</dt><dd>VAE <code>β=0</code> (≈AE) y VAE <code>β=1</code> guardados</dd>
+        <dt>Hereda</dt><dd>← receta base VAE (no reentrena)</dd>
+        <dt>Compara</dt><dd>dispersión del mapa (±49 vs ±3.3), parecido a N(0,I) (std 1.17), ¿se puede samplear?</dd>
+        <dt>Archivos</dt><dd><code>vae_beta_0.0.npz</code>, <code>vae_beta_1.0.npz</code></dd>
+      </dl></div></div>
     <h3>¿Por qué uno genera y el otro no? (AE vs VAE)</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> Ver lado a lado el mapa del AE (β=0) y el del VAE
       (β=1) para entender visualmente la diferencia.</p>
@@ -697,6 +880,13 @@
   <!-- E13 -->
   <section class="exp" id="e13">
     <div class="eyebrow">Parte 2 · Experimento E13</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E13 · mapa por clase</div><dl>
+        <dt>Modelo</dt><dd>VAE <code>β=1</code> guardado (<code>vae_beta_1.0.npz</code>)</dd>
+        <dt>Hereda</dt><dd>← receta base VAE (no reentrena)</dd>
+        <dt>Grafica</dt><dd><code>μ = encode_mean(X)</code> por clase + círculos del prior N(0,I) (radio 1 y 2)</dd>
+        <dt>E18 (cobertura)</dt><dd>200 semillas × 10 muestras → <strong>85%</strong> medio (4.3/5); estrella ≈33%, luna ≈23%, gota ≈19%, rayo ≈14%, corazón ≈12%</dd>
+      </dl></div></div>
     <h3>¿Cómo quedó el mapa del VAE por clase?</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿El mapa del VAE (β=1) realmente ordenó las clases y
       quedó con forma de campana?</p>
@@ -715,6 +905,12 @@
   <!-- E14 -->
   <section class="exp" id="e14">
     <div class="eyebrow">Parte 2 · Experimento E14 · el entregable generativo</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E14 · recon + generación</div><dl>
+        <dt>Modelo</dt><dd>VAE <code>β=1</code> (no reentrena)</dd>
+        <dt>Reconstrucción</dt><dd>usa <code>μ</code> (sin ruido): fila real → fila reconstruida</dd>
+        <dt>Generación</dt><dd>10 muestras nuevas desde N(0,I) (misma semilla diversa que E12)</dd>
+      </dl></div></div>
     <h3>Reconstruir y generar muestras nuevas</h3>
     <p class="lead"><span class="qlabel">La prueba final.</span> Que el VAE (a) reconstruye fiel, y (b) genera
       muestras <strong>nuevas —no copias—</strong> desde la campana al azar: variaciones continuas de los 5 prototipos.</p>
@@ -732,6 +928,13 @@
   <!-- E17 -->
   <section class="exp" id="e17">
     <div class="eyebrow">Parte 2 · Experimento E17</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E17 · atlas del latente</div><dl>
+        <dt>Modelo</dt><dd>VAE <code>β=1</code> (no reentrena)</dd>
+        <dt>Hereda</dt><dd>← receta base VAE</dd>
+        <dt>Grilla</dt><dd>13×13 puntos en <code>[−2.5, 2.5]²</code></dd>
+        <dt>Qué hace</dt><dd>decodifica cada punto (<code>generate</code>) → atlas continuo</dd>
+      </dl></div></div>
     <h3>El mapa completo, decodificado</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿El mapa del VAE es continuo (sin huecos) o tiene
       zonas muertas como el AE?</p>
@@ -750,6 +953,13 @@
   <!-- E15 -->
   <section class="exp" id="e15">
     <div class="eyebrow">Parte 2 · Experimento E15</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E15 · recon vs KL</div><dl>
+        <dt>Variable</dt><dd><code>β ∈ {0, 1, 4}</code></dd>
+        <dt>Hereda</dt><dd>← receta base VAE (Adam(1e-3), 3500 ep, batch 128, <code>seed=0</code>)</dd>
+        <dt>Registra</dt><dd>términos <code>recon</code> y <code>KL</code> por época</dd>
+        <dt>Frecuencia</dt><dd>log cada <strong>5</strong> épocas, con <code>eps=0</code> (determinista) sobre todo <code>X</code></dd>
+      </dl></div></div>
     <h3>El equilibrio: reconstrucción vs orden (las dos partes de la loss)</h3>
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cómo se pelean los dos términos de la pérdida
       (reconstruir bien vs ordenar el mapa) según β?</p>
@@ -809,6 +1019,13 @@
   }
   document.addEventListener('scroll', upd, {passive:true});
   window.addEventListener('resize', upd); upd();
+
+  // toggle de los paneles de configuración
+  function toggleCfg(btn){
+    btn.classList.toggle('on');
+    btn.nextElementSibling.classList.toggle('show');
+    setTimeout(upd, 0);
+  }
 </script>
 </body>
 </html>

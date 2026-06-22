@@ -20,6 +20,11 @@
     .reveal section h2 { margin:0 0 0.12em; font-size:1.02em; }
     .reveal .cover h1 { font-size:1.8em; }
     .reveal .big { font-size:0.92em; }
+    .reveal table.cfg { font-size:0.5em; width:84%; margin:0.4em auto; border-collapse:collapse; }
+    .reveal table.cfg td { padding:5px 12px; border-bottom:1px solid #e5e7eb; text-align:left; vertical-align:top; }
+    .reveal table.cfg td.k { color:#64748B; font-weight:bold; white-space:nowrap; width:30%; }
+    .reveal .vary { color:var(--naranja); font-weight:bold; }
+    .reveal .step { color:#94A3B8; font-size:0.42em; letter-spacing:1px; }
   </style>
 </head>
 <body>
@@ -48,92 +53,111 @@
     <span class="tag">EXPLORACIÓN · E0</span>
     <h2>El dataset: 32 caracteres</h2>
     <div class="duo">
-      <img src="../ej1a_autoencoder/figs/fig_e0a_dataset_letters.png" alt="32 letras">
-      <img src="../ej1a_autoencoder/figs/fig_e0c_hamming.png" alt="distancias entre letras">
+      <img src="../ej1a_secuencial/figs/fig_e0a_dataset_letters.png" alt="32 letras">
+      <img src="../ej1a_secuencial/figs/fig_e0c_hamming.png" alt="distancias entre letras">
     </div>
     <ul><li>32 caracteres de 7×5 (casi todos letras), a guardar con <span class="accent">solo 2 números</span>. Difícil: hay pares casi idénticos (<span class="accent">l y | a 2 px</span>) que igual hay que separar.</li></ul>
   </section>
 
-  <!-- 4 -->
+  <!-- 4 · CONFIG BASE -->
   <section>
-    <span class="tag">1a · RESUMEN</span>
-    <h2>Todo lo que probamos</h2>
-    <img src="../tablas/tabla_1a_resultados.png" alt="resumen 1a">
-    <ul><li>Cada fila: un experimento, <span class="accent">para qué</span> lo hicimos y qué dio.</li></ul>
+    <span class="tag">1a · PUNTO DE PARTIDA</span>
+    <h2>La configuración base</h2>
+    <table class="cfg">
+      <tr><td class="k">Arquitectura</td><td>35-20-2-20-35 (capas [35, 20, 2, 20, 35])</td></tr>
+      <tr><td class="k">Activaciones</td><td>tanh · <em>identity</em> (cuello) · tanh · <em>sigmoid</em> (salida)</td></tr>
+      <tr><td class="k">Init de pesos</td><td>auto por capa (Xavier para tanh/sigmoid, He para relu)</td></tr>
+      <tr><td class="k">Loss</td><td>BCE — heredada del TP3 (datos binarios)</td></tr>
+      <tr><td class="k">Optimizador</td><td>SGD — arranque naive</td></tr>
+      <tr><td class="k">Épocas · batch</td><td>6000 · 32 (full-batch) · semilla 0</td></tr>
+    </table>
+    <ul><li>Partimos de acá y, <span class="accent">cambiando un parámetro por vez</span>, llegamos a la receta ganadora. Para cada paso: primero la config, después el resultado.</li></ul>
   </section>
 
-  <!-- 5 -->
+  <!-- 5 · OPTIMIZADOR (config) -->
   <section>
-    <span class="tag">E1</span>
-    <h2>¿Hacen falta las curvas?</h2>
-    <div class="duo">
-      <img src="../ej1a_autoencoder/figs/fig_e1_linear_vs_pca.png" alt="E1">
-      <img src="../ej1a_autoencoder/figs/fig_e1_pca_pixel_error.png" alt="dónde falla PCA">
-    </div>
-    <ul><li>Modelo recto (PCA): <span class="accent">7 píxeles</span> de error, concentrados en el <span class="accent">centro del glifo</span>. Con curvas: <span class="accent">0</span>.</li></ul>
+    <span class="step">PASO 1 · CONFIG</span>
+    <h2>¿Cómo entrenar? (optimizador)</h2>
+    <table class="cfg">
+      <tr><td class="k">Variamos</td><td class="vary">SGD(0.5) · Momentum(0.1) · Adam(0.01)</td></tr>
+      <tr><td class="k">Config fija</td><td>35-20-2-20-35 · tanh · BCE · latente 2 · 6000 ep</td></tr>
+    </table>
+    <ul><li>Con la arquitectura ya capaz, comparamos optimizadores <span class="accent">en igualdad de condiciones</span>.</li></ul>
   </section>
 
-  <!-- 6 -->
+  <!-- 6 · OPTIMIZADOR (resultado) -->
   <section>
-    <span class="tag">E2</span>
-    <h2>¿Cuántos números por letra?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e2_latent_elbow.png" alt="E2">
-    <ul><li>Con 1 no alcanza; <span class="accent">con 2 ya salen perfectas</span>.</li></ul>
+    <span class="step">PASO 1 · RESULTADO</span>
+    <h2>Adam llega a 0 px</h2>
+    <img src="../ej1a_secuencial/figs/fig_exp2_optimizador.png" alt="optimizador">
+    <ul><li>SGD se estanca (5px), Momentum casi (1px), <span class="accent">Adam: 0 px</span>. → adoptamos <span class="accent">Adam(0.01)</span>.</li></ul>
   </section>
 
-  <!-- 7 -->
+  <!-- 7 · LEARNING RATE (config) -->
   <section>
-    <span class="tag">E3</span>
-    <h2>¿Qué tan grande la red?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e3_architecture.png" alt="E3">
-    <ul><li>Red muy chica falla; con <span class="accent">20 neuronas</span> ya sale perfecto.</li></ul>
+    <span class="step">PASO 2 · CONFIG</span>
+    <h2>¿Qué tan grande el paso? (learning rate)</h2>
+    <table class="cfg">
+      <tr><td class="k">Variamos</td><td class="vary">lr ∈ 0.0003 · 0.01 · 0.3</td></tr>
+      <tr><td class="k">Config fija</td><td>35-20-2-20-35 · tanh · BCE · <span class="accent">Adam</span> · latente 2</td></tr>
+    </table>
+    <ul><li>El learning rate es propio del optimizador → se barre <span class="accent">después</span> de fijar Adam.</li></ul>
   </section>
 
-  <!-- 8 -->
+  <!-- 8 · LEARNING RATE (resultado) -->
   <section>
-    <span class="tag">E4</span>
-    <h2>¿Cómo entrenar?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e4_optimizers.png" alt="E4">
-    <ul><li>Adam es el que <span class="accent">llega más abajo</span>; los otros se quedan a mitad de camino.</li></ul>
+    <span class="step">PASO 2 · RESULTADO</span>
+    <h2>0.01 es el punto justo</h2>
+    <img src="../ej1a_secuencial/figs/fig_exp3_learning_rate.png" alt="learning rate">
+    <ul><li>Chico (0.0003) tarda; grande (0.3) <span class="accent">no aprende (28px)</span>; <span class="accent">0.01</span> llega a 0. → adoptamos <span class="accent">lr=0.01</span>.</li></ul>
   </section>
 
-  <!-- 9 -->
+  <!-- 9 · ARQUITECTURA (config) -->
   <section>
-    <span class="tag">E5</span>
-    <h2>¿Qué tan grande el paso?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e5_lr.png" alt="E5">
-    <ul><li>Paso muy chico tarda; muy grande <span class="accent">se atasca alto (~28px)</span>; el del medio anda.</li></ul>
+    <span class="step">PASO 3 · CONFIG</span>
+    <h2>¿Qué tan grande la red? (capa oculta)</h2>
+    <table class="cfg">
+      <tr><td class="k">Variamos</td><td class="vary">() · 10 · 20 · 30 · 20+20 (por lado)</td></tr>
+      <tr><td class="k">Config fija</td><td>tanh · BCE · Adam(0.01) · latente 2</td></tr>
+      <tr><td class="k">Nota</td><td>(20) = 1 capa de 20 por lado; (20+20) = 2 capas apiladas</td></tr>
+    </table>
+    <ul><li>¿Hace falta capa oculta? ¿qué tan ancha? ¿qué tan profunda?</li></ul>
   </section>
 
-  <!-- 10 -->
+  <!-- 10 · ARQUITECTURA (resultado) -->
   <section>
-    <span class="tag">E6</span>
-    <h2>¿Qué tipo de neurona?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e6_activation.png" alt="E6">
-    <ul><li>Las tres terminan perfectas; solo cambia <span class="accent">qué tan rápido</span> llegan.</li></ul>
+    <span class="step">PASO 3 · RESULTADO</span>
+    <h2>20 neuronas es el mínimo justo</h2>
+    <img src="../ej1a_secuencial/figs/fig_exp4_arquitectura.png" alt="arquitectura">
+    <ul><li>Sin capa oculta = PCA (falla); 10 no alcanza; <span class="accent">20 → 0 px</span>. 30 y 20+20 empatan → por <span class="accent">parsimonia, 20</span>.</li></ul>
   </section>
 
-  <!-- 11 -->
+  <!-- 11 · LATENTE (config) -->
   <section>
-    <span class="tag">E7</span>
-    <h2>¿Cómo medir el error?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e7_loss.png" alt="E7">
-    <ul><li>Una forma (BCE) queda <span class="accent">perfecta</span> para blanco y negro; la otra deja 2 errores.</li></ul>
+    <span class="step">PASO 4 · CONFIG</span>
+    <h2>¿Cuántos números por letra? (latente)</h2>
+    <table class="cfg">
+      <tr><td class="k">Variamos</td><td class="vary">dimensión latente ∈ 1 · 2 · 3</td></tr>
+      <tr><td class="k">Config fija</td><td>35-20-·-20-35 · tanh · BCE · Adam(0.01)</td></tr>
+      <tr><td class="k">Nota</td><td>la consigna pide 2D; lo confirmamos</td></tr>
+    </table>
+    <ul><li>¿2 dimensiones alcanzan para separar las 32 letras?</li></ul>
   </section>
 
-  <!-- 12 -->
+  <!-- 12 · LATENTE (resultado) -->
   <section>
-    <span class="tag">1a · LA RECETA GANADORA</span>
-    <h2>Juntando lo mejor</h2>
-    <img src="../tablas/tabla_1a_config.png" alt="config 1a">
-    <ul><li>Combinando lo mejor de cada experimento, esta es <span class="accent">la receta del ganador</span>.</li></ul>
+    <span class="step">PASO 4 · RESULTADO</span>
+    <h2>Con 1 solo se aprende un subconjunto</h2>
+    <img src="../ej1a_secuencial/figs/fig_exp5_latente.png" alt="latente">
+    <ul><li>1D solo recupera un <span class="accent">subconjunto (14/32)</span>: no se pueden separar 32 letras en una recta. <span class="accent">2D → 0 px</span>.</li>
+    <li>Confirmamos que el cuello de la consigna alcanza: se mantiene <span class="accent">latente=2</span>.</li></ul>
   </section>
 
   <!-- 13 -->
   <section>
     <span class="tag">1a · GANADOR</span>
     <h2>Reconstrucción: sin errores</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e8a_reconstructions.png" alt="E8a">
+    <img src="../ej1a_secuencial/figs/fig_e8a_reconstructions.png" alt="E8a">
     <ul><li>Arriba la letra real, abajo la de la red: <span class="accent">0 px de error · 32 de 32 letras perfectas</span>.</li></ul>
   </section>
 
@@ -141,38 +165,27 @@
   <section>
     <span class="tag">1a · GANADOR</span>
     <h2>El mapa de 2 números</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e8b_latent2d.png" alt="E8b">
+    <img src="../ej1a_secuencial/figs/fig_e8b_latent2d.png" alt="E8b">
     <ul><li>Las 32 letras ubicadas en el mapa; el recuadro de la derecha es un <span class="accent">zoom</span> del centro.</li></ul>
   </section>
 
   <!-- 15 -->
   <section>
-    <span class="tag">1a · ¿SE PRESERVA EL PARECIDO?</span>
-    <h2>El mapa, ¿respeta las similitudes?</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
-    <ul>
-      <li>El AE <span class="accent">distingue las 32 letras a la perfección</span> (tiene que, para reconstruir a 0 px).</li>
-      <li>El <span class="accent">parecido</span>, en cambio, lo conserva <span class="accent">solo a medias (ρ = 0.57)</span>: las parecidas tienden a quedar cerca, y a los casi idénticos (l y |) los deja <strong>muy juntos</strong> — apenas lo justo para reconstruir ambos sin error.</li>
-    </ul>
+    <span class="tag">1a · GANADOR</span>
+    <h2>Inventar letras nuevas</h2>
+    <img src="../ej1a_secuencial/figs/fig_e8c_generation_grid.png" alt="E8c">
+    <ul><li>Recorriendo el mapa aparecen <span class="accent">letras que no estaban</span>.</li></ul>
   </section>
 
   <!-- 16 -->
   <section>
     <span class="tag">1a · GANADOR</span>
-    <h2>Inventar letras nuevas</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e8c_generation_grid.png" alt="E8c">
-    <ul><li>Recorriendo el mapa aparecen <span class="accent">letras que no estaban</span>.</li></ul>
-  </section>
-
-  <!-- 17 -->
-  <section>
-    <span class="tag">1a · GANADOR</span>
     <h2>De la 'a' a la 'o'</h2>
-    <img src="../ej1a_autoencoder/figs/fig_e8d_interpolation.png" alt="E8d">
+    <img src="../ej1a_secuencial/figs/fig_e8d_interpolation.png" alt="E8d">
     <ul><li>Caminamos en el mapa de la 'a' a la 'o': los pasos del medio son <span class="accent">mezclas continuas</span>.</li></ul>
   </section>
 
-  <!-- 18 -->
+  <!-- 17 -->
   <section>
     <span class="tag">PARTE 2</span>
     <h2>Limpiar ruido</h2>
@@ -180,7 +193,7 @@
     <ul><li>Misma idea de antes, pero la red aprende a <strong>sacar las manchas</strong>.</li></ul>
   </section>
 
-  <!-- 19 -->
+  <!-- 18 -->
   <section>
     <span class="tag">1b · RESUMEN</span>
     <h2>Todo lo que probamos</h2>
@@ -188,7 +201,7 @@
     <ul><li>Los dos experimentos, <span class="accent">para qué</span> y qué dieron.</li></ul>
   </section>
 
-  <!-- 20 -->
+  <!-- 19 -->
   <section>
     <span class="tag">E9</span>
     <h2>¿Por qué un cuello más ancho?</h2>
@@ -196,7 +209,7 @@
     <ul><li>Cuello 2 limpia mal; <span class="accent">cuello 10</span> mucho mejor; más de 10 no suma.</li></ul>
   </section>
 
-  <!-- 21 -->
+  <!-- 20 -->
   <section>
     <span class="tag">E10</span>
     <h2>¿Cuánto ruido al entrenar?</h2>
@@ -204,7 +217,7 @@
     <ul><li>El <span class="accent">15 % es el mejor compromiso</span> (anda bien en casi todo el rango); cada extremo solo gana en su zona (5 % en limpio, 30 % en ruido alto).</li></ul>
   </section>
 
-  <!-- 22 -->
+  <!-- 21 -->
   <section>
     <span class="tag">1b · LA RECETA GANADORA</span>
     <h2>Juntando lo mejor</h2>
@@ -212,7 +225,7 @@
     <ul><li>La receta del limpiador: <span class="accent">cuello 10</span> y el ruido de entrenamiento justo.</li></ul>
   </section>
 
-  <!-- 23 -->
+  <!-- 22 -->
   <section>
     <span class="tag">1b · GANADOR</span>
     <h2>Resultado del limpiador</h2>
@@ -220,7 +233,7 @@
     <ul><li>Deja <span class="accent">≤1 px de error en el 81% de las letras</span> a 15% de ruido (92% a 10%).</li></ul>
   </section>
 
-  <!-- 24 -->
+  <!-- 23 -->
   <section>
     <span class="tag">1b · GANADOR</span>
     <h2>Limpio / sucio / recuperado</h2>
@@ -228,7 +241,7 @@
     <ul><li>Se ve la letra <span class="accent">limpia, la sucia y la que recupera</span> la red.</li></ul>
   </section>
 
-  <!-- 25 -->
+  <!-- 24 -->
   <section>
     <span class="tag">PARTE 3</span>
     <h2>Generar imágenes nuevas</h2>
@@ -236,7 +249,7 @@
     <ul><li>Eso es justo lo que después le permite <strong>inventar</strong>.</li></ul>
   </section>
 
-  <!-- 26 -->
+  <!-- 25 -->
   <section>
     <span class="tag">VAE · DATOS</span>
     <h2>Datos nuevos: emojis</h2>
@@ -244,7 +257,7 @@
     <ul><li>Elegimos 5 emojis como <span class="accent">siluetas claras</span> (descartamos una versión de contornos que se confundía).</li></ul>
   </section>
 
-  <!-- 27 -->
+  <!-- 26 -->
   <section>
     <span class="tag">VAE · RESUMEN</span>
     <h2>Todo lo que probamos</h2>
@@ -252,7 +265,7 @@
     <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con las cuentas de la red <span class="accent">verificadas a mano, una por una</span>.</li></ul>
   </section>
 
-  <!-- 28 -->
+  <!-- 27 -->
   <section>
     <span class="tag">E12</span>
     <h2>El ingrediente que ordena el mapa</h2>
@@ -260,7 +273,7 @@
     <ul><li>Sin ese ingrediente sale <span class="accent">mayormente ruido</span>; con él salen emojis de verdad.</li></ul>
   </section>
 
-  <!-- 29 -->
+  <!-- 28 -->
   <section>
     <span class="tag">E16</span>
     <h2>Por qué uno genera y el otro no</h2>
@@ -268,7 +281,7 @@
     <ul><li>Sin ordenar, los puntos quedan <span class="accent">desparramados</span> (escala ±decenas); con orden, mucho más juntos (±2, cerca del 0).</li></ul>
   </section>
 
-  <!-- 30 -->
+  <!-- 29 -->
   <section>
     <span class="tag">VAE · LA RECETA GANADORA</span>
     <h2>Juntando lo mejor</h2>
@@ -276,7 +289,7 @@
     <ul><li>La receta del VAE ganador: <span class="accent">β=1</span>, el equilibrio entre ordenar el mapa y la calidad de imagen.</li></ul>
   </section>
 
-  <!-- 31 -->
+  <!-- 30 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa de los emojis</h2>
@@ -284,7 +297,7 @@
     <ul><li>Cada tipo de emoji ocupa <span class="accent">su propia zona</span>, separadas por clase (no una sola nube: conserva 5 cúmulos).</li></ul>
   </section>
 
-  <!-- 32 -->
+  <!-- 31 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>Generar muestras nuevas</h2>
@@ -292,7 +305,7 @@
     <ul><li>Reconstruye y además genera <span class="accent">muestras nuevas (no copias)</span>, reconocibles: variaciones continuas de los 5 prototipos.</li></ul>
   </section>
 
-  <!-- 33 -->
+  <!-- 32 -->
   <section>
     <span class="tag">VAE · CONTROL HONESTO</span>
     <h2>Sampleo honesto del VAE (semilla al azar, sin elegir)</h2>
@@ -300,7 +313,7 @@
     <ul><li>Semilla 0 fija (no elegida); en promedio aparece <span class="accent">~85 % de las clases (4.3/5)</span> por tirada sobre 200 semillas — el muestreo no siempre cubre las 5.</li></ul>
   </section>
 
-  <!-- 34 -->
+  <!-- 33 -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa completo decodificado</h2>
@@ -308,7 +321,7 @@
     <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: genera mezclas continuas, no copia.</li></ul>
   </section>
 
-  <!-- 35 -->
+  <!-- 34 -->
   <section>
     <span class="tag">E15</span>
     <h2>El equilibrio</h2>
@@ -316,7 +329,7 @@
     <ul><li>Más orden = mapa más prolijo pero imágenes un poco <span class="accent">peores</span>. Hay que equilibrar.</li></ul>
   </section>
 
-  <!-- 36 -->
+  <!-- 35 -->
   <section>
     <h2>Conclusiones</h2>
     <ul class="big" style="font-size:0.8em">
