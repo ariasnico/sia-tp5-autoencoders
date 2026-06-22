@@ -1,0 +1,4 @@
+variante,arquitectura,n_params,px_max,px_mean,perfectas,leq1
+no_lineal,35-20-2-20-35,1557,5,1.4062,10,17
+lineal,35-2-35,177,17,7.125,0,0
+pca_svd,PCA(2) analítico,0,15,7.1875,0,0

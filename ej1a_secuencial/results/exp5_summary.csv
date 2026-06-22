@@ -1,0 +1,4 @@
+latente,px_max,px_mean,perfectas,leq1,subconjunto,aprende_completo
+1,9,1.4688,14,21,14/32,False
+2,0,0.0,32,32,32/32,True
+3,0,0.0,32,32,32/32,True

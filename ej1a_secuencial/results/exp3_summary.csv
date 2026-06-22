@@ -1,0 +1,4 @@
+lr,px_max,px_mean,perfectas,leq1,final_loss,no_aprende
+0.0003,5,1.4688,10,20,0.158996,True
+0.01,0,0.0,32,32,0.048865,False
+0.3,28,10.5938,0,1,0.596362,True

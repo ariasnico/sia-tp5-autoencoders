@@ -1,0 +1,13 @@
+{
+  "hidden": [
+    20
+  ],
+  "latent": 2,
+  "act_hidden": "tanh",
+  "act_latent": "identity",
+  "act_out": "sigmoid",
+  "loss": "bce",
+  "optimizer": "adam",
+  "lr": 0.01,
+  "epochs": 6000
+}

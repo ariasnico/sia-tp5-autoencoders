@@ -1,0 +1,4 @@
+act_hidden,px_max,px_mean,perfectas,leq1,epoca_conv,final_loss
+tanh,0,0.0,32,32,1550,0.048865
+relu,0,0.0,32,32,650,2.5e-05
+sigmoid,0,0.0,32,32,3500,0.003939

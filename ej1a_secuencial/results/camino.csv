@@ -1,0 +1,8 @@
+paso,exp,eje,ganador,cambio_config,arquitectura,optimizer,lr,loss,act_hidden,latente
+1,exp1,linealidad,no_lineal,False,35-20-2-20-35,sgd,0.5,bce,tanh,2
+2,exp2,optimizador,adam(0.01),True,35-20-2-20-35,adam,0.01,bce,tanh,2
+3,exp3,learning_rate,lr=0.01,False,35-20-2-20-35,adam,0.01,bce,tanh,2
+4,exp4,arquitectura,hidden=20,False,35-20-2-20-35,adam,0.01,bce,tanh,2
+5,exp5,latente,latente=2,False,35-20-2-20-35,adam,0.01,bce,tanh,2
+6,exp6,activacion,tanh (empate),False,35-20-2-20-35,adam,0.01,bce,tanh,2
+7,exp7,loss,bce,False,35-20-2-20-35,adam,0.01,bce,tanh,2

@@ -1,0 +1,3 @@
+loss,px_max,px_mean,perfectas,leq1,final_loss
+bce,0,0.0,32,32,0.048865
+mse,2,0.25,25,31,0.008226
