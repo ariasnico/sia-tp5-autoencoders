@@ -158,7 +158,7 @@ Vemos un salto de calidad entre 5 y 10 neuronas similar al salto entre 2 y 5. No
 
 ---
 
-## Slide 23a — Nueva arquitectura: capas ocultas (primera vista)
+## Slide 23 — Nueva arquitectura: capas ocultas (primera vista)
 
 Con el espacio latente fijo en 10 neuronas, probamos distintos tamaños de capa oculta: 20, 30, 35 y 40 neuronas. Todos entrenados con 15% de ruido.
 
@@ -166,7 +166,7 @@ Con el espacio latente fijo en 10 neuronas, probamos distintos tamaños de capa 
 
 ---
 
-## Slide 23b — Nueva arquitectura: capas ocultas (conclusión)
+## Slide 24 — Nueva arquitectura: capas ocultas (conclusión)
 
 Hay un salto de calidad claro al pasar de 20 a 30 neuronas. Después de 30, aumentar la capacidad no mejora prácticamente nada.
 
@@ -174,13 +174,13 @@ Nos quedamos con 30 neuronas en la capa oculta.
 
 ---
 
-## Slide 24 — ¿Cuánto ruido al entrenar? (descripción)
+## Slide 25 — ¿Cuánto ruido al entrenar? (descripción)
 
 Con la arquitectura final 35-30-10-30-35, es preguntamos cómo se comporta al entrenar con distintos niveles de ruido de entrada.. Después a cada uno lo evaluamos pasándole entradas con niveles de ruido que van de 0% (limpio) hasta 40%, en saltos de 5%.
 
 ---
 
-## Slide 25 — ¿Cuánto ruido al entrenar? (lectura)
+## Slide 26 — ¿Cuánto ruido al entrenar? (lectura)
 
 Lo que vemos es que cada modelo se desenvuelve mejor en el rango de ruido con el que fue entrenado. La red entrenada al 5% funciona un poquito mejor con entrada completamente limpia, pero desde 10% de ruido en adelante, la supera la red entrenada al 15%. Y desde 15% para arriba, la entrenada al 5% es la que peor resultado da.
 
@@ -190,14 +190,14 @@ En resumen, la red entrenada al 15% parece la mejor opción para un uso general:
 
 ---
 
-## Slide 26 — Cualitativamente: efecto del 30% de ruido
+## Slide 27 — Cualitativamente: efecto del 30% de ruido
 
 Cuantitativamente la red entrenada al 30% parece comportarse mejor para entradas con mucho ruido, con 6 píxeles de error en promedio. Pero si miramos visualmente lo que devuelve, en la mayoría de los casos no logra reconstruir algo que se parezca a la letra original. Hay algunos casos donde sí: la P, la H, la N, la X y la Z las recupera bastante bien, probablemente porque son letras bastante distintas a las demás. Pero en general no es funcional.
 Con nuestra arquitectura propuesta, no logramos un modelo que funcione para niveles altos de ruido. La resolución de los datos originales (7x5, 35 pixeles) implica que un 30% de ruido ya es bastante destructivo, aprox. 10 pixeles en promedio se modifican.
 
 ---
 
-## Slide 27 — Resultado del denoiser (ganador)
+## Slide 28 — Resultado del denoiser (ganador)
 
 El denoiser ganador tiene capa oculta de 30 neuronas, espacio latente de 10 y fue entrenado con 15% de ruido.
 
@@ -205,11 +205,86 @@ Lo probamos con 50 generaciones ruidosas × 32 letras por nivel, o sea 1600 entr
 
 ---
 
-## Slide 28 — Limpio / sucio / recuperado
+## Slide 29 — Limpio / sucio / recuperado
 
 Acá podemos ver tríos de imágenes: la letra original limpia, la entrada con ruido que le dimos a la red, y lo que la red devolvió.
 
 Con 10% de ruido reconstruye 4 de 5 letras perfectas. Con 20% todavía se porta bien: la A y la R las recupera, la S perfecta. Con 30% de ruido, que visualmente las letras ya no se parecen a nada, la red igual logra recuperar la G y la S a la perfección. La A, la E y la R no las logra.
+
+---
+
+## Slide 30 — Ahora queremos generar, no sólo reconstruir
+
+Bueno, pasamos al ejercicio 2. Hasta acá el autoencoder reconstruía, pero ahora lo que queremos es generar imágenes nuevas, no sólo copiar las que ya teníamos.
+
+El problema es que el autoencoder de 1a guarda un punto por imagen. Si nosotros elegimos un punto nuevo cualquiera del espacio latente, casi siempre cae en una zona vacía que la red nunca vio durante el entrenamiento, así que lo que sale es ruido. De hecho ya lo vimos en 1a cuando inventamos letras: entre las letras reales aparecían símbolos raros.
+
+Entonces, para poder generar muestras nuevas, necesitamos que el espacio latente tenga una forma conocida, donde cualquier punto que elijamos sea válido. Esa es justamente la idea del Autoencoder Variacional, el VAE.
+
+---
+
+## Slide 31 — Datos nuevos: 5 emojis
+
+Para esta parte cambiamos de dataset. Elegimos 5 emojis: corazón, estrella, gota, luna y rayo. Los tomamos de OpenMoji y los usamos como siluetas rellenas en 20×20 píxeles, o sea 400 valores por imagen. 
+
+A partir de esos 5 símbolos generamos 700 muestras con aumentaciones: a cada simbolo base le aplicamos rotaciones, desplazamientos y ruido suave, 140 veces cada uno. Son 5 clases por 140 igual a 700 muestras. La idea de aumentar así es que cada clase ocupe una pequeña región y no un único punto, para que el VAE aprenda una variedad continua y pueda interpolar entre los símbolos, no que memorice 5 puntos fijos.
+
+---
+
+## Slide 32 — Arquitectura del VAE
+
+Es un autoencoder simétrico: la entrada son los 400 píxeles del emoji, pasa por una capa oculta de 128 neuronas con tangente hiperbólica, y llega al cuello, que es de 2 dimensiones (4 neuronas).
+
+Acá está la diferencia con el autoencoder común: el encoder no devuelve un punto, devuelve una media μ y un logvar (el logaritmo de la varianza). 
+Con eso armamos el z, con el truco de reparametrización, z = μ + σ·ε, y ese z lo pasamos por el decoder: otra capa de 128 con tanh y la salida de 400 con sigmoide. 
+
+Lo entrenamos con Adam y learning rate 1e-, durante 3500 épocas con mini-batches de 128, sobre las 700 muestras de emojis.
+
+---
+
+## Slide 33 — Espacio latente: AE vs VAE
+
+Entrenamos al AE del ej1 y al nuevo VAE con las 700 muestras, 
+Antes de leer el gráfico conviene explicar rápido cómo funciona el VAE. La diferencia clave es que el encoder ya no produce un punto, produce los parámetros de una distribución: una media μ y un desvío σ. Cada imagen, en vez de caer en un punto, enciende una campanita gaussiana en el espacio latente. Después se samplea un z de esa campana y se lo pasa al decoder. Lo importante es que a la pérdida le sumamos el término KL, que empuja cada una de esas campanitas hacia la normal estándar, la N(0,I). Eso es lo que junta todo cerca del origen y rellena los huecos.
+
+Graficamos la media latente de cada emoji: A la izquierda tenemos un autoencoder común, sin el término KL, y a la derecha el VAE. En el eje X e Y están las dos dimensiones del espacio latente.
+
+Vemos que sin el KL, el latente queda disperso, en una escala de decenas. Entonces si sampleamos un punto de la N(0,I), prácticamente siempre caemos en una zona vacía y el decoder genera ruido. 
+En cambio con el KL, el espacio latente queda compacto y centrado en 0, en una escala de más menos 2, conservando los 5 cúmulos separados. Por eso, samplear de la N(0,I) en el VAE sí nos da simbolos que hacen sentido.
+
+---
+
+## Slide 34 — El mapa de los emojis
+
+Este es el mapa del espacio latente del VAE ya entrenado. Cada punto es la media de una muestra, coloreado por clase. Podemos ver que cada clase ocupa su propia zona dentro de la Normal 0 I: no es una sola nube uniforme, todavía se distinguen los 5 cúmulos. Las circunferencias marcan varianza 1σ y 2σ de la normal estándar, vemos que la mayor cantidad de muestras caen dentro de la gaussiana y se distribuyen alrededor de esta.
+
+---
+
+## Slide 35 — Reconstruir el original
+
+Vemos que el VAE sigue reconstruyendo bien. Usamos de entrada algunas de las muestras que creamos nosotros, emojis aumentados. Arriba está el original y abajo la reconstrucción. Vemos que reconstruye bien muestras provenientes de las 5 clases.
+
+---
+
+## Slide 36 — Generar símbolos nuevos
+
+Y acá viene lo interesante, que es generar nuevas muestras. Ahora no usamos ningún emoji de entrada, ni el encoder. 
+Sampleamos puntos sintéticos z de la N(0,I), esos son los (z1, z2) que están anotados sobre cada símbolo, y los pasamos sólo por el decoder.
+
+Vemos que salen muestras nuevas, no son copias de las del dataset: son variaciones continuas de los 5 prototipos. 
+
+---
+
+## Slide 37 — El mapa completo decodificado
+
+Acá hacemos algo parecido a lo que hicimos en con letras inventadas del autoencoder, pero ahora sobre el latente del VAE. Tomamos una grilla de puntos z en el cuadrado de menos 2.5 a 2.5 en cada eje y decodificamos cada celda. 
+Vemos que los emojis se transforman de a poco, uno se va convirtiendo en otro a medida que nos movemos por el espacio. O sea que hay una cobertura continua, no son copias sueltas: vemos que entre cada par de clases hay una transición gradual.
+
+---
+
+## Slide 38 — ¡Gracias!
+
+Bueno, eso fue todo. ¡Muchas gracias!
 
 ---
 

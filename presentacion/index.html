@@ -342,10 +342,29 @@
     </ul>
   </section>
 
-  <!-- 32 · AE vs VAE (la comparativa clave) -->
+  <!-- 32 · arquitectura del VAE -->
+  <section>
+    <span class="tag">VAE · ARQUITECTURA</span>
+    <h2>Arquitectura del VAE</h2>
+<pre style="font-size:0.38em; line-height:1.35; text-align:left; display:inline-block; background:#f8fafc; border:1px solid #e5e7eb; box-shadow:none; padding:8px 16px; margin:0.25em auto; white-space:pre; width:auto;">
+       ENCODER                    cuello                        DECODER
+                       ┌─→ μ (2) ─────┐
+ x(400) ─→ tanh(128) ─→┤              ├─→ z = μ + σ·ε (2) ─→ tanh(128) ─→ sigmoide(400)
+                       └─→ logvar(2) ─┘
+</pre>
+    <ul style="font-size:0.46em;">
+      <li>Capas <span class="accent">400 → 128 → 2 → 128 → 400</span>: entrada/salida de 400 píxeles (20×20), ocultas de 128, espacio latente de 2.</li>
+      <li>El <span class="accent">encoder</span> termina en dos cabezas lineales, <span class="accent">μ</span> y <span class="accent">logvar</span> (predecimos log-varianza para que σ = exp(½·logvar) sea siempre positiva).</li>
+      <li>En el cuello, el <span class="accent">truco de reparametrización</span> <code>z = μ + σ·ε</code> con ε ∼ N(0,1); activación identidad.</li>
+      <li>Activaciones <span class="accent">tanh</span> en las ocultas y <span class="accent">sigmoide</span> en la salida; loss = <span class="accent">BCE + KL</span>.</li>
+    </ul>
+    <p style="font-size:0.46em; margin:0.3em auto 0; max-width:90%;">Entrenamos con <span class="accent">Adam, learning rate 1e-3</span> —el mismo optimizador que ya teníamos del TP3—, durante <span class="accent">3500 épocas</span> con mini-batches de <span class="accent">128</span>, sobre las <span class="accent">700 muestras</span> de emojis (5 clases × 140 aumentaciones) a 20×20.</p>
+  </section>
+
+  <!-- 33 · AE vs VAE (la comparativa clave) -->
   <section>
     <span class="tag">VAE · POR QUÉ FUNCIONA</span>
-    <h2>¿Por qué el VAE genera y el autoencoder común no?</h2>
+    <h2>Espacio latente: AE vs VAE</h2>
     <img src="figs/ej2/fig_e16_ae_vs_vae.png" alt="AE común vs VAE">
     <ul>
       <li>Graficamos la <span class="accent">media latente</span> de cada emoji: a la izquierda un autoencoder común (sin término KL), a la derecha el VAE.</li>
@@ -367,7 +386,6 @@
     <span class="tag">VAE · GANADOR</span>
     <h2>Reconstruir el original</h2>
     <img src="figs/ej2/fig_e14_recon.png" alt="reconstrucción">
-    <ul><li>Pasamos cada emoji por el <span class="accent">VAE entero</span> (encoder → media μ → decoder, sin ruido): arriba el original, abajo la reconstrucción.</li></ul>
   </section>
 
   <!-- 35b · generar -->
@@ -377,7 +395,7 @@
     <img src="figs/ej2/fig_e14_gen.png" alt="generación con z sintético" style="max-height:62vh;">
     <ul>
       <li>Sampleamos puntos sintéticos <span class="accent">z ∼ N(0,I)</span> (el (z1, z2) sobre cada símbolo) y los pasamos <span class="accent">sólo por el decoder</span> — sin encoder, sin ningún emoji de entrada.</li>
-      <li>Salen <span class="accent">muestras nuevas (no copias)</span>: variaciones continuas de los 5 prototipos. Cumple el Generative Autoencoder.</li>
+      <li>Salen <span class="accent">muestras nuevas (no copias)</span>: variaciones continuas de los 5 prototipos.</li>
     </ul>
   </section>
 
@@ -386,21 +404,10 @@
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa completo decodificado</h2>
     <img src="figs/ej2/fig_e17_vae_atlas.png" alt="atlas del latente">
-    <ul><li>Decodificamos una grilla de puntos z ∈ [-2.5, 2.5]²: los emojis se <span class="accent">transforman de a poco</span> uno en otro → cobertura continua, no copias.</li></ul>
+    <ul><li>Decodificamos una grilla de puntos z ∈ [-2.5, 2.5]²: los emojis se <span class="accent">transforman de a poco</span> uno en otro.</li></ul>
   </section>
 
-  <!-- 37 · sampleo honesto -->
-  <section>
-    <span class="tag">VAE · CONTROL HONESTO</span>
-    <h2>¿Siempre salen las 5 clases?</h2>
-    <img src="figs/ej2/fig_e18_sampleo_honesto.png" alt="sampleo honesto" style="max-height:60vh;">
-    <ul>
-      <li>Con una semilla <span class="accent">fija y no elegida</span> (la 0) sampleamos 20 puntos de N(0,I).</li>
-      <li>Sobre 200 semillas, una tirada cubre en promedio <span class="accent">~85 % de las clases (4.3/5)</span>: el muestreo no siempre cubre las 5, y el reparto es desigual (estrella ≈33 %, corazón ≈12 %).</li>
-    </ul>
-  </section>
-
-  <!-- 38 · cierre -->
+  <!-- 37 · cierre -->
   <section class="cover">
     <h1>¡Gracias!</h1>
   </section>

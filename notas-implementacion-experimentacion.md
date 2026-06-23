@@ -242,7 +242,7 @@ Esa es la magia: la estructura del KL convierte "samplear" en algo confiable. En
 Las dos figuras del ej2 son las dos formas de samplear:
 
 - **`fig_e18_sampleo_honesto`** — sampleo honesto: `z ~ N(0,I)` al azar, sin cherry-picking, y decodificás. Demuestra que aún a ciegas salen muestras válidas (lo que el AE simple **no** podía).
-- **`fig_e17_vae_atlas`** — el atlas: recorrés una **grilla** del latente espaciada según la gaussiana (con `norm.ppf`, la inversa de la CDF normal, para que la grilla respete la densidad) y decodificás cada celda → el mapa completo de qué genera cada región.
+- **`fig_e17_vae_atlas`** — el atlas: recorrés una **grilla uniforme** de 13×13 puntos sobre `z ∈ [-2.5, 2.5]²` (con `np.linspace`) y decodificás cada celda → el mapa completo de qué genera cada región. Como el latente es ~N(0,I), ±2.5σ ya cubre casi toda la zona poblada. (Nota: el atlas de MNIST de la cátedra usaba `norm.ppf` para espaciar la grilla según la densidad gaussiana; esta implementación usa grilla uniforme, que para ±2.5σ cubre bien igual.)
 
 ---
 
