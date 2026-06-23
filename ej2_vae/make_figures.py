@@ -86,7 +86,7 @@ def e13():
         m = y == ci; ax.scatter(mu[m, 0], mu[m, 1], s=14, alpha=0.65, label=n, color=PALETTE[ci])
     th = np.linspace(0, 2 * np.pi, 100)
     ax.plot(np.cos(th), np.sin(th), "k--", alpha=0.4); ax.plot(2 * np.cos(th), 2 * np.sin(th), "k--", alpha=0.25)
-    ax.set_title("E13 · Latente del VAE (β=1): el KL empuja cada q(z|x) a N(0,I),\n"
+    ax.set_title("Latente del VAE: el término KL empuja cada q(z|x) a N(0,I),\n"
                  "pero el agregado conserva 5 cúmulos de clase (no es una sola nube)")
     ax.legend(); ax.set_xlabel("z1"); ax.set_ylabel("z2")
     save(fig, "fig_e13_latent.png")
@@ -105,8 +105,8 @@ def e14():
             ax = axes[r, ci]; ax.imshow(imgs[ci].reshape(SZ, SZ), vmin=0, vmax=1)
             ax.set_xticks([]); ax.set_yticks([]); ax.grid(False)
         axes[r, 0].set_ylabel(lab, rotation=0, ha="right", va="center", fontsize=12)
-    fig.suptitle(f"E14 · VAE β=1: reconstrucción y muestras nuevas desde N(0,I)\n"
-                 f"(interpolan, no recuperan ningún emoji exacto del train; semilla {SEED_SAMPLE}, elegida para mostrar las 5; req. 2c)")
+    fig.suptitle(f"VAE: reconstrucción y muestras nuevas desde N(0,I)\n"
+                 f"(interpolan, no recuperan ningún emoji exacto del train; semilla {SEED_SAMPLE}, elegida para mostrar las 5)")
     save(fig, "fig_e14_recon_gen.png")
 
 
@@ -127,8 +127,8 @@ def e16():
     # Un panel por modelo, grande y legible a tamaño proyectado (fuentes >=14).
     fig, axes = plt.subplots(1, 2, figsize=(20, 9))
     th = np.linspace(0, 2 * np.pi, 200)
-    for ax, beta, tit in [(axes[0], 0.0, "AE común (β=0): cada q(z|x) NO está empujada a N(0,I)\nlatente disperso (escala ±decenas)"),
-                          (axes[1], 1.0, "VAE (β=1): KL empuja cada q(z|x) a N(0,I)\nlatente compacto, pero conserva 5 cúmulos")]:
+    for ax, beta, tit in [(axes[0], 0.0, "Autoencoder común (sin término KL): cada q(z|x) NO se empuja a N(0,I)\nlatente disperso (escala ±decenas)"),
+                          (axes[1], 1.0, "VAE (con término KL): el KL empuja cada q(z|x) a N(0,I)\nlatente compacto, pero conserva 5 cúmulos")]:
         mu = load_vae(beta).encode_mean(X)
         for ci, n in enumerate(names):
             m = y == ci
@@ -140,8 +140,8 @@ def e16():
         ax.set_xlabel("z1", fontsize=16); ax.set_ylabel("z2", fontsize=16)
         ax.tick_params(axis="both", labelsize=14)
         ax.legend(fontsize=15, loc="best", framealpha=0.9, markerscale=1.4)
-    fig.suptitle("E16 · Por qué el VAE genera y el AE no: samplear N(0,I) sólo cae en zona "
-                 "entrenada cuando el KL ha empujado el latente hacia N(0,I)", fontsize=19)
+    fig.suptitle("Por qué el VAE genera y el autoencoder común no: samplear N(0,I) sólo cae en zona "
+                 "entrenada cuando el término KL empujó el latente hacia N(0,I)", fontsize=19)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     save(fig, "fig_e16_ae_vs_vae.png")
 
@@ -200,7 +200,7 @@ def atlas():
         for c, xx in enumerate(g):
             canvas[r * SZ:(r + 1) * SZ, c * SZ:(c + 1) * SZ] = vae.generate([[xx, yy]])[0].reshape(SZ, SZ)
     fig, ax = plt.subplots(figsize=(9, 9)); ax.imshow(canvas, vmin=0, vmax=1); ax.axis("off")
-    ax.set_title("Atlas del latente del VAE (β=1): grilla z∈[-2.5, 2.5]² decodificada")
+    ax.set_title("Atlas del latente del VAE: grilla z∈[-2.5, 2.5]² decodificada")
     save(fig, "fig_e17_vae_atlas.png")
 
 
