@@ -57,6 +57,7 @@
     <p class="sub">Nicolás Valentín Arias · Tomás Pinausig · Mateo Pirola · Katia Menshikoff</p>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Bueno, empezamos con el TP5 de Autoencoders. El trabajo tiene tres partes: primero entrenamos un autoencoder básico para comprimir y reconstruir 32 letras ASCII, después entrenamos uno específicamente para limpiar ruido, y por último un VAE para generar imágenes nuevas de emojis.</p>
     </aside>
   </section>
@@ -71,6 +72,7 @@
     </div>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>El dataset que vamos a usar es un conjunto de 32 letras ASCII. Son grillas de 7 por 5 píxeles que pueden ser blancos o negros, así que cada letra son 35 valores.</p>
       <p>También medimos qué tan distintas son las letras entre sí, en cantidad de píxeles. En general se diferencian entre 10 y 20 píxeles. Hay algunos casos extremos: por ejemplo la K y la Q están bastante lejos, y en el otro extremo la L y el pipe son prácticamente iguales.</p>
     </aside>
@@ -91,6 +93,7 @@
     <ul><li>Aprovechamos lo implementado en el <span class="accent">MLP del TP3</span>.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Para empezar, la configuración base del autoencoder aprovecha mucho de lo que ya teníamos del TP3: un perceptrón multicapa con 35 entradas y 35 salidas, una capa oculta de 20 neuronas, y el espacio latente en el medio con 2 neuronas, que es lo que pide la consigna.</p>
       <p>Las activaciones son tangente hiperbólica para las capas ocultas, identidad para la capa latente, y sigmoide para la salida, para que cada píxel salga entre 0 y 1 y después lo umbralizamos en 0.5 para decidir si es blanco o negro.</p>
       <p>Usamos la función de pérdida de entropía cruzada binaria, también heredada del TP3. Arrancamos con SGD, 6000 épocas, y full batch sobre las 32 letras.</p>
@@ -107,6 +110,7 @@
     </table>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>El primer paso fue elegir el optimizador. Probamos tres: SGD con learning rate 0.5, Momentum con learning rate 0.1, y Adam con learning rate 0.01. El resto de la configuración se mantuvo fija.</p>
     </aside>
   </section>
@@ -123,6 +127,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>Podemos ver algo muy bueno: Adam, de entrada, ya logra lo que pide la consigna, que es llegar a cero píxeles de error.</p>
       <p>En el gráfico de barras vemos la cantidad de letras recuperadas perfectas y el error máximo que tuvo. SGD recuperó 10 de 32, con hasta 5 píxeles de error. Momentum recuperó 30 de 32, bastante bien, pero quedaron 2 letras con un pixel de error. Adam las recuperó todas perfectas.</p>
       <p>Como Adam ya logró la perfección, nos quedamos con Adam.</p>
@@ -134,6 +139,7 @@
     <img src="figs/ej1a/fig_exp2_letras.png" alt="reconstrucción de las 32 letras por optimizador" style="max-height:80vh; max-width:96%;">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Visualmente, con SGD se ven letras bastante distintas a las originales. Momentum pifió en solo dos letras, de hecho la letra se lee bien, pero el pipe se convirtió en una L. Adam perfecta.</p>
     </aside>
   </section>
@@ -148,6 +154,7 @@
     </table>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Ahora probamos distintos valores de learning rate: 0.0003, 0.01 y 0.3. El resto de la configuración se mantuvo fija con Adam.</p>
     </aside>
   </section>
@@ -164,6 +171,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Podemos ver que 0.01 es el punto justo. El learning rate grande, 0.3, directamente no aprende: no converge y tiene un error máximo gigante, llegando a errar casi todos los píxeles. El learning rate chico, 0.0003, va en la dirección correcta pero no llega en 6000 épocas. Con más épocas probablemente llegaría al mismo resultado, pero no hace falta. 0.01 llega a cero píxeles de error, así que nos quedamos con ese.</p>
     </aside>
   </section>
@@ -179,6 +187,7 @@
     </table>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>Después investigamos la arquitectura. Probamos cambiar la capa oculta: sin capa oculta (lo que sería equivalente a una compresión lineal tipo PCA), una capa de 10, de 20, de 30, o dos capas apiladas de 20 de cada lado.</p>
     </aside>
   </section>
@@ -190,6 +199,7 @@
     <ul><li><span class="accent">20 → 0 px</span>. 30 y 20+20 empatan → <span class="accent">elegimos una capa con 20 neuronas</span>.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>Sin capa oculta solo recuperó perfecta una letra y tuvo hasta 14 píxeles de error. Con 10 neuronas reconstruye 18 letras pero igual quedan algunas con hasta 4 píxeles de error. A partir de 20 neuronas ya logra el resultado esperado: cero píxeles de error.</p>
       <p>30 neuronas y la doble capa de 20 dieron el mismo resultado que 20. Como con 20 ya alcanza, nos quedamos con eso, no tiene sentido usar más.</p>
     </aside>
@@ -206,6 +216,7 @@
     </table>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>También probamos el tamaño del espacio latente, más allá de lo que pide la consigna. ¿Qué pasa si lo reducimos a una sola neurona? ¿Alcanza con eso para guardar 32 letras distintas?</p>
     </aside>
   </section>
@@ -218,6 +229,7 @@
     <ul><li>1D solo recupera un <span class="accent">subconjunto (14/32)</span>: no se pueden separar 32 letras en una recta. <span class="accent">2D → 0 px</span>.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>No. Con una sola neurona la red solo aprende un subconjunto de las letras: recupera 14 de 32 a la perfección, y las otras tienen hasta 9 píxeles de error. No alcanza con una sola dimensión para separar 32 letras diferentes.</p>
       <p>Con 2 y 3 neuronas llega a cero error. La consigna pide 2, y confirmaos que alcanza, así que nos quedamos con eso.</p>
     </aside>
@@ -228,6 +240,7 @@
     <img src="figs/ej1a/fig_e8a_reconstructions.png" alt="E8a" style="display:block; max-height:88vh; max-width:96%; margin:0 auto;">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Acá podemos ver visualmente que la red está reconstruyendo a la perfección las 32 letras: la fila de arriba son las originales y la de abajo las reconstruidas por el autoencoder.</p>
     </aside>
   </section>
@@ -239,6 +252,7 @@
     <img src="figs/ej1a/fig_e8b_latent2d.png" alt="E8b">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>El espacio latente de 2 dimensiones se puede graficar. Cada letra queda ubicada en un punto del plano. Podemos ver que letras que visualmente se parecen tienden a quedar cerca: la O, la E y la B quedan juntas porque todas tienen una forma circular. La H, la N y la M también quedan relativamente cerca, aunque no tanto.</p>
     </aside>
   </section>
@@ -249,6 +263,7 @@
     <img src="figs/ej1a/fig_e8c_generation_grid.png" alt="E8c" style="display:block; max-height:82vh; max-width:92%; margin:0 auto;">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Si tomamos una grilla de valores en el espacio latente y los pasamos por el decoder, podemos ver qué &quot;inventa&quot; la red. Aparecen las letras reales en sus posiciones, y entre ellas aparecen símbolos inventados, algunos que mezclan rasgos de las letras cercanas.</p>
     </aside>
   </section>
@@ -259,6 +274,7 @@
     <img src="figs/ej1a/fig_e8d_interpolation.png" alt="interpolación a→o" style="display:block; max-height:24vh; max-width:94%; margin:0.3em auto 0;">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>Si en el espacio latente trazamos el vector que va desde la posición de la A hasta la posición de la O, y recorremos ese camino paso a paso, vemos cómo la letra va cambiando gradualmente. La A se deforma, pasa por una especie de U extraña, y termina siendo una O.</p>
     </aside>
   </section>
@@ -269,6 +285,7 @@
     <h2>Denoising — Limpiar ruido</h2>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>Ahora pasamos al denoising: entrenar una red específicamente para limpiar letras que tienen ruido.</p>
     </aside>
   </section>
@@ -281,6 +298,7 @@
     <ul><li>Ruido <span class="accent">bit-flip</span>: cada píxel se invierte con probabilidad <code>p</code>, fresco en cada época.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>El ruido que usamos es bit-flip: cada píxel se invierte con probabilidad P. Es el mismo mecanismo que en el TP4. Importante: en cada época de entrenamiento se generan inputs nuevos con ruido, la red nunca ve dos veces la misma mancha.</p>
       <p>Visualmente, con 10% de ruido las letras todavía se parecen bastante a la original. Con 15% ya se empieza a perder la forma. Con 30% las letras ya no se parecen en nada a la original.</p>
     </aside>
@@ -294,6 +312,7 @@
     <ul><li>No fue entrenado para limpiar: la salida se <span class="accent">deforma</span> a medida que sube el ruido.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>Primero probamos qué pasa si le damos entradas con ruido al autoencoder que ya teníamos, sin reentrenarlo. La respuesta es que no funciona: con 10% de ruido ya empieza a errar en varias letras, y a partir de 15% no logra reconstruir ninguna correctamente. No fue entrenado para limpiar, así que la salida se deforma.</p>
     </aside>
   </section>
@@ -308,6 +327,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>El error crece a medida que sube el ruido de entrada. Hay que entrenar la red específicamente para limpiar.</p>
     </aside>
   </section>
@@ -324,6 +344,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>La idea es simple: generamos entradas ensuciando cada letra, y le exigimos a la red que devuelva la letra original limpia. En vez de pedirle que reconstruya la entrada (limpio → limpio), le pedimos que limpie (sucio → limpio).</p>
       <p>La arquitectura y la función de pérdida son las mismas que antes. Solo cambia qué le pedimos como salida.</p>
       <p>Para las pruebas que vienen, evaluamos 30 realizaciones con ruido por nivel × 32 letras, lo que da 960 entradas por cada nivel de ruido.</p>
@@ -343,6 +364,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Para el denoiser probamos agrandar el espacio latente: 2, 5, 10 y 20 neuronas. Entrenamos cada modelo con 15% de ruido de entrada y después los evaluamos con entradas al 10%, 20% y 30% de ruido.</p>
       <p>El gráfico de la izquierda muestra el promedio de píxeles incorrectos. El de la derecha muestra cuántas letras se recuperan casi perfectas (0 o 1 píxel de error) cuando la entrada tiene 20% de ruido.</p>
       <p>Vemos un salto de calidad entre 5 y 10 neuronas similar al salto entre 2 y 5. Nos quedamos con 10 neuronas en el espacio latente.</p>
@@ -361,6 +383,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Con el espacio latente fijo en 10 neuronas, probamos distintos tamaños de capa oculta: 20, 30, 35 y 40 neuronas. Todos entrenados con 15% de ruido.</p>
       <p>ACÁ LEER LA DIAPO TAMBIEN</p>
     </aside>
@@ -375,6 +398,7 @@
     <ul><li>Nos quedamos con <span class="accent">capa oculta de 30 neuronas</span>: captura casi toda la mejora, sin pagar el costo extra de seguir agrandando la red.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Hay un salto de calidad claro al pasar de 20 a 30 neuronas. Después de 30, aumentar la capacidad no mejora prácticamente nada.</p>
       <p>Nos quedamos con 30 neuronas en la capa oculta.</p>
     </aside>
@@ -391,6 +415,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Con la arquitectura final 35-30-10-30-35, es preguntamos cómo se comporta al entrenar con distintos niveles de ruido de entrada.. Después a cada uno lo evaluamos pasándole entradas con niveles de ruido que van de 0% (limpio) hasta 40%, en saltos de 5%.</p>
     </aside>
   </section>
@@ -408,6 +433,7 @@
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Lo que vemos es que cada modelo se desenvuelve mejor en el rango de ruido con el que fue entrenado. La red entrenada al 5% funciona un poquito mejor con entrada completamente limpia, pero desde 10% de ruido en adelante, la supera la red entrenada al 15%. Y desde 15% para arriba, la entrenada al 5% es la que peor resultado da.</p>
       <p>La red entrenada al 30% devuelve letras más ruidosas para entradas con poco ruido. Recién supera a las demás cuando el ruido de entrada llega a 30% o más.</p>
       <p>En resumen, la red entrenada al 15% parece la mejor opción para un uso general: se porta bien desde entradas limpias hasta 25% de ruido.</p>
@@ -422,6 +448,7 @@
     <p style="font-size:0.62em; margin:0.3em auto 0; max-width:90%;">El denoiser entrenado al 30% parece comportarse mejor que el resto para niveles altos de ruido, con <span class="accent">6px errados en promedio</span> — visualmente vemos que la letra recuperada <span class="accent">no reconstruye la original</span> :(</p>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>Cuantitativamente la red entrenada al 30% parece comportarse mejor para entradas con mucho ruido, con 6 píxeles de error en promedio. Pero si miramos visualmente lo que devuelve, en la mayoría de los casos no logra reconstruir algo que se parezca a la letra original. Hay algunos casos donde sí: la P, la H, la N, la X y la Z las recupera bastante bien, probablemente porque son letras bastante distintas a las demás. Pero en general no es funcional.
 Con nuestra arquitectura propuesta, no logramos un modelo que funcione para niveles altos de ruido. La resolución de los datos originales (7x5, 35 pixeles) implica que un 30% de ruido ya es bastante destructivo, aprox. 10 pixeles en promedio se modifican.</p>
     </aside>
@@ -439,6 +466,7 @@ Con nuestra arquitectura propuesta, no logramos un modelo que funcione para nive
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Mate</strong></p>
       <p>El denoiser ganador tiene capa oculta de 30 neuronas, espacio latente de 10 y fue entrenado con 15% de ruido.</p>
       <p>Lo probamos con 50 generaciones ruidosas × 32 letras por nivel, o sea 1600 entradas por nivel. Con 10% de ruido en la entrada, el 92% de las salidas tiene 0 o 1 píxel de error. Con 15% de ruido, sigue portándose bien: 80% de las letras quedan con 0 o 1 píxel de error.</p>
     </aside>
@@ -450,6 +478,7 @@ Con nuestra arquitectura propuesta, no logramos un modelo que funcione para nive
     <img src="figs/ej1b/fig_e11_triplets.png" alt="E11" style="display:block; max-height:84vh; max-width:96%; margin:0 auto;">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>Acá podemos ver tríos de imágenes: la letra original limpia, la entrada con ruido que le dimos a la red, y lo que la red devolvió.</p>
       <p>Con 10% de ruido reconstruye 4 de 5 letras perfectas. Con 20% todavía se porta bien: la A y la R las recupera, la S perfecta. Con 30% de ruido, que visualmente las letras ya no se parecen a nada, la red igual logra recuperar la G y la S a la perfección. La A, la E y la R no las logra.</p>
     </aside>
@@ -466,6 +495,7 @@ Con nuestra arquitectura propuesta, no logramos un modelo que funcione para nive
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>Bueno, pasamos al ejercicio 2. Hasta acá el autoencoder reconstruía, pero ahora lo que queremos es generar imágenes nuevas, no sólo copiar las que ya teníamos.</p>
       <p>El problema es que el autoencoder de 1a guarda un punto por imagen. Si nosotros elegimos un punto nuevo cualquiera del espacio latente, casi siempre cae en una zona vacía que la red nunca vio durante el entrenamiento, así que lo que sale es ruido. De hecho ya lo vimos en 1a cuando inventamos letras: entre las letras reales aparecían símbolos raros.</p>
       <p>Entonces, para poder generar muestras nuevas, necesitamos que el espacio latente tenga una forma conocida, donde cualquier punto que elijamos sea válido. Esa es justamente la idea del Autoencoder Variacional, el VAE.</p>
@@ -483,6 +513,7 @@ Con nuestra arquitectura propuesta, no logramos un modelo que funcione para nive
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Narias</strong></p>
       <p>Para esta parte cambiamos de dataset. Elegimos 5 emojis: corazón, estrella, gota, luna y rayo. Los tomamos de OpenMoji y los usamos como siluetas rellenas en 20×20 píxeles, o sea 400 valores por imagen.</p>
       <p>A partir de esos 5 símbolos generamos 700 muestras con aumentaciones: a cada simbolo base le aplicamos rotaciones, desplazamientos y ruido suave, 140 veces cada uno. Son 5 clases por 140 igual a 700 muestras. La idea de aumentar así es que cada clase ocupe una pequeña región y no un único punto, para que el VAE aprenda una variedad continua y pueda interpolar entre los símbolos, no que memorice 5 puntos fijos.</p>
     </aside>
@@ -507,6 +538,7 @@ Con nuestra arquitectura propuesta, no logramos un modelo que funcione para nive
     <p style="font-size:0.46em; margin:0.3em auto 0; max-width:90%;">Entrenamos con <span class="accent">Adam, learning rate 1e-3</span> —el mismo optimizador que ya teníamos del TP3—, durante <span class="accent">3500 épocas</span> con mini-batches de <span class="accent">128</span>, sobre las <span class="accent">700 muestras</span> de emojis (5 clases × 140 aumentaciones) a 20×20.</p>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Es un autoencoder simétrico: la entrada son los 400 píxeles del emoji, pasa por una capa oculta de 128 neuronas con tangente hiperbólica, y llega al cuello, que es de 2 dimensiones (4 neuronas).</p>
       <p>Acá está la diferencia con el autoencoder común: el encoder no devuelve un punto, devuelve una media μ y un logvar (el logaritmo de la varianza). 
 Con eso armamos el z, con el truco de reparametrización, z = μ + σ·ε, y ese z lo pasamos por el decoder: otra capa de 128 con tanh y la salida de 400 con sigmoide.</p>
@@ -526,6 +558,7 @@ Con eso armamos el z, con el truco de reparametrización, z = μ + σ·ε, y ese
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Entrenamos al AE del ej1 y al nuevo VAE con las 700 muestras, 
 Antes de leer el gráfico conviene explicar rápido cómo funciona el VAE. La diferencia clave es que el encoder ya no produce un punto, produce los parámetros de una distribución: una media μ y un desvío σ. Cada imagen, en vez de caer en un punto, enciende una campanita gaussiana en el espacio latente. Después se samplea un z de esa campana y se lo pasa al decoder. Lo importante es que a la pérdida le sumamos el término KL, que empuja cada una de esas campanitas hacia la normal estándar, la N(0,I). Eso es lo que junta todo cerca del origen y rellena los huecos.</p>
       <p>Graficamos la media latente de cada emoji: A la izquierda tenemos un autoencoder común, sin el término KL, y a la derecha el VAE. En el eje X e Y están las dos dimensiones del espacio latente.</p>
@@ -542,6 +575,7 @@ En cambio con el KL, el espacio latente queda compacto y centrado en 0, en una e
     <ul><li>Cada clase ocupa <span class="accent">su propia zona</span> dentro de N(0,I): no es una sola nube uniforme, conserva 5 cúmulos. Las circunferencias marcan 1σ y 2σ.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Pina</strong></p>
       <p>Este es el mapa del espacio latente del VAE ya entrenado. Cada punto es la media de una muestra, coloreado por clase. Podemos ver que cada clase ocupa su propia zona dentro de la Normal 0 I: no es una sola nube uniforme, todavía se distinguen los 5 cúmulos. Las circunferencias marcan varianza 1σ y 2σ de la normal estándar, vemos que la mayor cantidad de muestras caen dentro de la gaussiana y se distribuyen alrededor de esta.</p>
     </aside>
   </section>
@@ -553,6 +587,7 @@ En cambio con el KL, el espacio latente queda compacto y centrado en 0, en una e
     <img src="figs/ej2/fig_e14_recon.png" alt="reconstrucción">
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Vemos que el VAE sigue reconstruyendo bien. Usamos de entrada algunas de las muestras que creamos nosotros, emojis aumentados. Arriba está el original y abajo la reconstrucción. Vemos que reconstruye bien muestras provenientes de las 5 clases.</p>
     </aside>
   </section>
@@ -568,6 +603,7 @@ En cambio con el KL, el espacio latente queda compacto y centrado en 0, en una e
     </ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Y acá viene lo interesante, que es generar nuevas muestras. Ahora no usamos ningún emoji de entrada, ni el encoder. 
 Sampleamos puntos sintéticos z de la N(0,I), esos son los (z1, z2) que están anotados sobre cada símbolo, y los pasamos sólo por el decoder.</p>
       <p>Vemos que salen muestras nuevas, no son copias de las del dataset: son variaciones continuas de los 5 prototipos.</p>
@@ -582,6 +618,7 @@ Sampleamos puntos sintéticos z de la N(0,I), esos son los (z1, z2) que están a
     <ul><li>Decodificamos una grilla de puntos z ∈ [-2.5, 2.5]²: los emojis se <span class="accent">transforman de a poco</span> uno en otro.</li></ul>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: Katia</strong></p>
       <p>Acá hacemos algo parecido a lo que hicimos en con letras inventadas del autoencoder, pero ahora sobre el latente del VAE. Tomamos una grilla de puntos z en el cuadrado de menos 2.5 a 2.5 en cada eje y decodificamos cada celda. 
 Vemos que los emojis se transforman de a poco, uno se va convirtiendo en otro a medida que nos movemos por el espacio. O sea que hay una cobertura continua, no son copias sueltas: vemos que entre cada par de clases hay una transición gradual.</p>
     </aside>
@@ -592,6 +629,7 @@ Vemos que los emojis se transforman de a poco, uno se va convirtiendo en otro a 
     <h1>¡Gracias!</h1>
   
     <aside class="notes">
+      <p><strong>🎤 Orador: (a definir)</strong></p>
       <p>Bueno, eso fue todo. ¡Muchas gracias!</p>
     </aside>
   </section>
