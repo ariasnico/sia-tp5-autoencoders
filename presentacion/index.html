@@ -221,7 +221,10 @@
     <span class="tag">1b · MOTIVACIÓN</span>
     <h2>El AE de 1a no limpia</h2>
     <img src="figs/ej1b/fig_ae1a_pxerror.png" alt="px error del AE de 1a">
-    <ul><li>El error <span class="accent">crece con el ruido de entrada</span>. Hay que entrenar la red <span class="accent">específicamente para limpiar</span>.</li></ul>
+    <ul>
+      <li>El error <span class="accent">crece con el ruido de entrada</span>. Hay que entrenar la red <span class="accent">específicamente para limpiar</span>.</li>
+      <li>Para las redes entrenadas, las testeamos a varios niveles de ruido de entrada, generando <span class="accent">30 realizaciones por nivel × 32 letras</span>. Eso da <span class="accent">30 × 32 = 960 entradas</span> por cada nivel de ruido.</li>
+    </ul>
   </section>
 
   <!-- 22 · cómo entrenar un denoiser -->
@@ -242,8 +245,9 @@
     <p class="big">Probamos agrandar la dimensión del espacio latente: <span class="accent">2, 5, 10 y 20</span> neuronas.</p>
     <img src="figs/ej1b/fig_e9_bottleneck.png" alt="barrido de espacio latente" style="max-height:46vh;">
     <ul>
-      <li>Medimos el <span class="accent">promedio de px incorrectos</span> en los resultados generados vs el input original sin ruido.</li>
-      <li>Y la cantidad de letras recuperadas <span class="accent">"perfecto"</span> con 20% de ruido (error de px ∈ {0, 1}).</li>
+      <li>Entrenamos cada modelo con <span class="accent">15% de ruido de entrada</span>.</li>
+      <li>Después evaluamos un forward pass con entradas al <span class="accent">10%, 20% y 30% de ruido</span>; en el gráfico de la izquierda medimos el <span class="accent">promedio de px incorrectos</span> contra la letra original sin ruido.</li>
+      <li>En el gráfico de la derecha medimos cuántas letras se recuperan <span class="accent">"perfecto"</span> con <span class="accent">20% de ruido de entrada</span> (<em>perfecto</em> = error de px ∈ {0, 1}).</li>
     </ul>
   </section>
 
@@ -252,7 +256,20 @@
     <span class="tag">1b · NUEVA ARQUITECTURA</span>
     <h2>Nueva arquitectura — Capas ocultas</h2>
     <img src="figs/ej1b/fig_e9b_hidden.png" alt="barrido de capa oculta" style="max-height:50vh;">
-    <ul><li>Con el latente fijo en 10, barremos el ancho de la capa oculta {20, 30, 35, 40}. El salto real es <span class="accent">20→30</span>; de ahí es meseta → por parsimonia, <span class="accent">30</span>.</li></ul>
+    <ul>
+      <li>Fijamos el espacio latente en <span class="accent">10 neuronas</span>. Hacemos un barrido del tamaño de la capa oculta <span class="accent">{20, 30, 35, 40}</span> y entrenamos cada modelo con <span class="accent">15% de ruido de entrada</span>.</li>
+      <li>En el gráfico de la izquierda medimos nuevamente la cantidad <span class="accent">promedio de px incorrectos</span> en la salida.</li>
+      <li>Para cada red ya entrenada, en el gráfico de la derecha medimos el <span class="accent">porcentaje de letras recuperadas perfectas</span> con <span class="accent">20% de ruido de entrada</span>.</li>
+    </ul>
+  </section>
+
+  <!-- 24 · conclusión ancho oculto -->
+  <section>
+    <span class="tag">1b · NUEVA ARQUITECTURA</span>
+    <h2>Nueva arquitectura — Capas ocultas</h2>
+    <p class="big">Vemos una mejora clara en el salto de <span class="accent">20 → 30</span> neuronas; después, aumentar capacidad da <span class="accent">diminishing returns</span>.</p>
+    <img src="figs/ej1b/fig_e9b_hidden.png" alt="barrido de capa oculta" style="max-height:50vh;">
+    <ul><li>Nos quedamos con <span class="accent">capa oculta de 30 neuronas</span>: captura casi toda la mejora, sin pagar el costo extra de seguir agrandando la red.</li></ul>
   </section>
 
   <!-- 24 · E10 ruido de entrenamiento -->
@@ -260,26 +277,46 @@
     <span class="tag">E10</span>
     <h2>¿Cuánto ruido al entrenar?</h2>
     <img src="figs/ej1b/fig_e10_train_noise.png" alt="E10">
-    <ul><li>El <span class="accent">15 % es el mejor compromiso</span> (anda bien en casi todo el rango); cada extremo solo gana en su zona (5 % en limpio, 30 % en ruido alto).</li></ul>
+    <ul>
+      <li>Con la red final <span class="accent">35 - 30 - 10 - 30 - 35</span>, preguntamos cómo se comporta al entrenar con distintos niveles de ruido de entrada. Entrenamos varios modelos, haciendo un barrido de ruido de entrada <span class="accent">{5%, 15%, 30%}</span>.</li>
+      <li>Testeamos cada modelo entrenado con un forward pass con ruido de entrada <span class="accent">{limpio, 5, 10, 15, 20, 25, 30, 35, 40}</span>. Graficamos la cantidad <span class="accent">promedio de px incorrectos</span> para cada red.</li>
+    </ul>
   </section>
 
-  <!-- 25 · cualitativo: efecto del 30% de ruido -->
+  <!-- 25 · lectura E10 -->
+  <section>
+    <span class="tag">E10</span>
+    <h2>¿Cuánto ruido al entrenar?</h2>
+    <img src="figs/ej1b/fig_e10_train_noise.png" alt="E10">
+    <ul>
+      <li>Vemos que cada modelo se comporta mejor en su <span class="accent">zona</span> de ruido de entrada: exactamente en su nivel de ruido entrenado y cerca de ese nivel.</li>
+      <li>El denoiser entrenado al <span class="accent">5%</span> se comporta levemente mejor con entrada completamente limpia, y es sobrepasado por la red entrenada al <span class="accent">15%</span> desde 5% de ruido en adelante.</li>
+      <li>Además, la red entrenada al <span class="accent">5%</span> es la que peores respuestas da desde <span class="accent">15%</span> de ruido en adelante.</li>
+      <li>Comparado con el resto, el denoiser entrenado con <span class="accent">30%</span> de ruido devuelve letras más ruidosas entre <span class="accent">0% y 30%</span>. Recién supera a las otras redes desde <span class="accent">30%</span> en adelante.</li>
+    </ul>
+  </section>
+
+  <!-- 26 · cualitativo: efecto del 30% de ruido -->
   <section>
     <span class="tag">1b · CUALITATIVO</span>
     <h2>Cualitativamente, ¿qué efecto tiene 30% de ruido sobre los inputs?</h2>
     <img src="figs/ej1b/fig_denoise30_all.png" alt="32 letras denoiser 30%" style="display:block; max-height:60vh; max-width:auto; margin:0 auto;">
-    <p style="font-size:0.62em; margin:0.3em auto 0; max-width:90%;">Si medimos la cantidad de píxeles coincidentes, el denoiser entrenado al 30% parece comportarse bien — visualmente vemos que la letra recuperada <span class="accent">no reconstruye la original</span> :(</p>
+    <p style="font-size:0.62em; margin:0.3em auto 0; max-width:90%;">El denoiser entrenado al 30% parece comportarse mejor que el resto para niveles altos de ruido, con <span class="accent">6px errados en promedio</span> — visualmente vemos que la letra recuperada <span class="accent">no reconstruye la original</span> :(</p>
   </section>
 
-  <!-- 26 · ganador -->
+  <!-- 27 · ganador -->
   <section>
     <span class="tag">1b · GANADOR</span>
-    <h2>Resultado del limpiador</h2>
+    <h2>Resultado del denoiser</h2>
+    <p>Capa oculta de <span class="accent">30 neuronas</span>, latente de <span class="accent">10 neuronas</span>, entrenado con entradas al <span class="accent">15% de ruido</span>.</p>
     <img src="figs/ej1b/fig_e_champion.png" alt="ganador">
-    <ul><li>Deja <span class="accent">≤1 px de error en el 80% de las letras</span> a 15% de ruido (92% a 10%).</li></ul>
+    <ul>
+      <li>Probamos darle entradas con ruido <span class="accent">{10%, 15% y 20%}</span>; vemos que deja <span class="accent">≤1 px de error en el 80% de las letras</span> a <span class="accent">15% de ruido</span>.</li>
+      <li>Cada barra resume <span class="accent">50 generaciones ruidosas × 32 letras</span> por nivel de ruido (<span class="accent">1600 entradas evaluadas</span> por nivel evaluado).</li>
+    </ul>
   </section>
 
-  <!-- 27 · triplets -->
+  <!-- 28 · triplets -->
   <section>
     <h2>Limpio / sucio / recuperado</h2>
     <img src="figs/ej1b/fig_e11_triplets.png" alt="E11" style="display:block; max-height:84vh; max-width:96%; margin:0 auto;">

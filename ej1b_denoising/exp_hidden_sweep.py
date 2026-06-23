@@ -105,7 +105,7 @@ def main():
                     ha="center", va="bottom", fontsize=9, xytext=(0, 2), textcoords="offset points")
     a2.set_ylim(0, max(df["pct_leq1@0.2"]) * 1.25)
     a2.set_title("% recuperadas (≤1px) @ 20% ruido")
-    fig.suptitle("E9b · Barrido de capa oculta con cuello fijo en 10 (denoising)")
+    fig.subplots_adjust(top=0.92)
     fig.savefig(FIGS / "fig_e9b_hidden.png"); plt.close(fig)
     print("\n  -> figs/fig_e9b_hidden.png")
     print(f"  ({time.time()-t0:.0f}s)")

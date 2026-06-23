@@ -36,8 +36,7 @@ def e9():
     a2.bar(df["cuello"].astype(str), df["%<=1px@0.2"], color=SECONDARY)
     a2.set_xlabel("tamaño del espacio latente"); a2.set_ylabel("% letras recuperadas (≤1px) @ test 20%")
     a2.set_title("% recuperadas vs tamaño del espacio latente")
-    fig.suptitle("Espacio latente 2D (de 1a) denoisa mal; agrandarlo a 10 ayuda (20 ya no mejora)")
-    fig.subplots_adjust(top=0.85)
+    fig.subplots_adjust(top=0.92)
     save(fig, "fig_e9_bottleneck.png")
 
 
