@@ -73,10 +73,10 @@
     <h2>La configuración base</h2>
     <table class="cfg">
       <tr><td class="k">Arquitectura</td><td>35-20-2-20-35 (capas [35, 20, 2, 20, 35])</td></tr>
-      <tr><td class="k">Activaciones</td><td>tanh · <em>identity</em> (cuello) · tanh · <em>sigmoid</em> (salida)</td></tr>
-      <tr><td class="k">Init de pesos</td><td>auto por capa (Xavier para tanh/sigmoid, He para relu)</td></tr>
+      <tr><td class="k">Activaciones</td><td>tanh · <em>identity</em> (latente) · tanh · <em>sigmoid</em> (salida)</td></tr>
+      <tr><td class="k">Init de pesos</td><td>auto por capa (Xavier para tanh/sigmoid; uniforme en <em>identity</em> del latente)</td></tr>
       <tr><td class="k">Loss</td><td>BCE — heredada del TP3 (datos binarios)</td></tr>
-      <tr><td class="k">Optimizador</td><td>SGD — arranque naive</td></tr>
+      <tr><td class="k">Optimizador</td><td>SGD</td></tr>
       <tr><td class="k">Épocas · batch</td><td>6000 · 32 (full-batch) · semilla 0</td></tr>
     </table>
     <ul><li>Aprovechamos lo implementado en el <span class="accent">MLP del TP3</span>.</li></ul>
@@ -144,10 +144,9 @@
 
   <!-- 10 · ARQUITECTURA (resultado) -->
   <section>
-    <span class="step">PASO 3 · RESULTADO</span>
     <h2>20 neuronas es el mínimo justo</h2>
     <img src="figs/ej1a/fig_exp4_arquitectura.png" alt="arquitectura">
-    <ul><li>Sin capa oculta = PCA (falla); 10 no alcanza; <span class="accent">20 → 0 px</span>. 30 y 20+20 empatan → por <span class="accent">parsimonia, 20</span>.</li></ul>
+    <ul><li><span class="accent">20 → 0 px</span>. 30 y 20+20 empatan → por <span class="accent">parsimonia, 20</span>.</li></ul>
   </section>
 
   <!-- 11 · LATENTE (config) -->
@@ -166,8 +165,7 @@
     <span class="step">PASO 4 · RESULTADO</span>
     <h2>Con 1 solo se aprende un subconjunto</h2>
     <img src="figs/ej1a/fig_exp5_latente.png" alt="latente">
-    <ul><li>1D solo recupera un <span class="accent">subconjunto (14/32)</span>: no se pueden separar 32 letras en una recta. <span class="accent">2D → 0 px</span>.</li>
-    <li>Confirmamos que el cuello de la consigna alcanza: se mantiene <span class="accent">latente=2</span>.</li></ul>
+    <ul><li>1D solo recupera un <span class="accent">subconjunto (14/32)</span>: no se pueden separar 32 letras en una recta. <span class="accent">2D → 0 px</span>.</li></ul>
   </section>
 
   <!-- 13 -->
@@ -223,7 +221,6 @@
     <img src="figs/ej1b/fig_ae1a_pxerror.png" alt="px error del AE de 1a">
     <ul>
       <li>El error <span class="accent">crece con el ruido de entrada</span>. Hay que entrenar la red <span class="accent">específicamente para limpiar</span>.</li>
-      <li>Para las redes entrenadas, las testeamos a varios niveles de ruido de entrada, generando <span class="accent">30 realizaciones por nivel × 32 letras</span>. Eso da <span class="accent">30 × 32 = 960 entradas</span> por cada nivel de ruido.</li>
     </ul>
   </section>
 
@@ -235,6 +232,7 @@
       <li>Generamos las entradas ensuciando cada letra con nuestro <span class="accent">ruido bit-flip</span>; regeneramos los inputs en cada época (la red nunca ve dos veces la misma "mancha").</li>
       <li>Entrenamos la red con esas entradas sucias, y le exigimos que devuelva la <span class="accent">letra original limpia</span>.</li>
       <li>Es la <span class="accent">misma red y la misma loss (BCE)</span> que el autoencoder; ahora le pedimos, en vez de <code>x → x</code>, <span class="accent">sucio → limpio</span>.</li>
+      <li>Para las redes entrenadas, las testeamos a varios niveles de ruido de entrada, generando <span class="accent">30 realizaciones por nivel × 32 letras</span>. Eso da <span class="accent">30 × 32 = 960 entradas</span> por cada nivel de ruido.</li>
     </ul>
   </section>
 
@@ -322,101 +320,83 @@
     <img src="figs/ej1b/fig_e11_triplets.png" alt="E11" style="display:block; max-height:84vh; max-width:96%; margin:0 auto;">
   </section>
 
-  <!-- 24 -->
+  <!-- 30 · transición al VAE -->
   <section>
-    <span class="tag">PARTE 3</span>
-    <h2>Generar imágenes nuevas</h2>
-    <p class="big">El nuevo modelo guarda <span class="accent">una zona</span> por imagen, no un punto.</p>
-    <ul><li>Eso es justo lo que después le permite <strong>inventar</strong>.</li></ul>
+    <span class="tag">EJERCICIO 2 · VAE</span>
+    <h2>Ahora queremos generar, no sólo reconstruir</h2>
+    <p class="big">El autoencoder de 1a guarda <span class="accent">un punto</span> por imagen. Si elegimos un punto nuevo del espacio latente, casi siempre cae en una <span class="accent">zona vacía</span> que la red nunca vio → sale ruido.</p>
+    <ul>
+      <li>Para <span class="accent">generar</span> muestras nuevas necesitamos que el espacio latente tenga una <span class="accent">forma conocida</span>, donde cualquier punto que elijamos sea válido.</li>
+      <li>Esa es la idea del <span class="accent">Autoencoder Variacional (VAE)</span>.</li>
+    </ul>
   </section>
 
-  <!-- 25 -->
+  <!-- 31 · dataset emojis -->
   <section>
     <span class="tag">VAE · DATOS</span>
-    <h2>Datos nuevos: emojis</h2>
+    <h2>Datos nuevos: 5 emojis</h2>
     <img src="figs/ej2/contact_sheet.png" alt="contact sheet">
-    <ul><li>Elegimos 5 emojis como <span class="accent">siluetas claras</span> (descartamos una versión de contornos que se confundía).</li></ul>
+    <ul>
+      <li>Elegimos 5 emojis (corazón, estrella, gota, luna, rayo) como <span class="accent">siluetas rellenas</span> a 20×20; descartamos la versión de contornos que se confundía a baja resolución.</li>
+      <li>700 muestras con augmentaciones moderadas y assets cacheados → <span class="accent">reproducible offline</span>.</li>
+    </ul>
   </section>
 
-  <!-- 26 -->
+  <!-- 32 · AE vs VAE (la comparativa clave) -->
   <section>
-    <span class="tag">VAE · RESUMEN</span>
-    <h2>Todo lo que probamos</h2>
-    <img src="figs/ej2/tabla_vae_resultados.png" alt="barrido vae">
-    <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con las cuentas de la red <span class="accent">verificadas a mano, una por una</span>.</li></ul>
+    <span class="tag">VAE · POR QUÉ FUNCIONA</span>
+    <h2>¿Por qué el VAE genera y el autoencoder común no?</h2>
+    <img src="figs/ej2/fig_e16_ae_vs_vae.png" alt="AE común vs VAE">
+    <ul>
+      <li>Graficamos la <span class="accent">media latente</span> de cada emoji: a la izquierda un autoencoder común (sin término KL), a la derecha el VAE.</li>
+      <li>Sin el KL el latente queda <span class="accent">disperso</span> (escala de ±decenas): samplear N(0,I) cae en zona vacía → ruido.</li>
+      <li>Con el KL el latente es <span class="accent">compacto y centrado en 0</span> (±2) pero conserva los 5 cúmulos → samplear N(0,I) sí da emojis.</li>
+    </ul>
   </section>
 
-  <!-- 27 -->
-  <section>
-    <span class="tag">E12</span>
-    <h2>El ingrediente que ordena el mapa</h2>
-    <img src="figs/ej2/fig_e12_beta_sampling.png" alt="E12">
-    <ul><li>Sin ese ingrediente sale <span class="accent">mayormente ruido</span>; con él salen emojis de verdad.</li></ul>
-  </section>
-
-  <!-- 28 -->
-  <section>
-    <span class="tag">E16</span>
-    <h2>Por qué uno genera y el otro no</h2>
-    <img src="figs/ej2/fig_e16_ae_vs_vae.png" alt="E16">
-    <ul><li>Sin ordenar, los puntos quedan <span class="accent">desparramados</span> (escala ±decenas); con orden, mucho más juntos (±2, cerca del 0).</li></ul>
-  </section>
-
-  <!-- 29 -->
-  <section>
-    <span class="tag">VAE · LA RECETA GANADORA</span>
-    <h2>Juntando lo mejor</h2>
-    <img src="figs/ej2/tabla_vae_config.png" alt="config VAE">
-    <ul><li>La receta del VAE ganador: <span class="accent">β=1</span>, el equilibrio entre ordenar el mapa y la calidad de imagen.</li></ul>
-  </section>
-
-  <!-- 30 -->
+  <!-- 34 · mapa del latente -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa de los emojis</h2>
-    <img src="figs/ej2/fig_e13_latent.png" alt="E13">
-    <ul><li>Cada tipo de emoji ocupa <span class="accent">su propia zona</span>, separadas por clase (no una sola nube: conserva 5 cúmulos).</li></ul>
+    <img src="figs/ej2/fig_e13_latent.png" alt="latente del VAE">
+    <ul><li>Cada clase ocupa <span class="accent">su propia zona</span> dentro de N(0,I): no es una sola nube uniforme, conserva 5 cúmulos. Las circunferencias marcan 1σ y 2σ.</li></ul>
   </section>
 
-  <!-- 31 -->
+  <!-- 35 · reconstruir y generar -->
   <section>
     <span class="tag">VAE · GANADOR</span>
-    <h2>Generar muestras nuevas</h2>
-    <img src="figs/ej2/fig_e14_recon_gen.png" alt="E14">
-    <ul><li>Reconstruye y además genera <span class="accent">muestras nuevas (no copias)</span>, reconocibles: variaciones continuas de los 5 prototipos.</li></ul>
+    <h2>Reconstruir y generar muestras nuevas</h2>
+    <img src="figs/ej2/fig_e14_recon_gen.png" alt="reconstrucción y generación">
+    <ul><li>Arriba el original, en el medio la reconstrucción, abajo <span class="accent">muestras generadas desde N(0,I)</span>.</li>
+    <li>Las generadas <span class="accent">no copian</span> ningún emoji del train: son variaciones continuas de los 5 prototipos (cumple el Generative Autoencoder).</li></ul>
   </section>
 
-  <!-- 32 -->
-  <section>
-    <span class="tag">VAE · CONTROL HONESTO</span>
-    <h2>Sampleo honesto del VAE (semilla al azar, sin elegir)</h2>
-    <img src="figs/ej2/fig_e18_sampleo_honesto.png" alt="E18 sampleo honesto" style="max-height:60vh;">
-    <ul><li>Semilla 0 fija (no elegida); en promedio aparece <span class="accent">~85 % de las clases (4.3/5)</span> por tirada sobre 200 semillas — el muestreo no siempre cubre las 5.</li></ul>
-  </section>
-
-  <!-- 33 -->
+  <!-- 36 · atlas -->
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa completo decodificado</h2>
-    <img src="figs/ej2/fig_e17_vae_atlas.png" alt="E17">
-    <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: genera mezclas continuas, no copia.</li></ul>
+    <img src="figs/ej2/fig_e17_vae_atlas.png" alt="atlas del latente">
+    <ul><li>Decodificamos una grilla de puntos z ∈ [-2.5, 2.5]²: los emojis se <span class="accent">transforman de a poco</span> uno en otro → cobertura continua, no copias.</li></ul>
   </section>
 
-  <!-- 34 -->
+  <!-- 37 · sampleo honesto -->
   <section>
-    <span class="tag">E15</span>
-    <h2>El equilibrio</h2>
-    <img src="figs/ej2/fig_e15_recon_kl.png" alt="E15">
-    <ul><li>Más orden = mapa más prolijo pero imágenes un poco <span class="accent">peores</span>. Hay que equilibrar.</li></ul>
+    <span class="tag">VAE · CONTROL HONESTO</span>
+    <h2>¿Siempre salen las 5 clases?</h2>
+    <img src="figs/ej2/fig_e18_sampleo_honesto.png" alt="sampleo honesto" style="max-height:60vh;">
+    <ul>
+      <li>Con una semilla <span class="accent">fija y no elegida</span> (la 0) sampleamos 20 puntos de N(0,I).</li>
+      <li>Sobre 200 semillas, una tirada cubre en promedio <span class="accent">~85 % de las clases (4.3/5)</span>: el muestreo no siempre cubre las 5, y el reparto es desigual (estrella ≈33 %, corazón ≈12 %).</li>
+    </ul>
   </section>
 
-  <!-- 35 -->
+  <!-- 38 · conclusiones -->
   <section>
     <h2>Conclusiones</h2>
     <ul class="big" style="font-size:0.8em">
       <li><strong>1a:</strong> con curvas y 2 números guardamos las 32 letras perfecto; un método clásico no llega.</li>
-      <li><strong>1b:</strong> limpiar ruido necesita un espacio latente más grande, y el ruido de entrenamiento es un equilibrio.</li>
-      <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> muestras nuevas (no copias) reconocibles.</li>
+      <li><strong>1b:</strong> limpiar ruido necesita un espacio latente más grande, y el nivel de ruido de entrenamiento es un equilibrio.</li>
+      <li><strong>VAE:</strong> al hacer que el encoder produzca una distribución y empujar el latente a N(0,I), el modelo pasa de resumir a <strong>generar</strong> muestras nuevas (no copias) reconocibles.</li>
     </ul>
   </section>
 
