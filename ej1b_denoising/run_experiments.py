@@ -30,7 +30,7 @@ X = load_font(FONT)
 N = len(X)
 
 
-def make_dae(latent=10, hidden=(25,), seed=SEED):
+def make_dae(latent=10, hidden=(30,), seed=SEED):
     return build_ae(D, hidden=hidden, latent=latent, act_hidden="tanh",
                     act_latent="identity", act_out="sigmoid", loss="bce",
                     optimizer=Adam(0.01), seed=seed)
@@ -51,11 +51,11 @@ def eval_denoise(net, levels, trials=30, seed=123):
 TEST_LEVELS = [0.0, 0.05, 0.10, 0.15, 0.20, 0.30, 0.40]
 t0 = time.time()
 
-print("== E9: barrido de ancho de cuello (p_train=0.15) ==")
+print("== E9: barrido de ancho de cuello (p_train=0.15, capa oculta=20, base de 1a) ==")
 rows = []
 for latent in [2, 5, 10, 20]:
     rng = np.random.default_rng(SEED)
-    dae = make_dae(latent=latent)
+    dae = make_dae(latent=latent, hidden=(20,))   # base 35-20 (heredada de 1a); barremos el cuello
     train_denoising(dae, X, 0.15, EPOCHS, rng)
     ev = eval_denoise(dae, [0.1, 0.2, 0.3])
     rows.append({"cuello": latent,
@@ -97,6 +97,6 @@ champ.save(RES / "dae_champion.npz")  # -> tripletes E11 (ganador reforzado)
 
 (RES / "config_used.json").write_text(json.dumps(
     {"seed": SEED, "epochs_sweep": EPOCHS, "epochs_champion": EPOCHS_CHAMP,
-     "dae": "35-25-{cuello}-25-35 | tanh/identity/sigmoid | BCE | Adam(0.01)",
-     "champion": "cuello=10, p_train=0.15", "test_levels": TEST_LEVELS}, indent=2))
+     "dae": "35-30-{cuello}-30-35 | tanh/identity/sigmoid | BCE | Adam(0.01)",
+     "champion": "cuello=10, oculta=30, p_train=0.15", "test_levels": TEST_LEVELS}, indent=2))
 print(f"\nOK 1b en {time.time() - t0:.1f}s. DAE ganador reforzado (15000 ep) guardado.")

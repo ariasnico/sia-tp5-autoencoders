@@ -1,4 +1,10 @@
-import base64, re, os, urllib.request
+import base64, re, os, subprocess, sys, urllib.request
+
+# Sincroniza presentacion/figs/ con las figuras fuente ANTES de embeber,
+# así el offline nunca queda con copias viejas. (Paso instantáneo.)
+print("Sincronizando figuras (sync_figs.py)...")
+subprocess.run([sys.executable, "sync_figs.py"], check=True,
+               cwd=os.path.dirname(os.path.abspath(__file__)))
 
 SRC = "index.html"
 OUT = "presentacion_offline.html"
@@ -34,12 +40,12 @@ def img_data(m):
         b = base64.b64encode(f.read()).decode("ascii")
     return f'src="data:image/png;base64,{b}"'
 
-h, n = re.subn(r'src="(\.\./[^"]+\.png)"', img_data, h)
+h, n = re.subn(r'src="(figs/[^"]+\.png)"', img_data, h)
 print(f"  imagenes embebidas: {n}")
 
 open(OUT, "w", encoding="utf-8").write(h)
 
 left_https = len(re.findall(r'(?:href|src)="https://', h))
-left_rel = len(re.findall(r'src="\.\./', h))
+left_rel = len(re.findall(r'src="(?:\.\./|figs/)', h))
 print(f"\nOK -> {OUT}: {os.path.getsize(OUT)/1024/1024:.2f} MB")
-print(f"refs https restantes: {left_https} | refs relativas '../' restantes: {left_rel}")
+print(f"refs https restantes: {left_https} | refs a archivos restantes: {left_rel}")

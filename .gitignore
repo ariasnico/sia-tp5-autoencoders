@@ -31,3 +31,9 @@ PRESENTACION.md
 # material de catedra (referencia, no se redistribuye) y debug
 kerasautoencoders.py
 nobrain.png
+
+# config de editores / herramientas locales (no son entregables)
+.claude/
+.obsidian/
+Untitled.md
+pasted-image/

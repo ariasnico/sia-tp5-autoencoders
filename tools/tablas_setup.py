@@ -98,7 +98,7 @@ render_table(
     "1b · Denoising — configuración",
     ["Parámetro", "Valor", "Por qué"],
     [
-        ["Arquitectura", "35-25-{cuello}-25-35", "cuello variable; ganador usa 10 (E9)"],
+        ["Arquitectura", "35-30-{cuello}-30-35", "cuello 10 (E9); capa oculta 30 (E9b)"],
         ["Entrenamiento", "bit-flip(p) → limpio", "entrada ruidosa, target limpio"],
         ["p_train (ganador)", "0.15", "compromiso del trade-off (E10)"],
         ["Loss / Opt", "BCE / Adam(0.01)", "igual que 1a"],
@@ -111,7 +111,8 @@ render_table(
     "1b · Denoising — experimentos: qué, para qué y resultado",
     ["Exp", "Para qué (la pregunta)", "Qué variamos", "Resultado / lectura"],
     [
-        ["E9", "¿qué cuello para limpiar?", "cuello: 2,5,10,20", "2→48% · 10→59% · 20 satura"],
+        ["E9", "¿qué cuello para limpiar?", "cuello: 2,5,10,20", "2→44% · 10→54% · 20 satura"],
+        ["E9b", "¿qué ancho de capa oculta?", "oculta: 20,30,35,40", "20→54% · 30→63% · plateau → 30 (parsimonia)"],
         ["E10", "¿cuánto ruido en el train?", "p_train: 0.05/0.15/0.30", "curvas se cruzan: trade-off"],
     ], RES, "tabla_1b_resultados.png")
 

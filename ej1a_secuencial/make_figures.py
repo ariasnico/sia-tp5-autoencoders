@@ -329,6 +329,52 @@ def _legacy_imports():
     return np, X, N, LABELS, H, W, hamming_matrix, pixel_density, decode, MLP, curves
 
 
+def fig_concept_vector():
+    """Sección del mapa latente con el concept-vector 'a'→'o' dibujado, los puntos de
+    interpolación sobre la recta, y miniaturas decodificadas en cada paso (cualitativo)."""
+    import numpy as np
+    from tp5lib.fonts import load_font, LABELS, H, W
+    from tp5lib.autoencoder import decode
+    from mlp.network import MLP
+    Z = np.load(RES / "champion_latent.npz")["Z"]
+    ae = MLP.load(RES / "champion_1a.npz")
+    ia, io = LABELS.index("a"), LABELS.index("o")
+    za, zo = Z[ia], Z[io]
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+    # contexto: todas las letras
+    ax.scatter(Z[:, 0], Z[:, 1], s=26, c=GREY, zorder=2)
+    for j, lab in enumerate(LABELS):
+        ax.annotate(lab, (Z[j, 0], Z[j, 1]), fontsize=10, ha="center", va="center",
+                    color="#64748B", zorder=3)
+    # el concept-vector a -> o
+    ax.annotate("", xy=(zo[0], zo[1]), xytext=(za[0], za[1]),
+                arrowprops=dict(arrowstyle="-|>", lw=2.6, color=ACCENT,
+                                shrinkA=0, shrinkB=0), zorder=5)
+    # puntos de interpolación (mismos S=9 que la tira de letras)
+    S = 9
+    ts = np.linspace(0, 1, S)
+    pts = np.array([(1 - t) * za + t * zo for t in ts])
+    ax.scatter(pts[:, 0], pts[:, 1], s=55, c=ACCENT, zorder=6,
+               edgecolor="white", linewidth=0.8)
+    # resaltar extremos
+    ax.scatter([za[0], zo[0]], [za[1], zo[1]], s=190, facecolors="none",
+               edgecolors=PRIMARY, linewidths=2.2, zorder=7)
+    ax.annotate("a", (za[0], za[1]), fontsize=15, fontweight="bold", color=PRIMARY,
+                ha="center", va="center", zorder=8)
+    ax.annotate("o", (zo[0], zo[1]), fontsize=15, fontweight="bold", color=PRIMARY,
+                ha="center", va="center", zorder=8)
+    # sección del mapa: zoom al segmento con margen
+    mx = abs(zo[0] - za[0]) * 0.6 + 2.0
+    my = abs(zo[1] - za[1]) * 0.6 + 2.0
+    cx, cy = (za[0] + zo[0]) / 2, (za[1] + zo[1]) / 2
+    half = max(abs(zo[0] - za[0]), abs(zo[1] - za[1])) / 2 + max(mx, my)
+    ax.set_xlim(cx - half, cx + half); ax.set_ylim(cy - half, cy + half)
+    ax.set_xlabel("z1"); ax.set_ylabel("z2")
+    ax.set_title("Concept-vector: el camino latente que recorremos de 'a' a 'o'")
+    save(fig, "fig_concept_vector.png")
+
+
 def fig_e0a():
     np, X, N, LABELS, H, W, *_ = _legacy_imports()
     fig, ax = plt.subplots(4, 8, figsize=(12, 7))
@@ -607,8 +653,11 @@ if __name__ == "__main__":
     import sys as _sys
     only_letras = "--letras" in _sys.argv
     only_legacy = "--legacy" in _sys.argv
+    only_concept = "--concept" in _sys.argv
     print("Generando figuras en figs/ ...")
-    if only_letras:
+    if only_concept:
+        fig_concept_vector()
+    elif only_letras:
         fig_exp2_letras()
     elif only_legacy:
         fig_e0a(); fig_e0b(); fig_e0c()

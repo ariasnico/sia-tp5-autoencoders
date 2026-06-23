@@ -221,11 +221,11 @@
     <p><span class="qlabel">Qué miramos.</span> Las 32 letras (7×5 = 35 píxeles, blanco y negro), la distancia
       entre cada par (cuántos píxeles las diferencian) y cuántos píxeles tiene encendidos cada una.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e0a_dataset_letters.png" alt="las 32 letras del dataset">
+      <img src="figs/ej1a/fig_e0a_dataset_letters.png" alt="las 32 letras del dataset">
       <figcaption>Las 32 letras del dataset (<code>` a…z { | } ~ DEL</code>), cada una de 7×5 píxeles.</figcaption>
     </figure>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e0b_dataset_stats.png" alt="estadísticas del dataset">
+      <img src="figs/ej1a/fig_e0b_dataset_stats.png" alt="estadísticas del dataset">
       <figcaption>Izq: matriz de distancias entre letras. Der: cuántos píxeles encendidos tiene cada una.</figcaption>
     </figure>
     <div class="chips">
@@ -255,7 +255,7 @@
     <p><span class="qlabel">Qué probamos.</span> Tres modelos comprimiendo a 2D: un autoencoder
       <strong>no-lineal</strong>, un autoencoder <strong>lineal</strong>, y <strong>PCA</strong> de 2 componentes.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e1_linear_vs_pca.png" alt="lineal vs PCA vs no-lineal">
+      <img src="figs/ej1a/fig_e1_linear_vs_pca.png" alt="lineal vs PCA vs no-lineal">
       <figcaption>Error de reconstrucción (en píxeles) de cada modelo. Menos es mejor.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -294,7 +294,7 @@
     <p><span class="qlabel">Qué probamos.</span> El mismo modelo no-lineal, variando el ancho del cuello:
       <strong>1, 2, 3, 5 y 8</strong> dimensiones.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e2_latent_elbow.png" alt="el codo de la dimensión latente">
+      <img src="figs/ej1a/fig_e2_latent_elbow.png" alt="el codo de la dimensión latente">
       <figcaption>El "codo": el error se desploma al pasar de 1 a 2 dimensiones, y después ya está perfecto.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -325,7 +325,7 @@
     <p><span class="qlabel">Qué probamos.</span> Distintos tamaños de capa oculta: <strong>ninguna, 10, 20, 30,
       y dos capas de 20</strong>.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e3_architecture.png" alt="barrido de arquitectura">
+      <img src="figs/ej1a/fig_e3_architecture.png" alt="barrido de arquitectura">
       <figcaption>Izq: error según el tamaño de la red. Der: qué tan rápido y bajo converge cada una.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -371,7 +371,7 @@
     <p><span class="qlabel">Qué probamos.</span> <strong>SGD, Momentum y Adam</strong> (cada uno con su mejor
       paso de aprendizaje).</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e4_optimizers.png" alt="comparación de optimizadores">
+      <img src="figs/ej1a/fig_e4_optimizers.png" alt="comparación de optimizadores">
       <figcaption>Curva de error durante el entrenamiento (escala logarítmica). Más abajo = mejor.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -403,7 +403,7 @@
     <p><span class="qlabel">Qué probamos.</span> Con Adam, tres pasos: <strong>0.0003 (chico), 0.01 (justo) y
       0.3 (grande)</strong>.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e5_lr.png" alt="barrido de learning rate">
+      <img src="figs/ej1a/fig_e5_lr.png" alt="barrido de learning rate">
       <figcaption>El paso chico baja lento; el justo llega abajo; el grande queda atascado arriba.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -436,7 +436,7 @@
     <p><span class="qlabel">Qué probamos.</span> Tres activaciones en la capa oculta: <strong>tanh, relu y
       sigmoid</strong>.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e6_activation.png" alt="comparación de activaciones">
+      <img src="figs/ej1a/fig_e6_activation.png" alt="comparación de activaciones">
       <figcaption>Las tres llegan a 0 px; lo único que cambia es la velocidad de convergencia.</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>Las <strong>tres llegan a 0 px</strong> — cualquier no-linealidad
@@ -466,7 +466,7 @@
     <p><span class="qlabel">Qué probamos.</span> <strong>BCE</strong> (entropía cruzada binaria) vs
       <strong>MSE</strong> (error cuadrático).</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e7_loss.png" alt="BCE vs MSE">
+      <img src="figs/ej1a/fig_e7_loss.png" alt="BCE vs MSE">
       <figcaption>Izq: error final de cada loss. Der: cómo converge cada una.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -504,20 +504,20 @@
     <p style="margin-top:22px"><strong class="azul">1) Reconstrucción perfecta</strong> — la red devuelve las 32
       letras idénticas a las originales.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e8a_reconstructions.png" alt="reconstrucciones del ganador">
+      <img src="figs/ej1a/fig_e8a_reconstructions.png" alt="reconstrucciones del ganador">
       <figcaption>Arriba cada letra original, abajo la reconstrucción de la red. Iguales: 0 píxeles de error.</figcaption>
     </figure>
 
     <p><strong class="azul">2) El mapa de 2 números</strong> — dónde ubica cada letra en el espacio latente 2D.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e8b_latent2d.png" alt="espacio latente 2D">
+      <img src="figs/ej1a/fig_e8b_latent2d.png" alt="espacio latente 2D">
       <figcaption>Las 32 letras en el mapa de 2 dimensiones; el recuadro de la derecha es un zoom del centro.</figcaption>
     </figure>
 
     <p><strong class="azul">2b) ¿El mapa preservó el parecido entre letras?</strong> — comparamos la distancia
       entre cada par de letras en píxeles (Hamming) vs en el mapa latente.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
+      <img src="figs/ej1a/fig_e8e_latent_vs_hamming.png" alt="Hamming vs latente">
       <figcaption>Distancia en píxeles (izq.) vs en el mapa 2D (der.), mismas letras y orden. Spearman ρ = 0.57.</figcaption>
     </figure>
     <div class="box teach"><h4>💡 El contraste (un insight fino)</h4>El AE preserva la <strong>distinguibilidad
@@ -531,14 +531,14 @@
     <p><strong class="azul">3) Inventar letras nuevas</strong> — recorriendo el mapa aparecen formas que no estaban
       en el dataset.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e8c_generation_grid.png" alt="grilla de generación">
+      <img src="figs/ej1a/fig_e8c_generation_grid.png" alt="grilla de generación">
       <figcaption>Cada celda es un punto del mapa decodificado. En las zonas pobladas salen letras nuevas.</figcaption>
     </figure>
 
     <p><strong class="azul">4) De la <code>a</code> a la <code>o</code></strong> — caminar en línea recta entre dos
       letras genera mezclas continuas.</p>
     <figure>
-      <img src="../ej1a_secuencial/figs/fig_e8d_interpolation.png" alt="interpolación a → o">
+      <img src="figs/ej1a/fig_e8d_interpolation.png" alt="interpolación a → o">
       <figcaption>9 pasos del mapa, de la <code>a</code> a la <code>o</code>: los del medio son glifos intermedios nuevos.</figcaption>
     </figure>
 
@@ -578,11 +578,11 @@
     </ul>
     <p>El ruido es <strong>bit-flip</strong>: cada píxel se da vuelta (0↔1) con cierta probabilidad <code>p</code>,
       y es <strong>fresco en cada época</strong> (la red nunca ve dos veces la misma mancha). Usamos las mismas 32
-      letras, pero con una arquitectura un poco distinta: <code>35-25-{cuello}-25-35</code>.</p>
+      letras, pero con una arquitectura un poco distinta: <code>35-30-{cuello}-30-35</code>.</p>
     <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Receta base 1b <span class="car">▸</span></button>
       <div class="cfg-panel base"><div class="cfg-h">Config común · E9–ganador</div><dl>
         <dt>Dataset</dt><dd>mismas 32 letras de <code>font.h</code> (35 px binarios)</dd>
-        <dt>Arquitectura</dt><dd><code>35-25-{cuello}-25-35</code> (capas <code>[35,25,cuello,25,35]</code>)</dd>
+        <dt>Arquitectura</dt><dd><code>35-30-{cuello}-30-35</code> (capas <code>[35,30,cuello,30,35]</code>)</dd>
         <dt>Activaciones</dt><dd>tanh / identity (cuello) / tanh / sigmoid (salida)</dd>
         <dt>Init pesos</dt><dd>auto por capa (Xavier para tanh/sigmoid, uniforme para el cuello)</dd>
         <dt>Loss</dt><dd>BCE</dd>
@@ -597,35 +597,68 @@
   <section class="exp" id="e9">
     <div class="eyebrow">Parte 1b · Experimento E9</div>
     <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
-      <div class="cfg-panel"><div class="cfg-h">E9 · ancho de cuello</div><dl>
-        <dt>Variable</dt><dd><code>cuello ∈ {2, 5, 10, 20}</code></dd>
-        <dt>Hereda</dt><dd>← receta base 1b (<code>35-25-·-25-35</code>, tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8))</dd>
+      <div class="cfg-panel"><div class="cfg-h">E9 · tamaño del espacio latente</div><dl>
+        <dt>Variable</dt><dd><code>espacio latente ∈ {2, 5, 10, 20}</code></dd>
+        <dt>Hereda</dt><dd>← base de 1a (<code>35-20-·-20-35</code>, tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8)) — barremos el espacio latente antes de tocar el ancho oculto</dd>
         <dt>Ruido entren.</dt><dd><code>p_train = 0.15</code> (bit-flip fresco c/época, target limpio)</dd>
         <dt>Épocas</dt><dd>6000, full-batch, <code>seed=0</code></dd>
         <dt>Evaluación</dt><dd><strong>30</strong> realizaciones × 32 letras, test <code>p ∈ {0.1, 0.2, 0.3}</code></dd>
       </dl></div></div>
-    <h3>¿Por qué un cuello más ancho que en 1a?</h3>
-    <p class="lead"><span class="qlabel">La pregunta.</span> ¿El cuello de 2 que usamos en 1a sirve para limpiar,
+    <h3>¿Por qué un espacio latente más grande que en 1a?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> ¿El espacio latente de 2 que usamos en 1a sirve para limpiar,
       o limpiar necesita más capacidad?</p>
-    <p><span class="qlabel">Qué probamos.</span> Anchos de cuello <strong>2, 5, 10 y 20</strong> (entrenando todos
-      con 15% de ruido).</p>
+    <p><span class="qlabel">Qué probamos.</span> Partiendo de la arquitectura de 1a (capa oculta 20), tamaños de
+      espacio latente <strong>2, 5, 10 y 20</strong> (entrenando todos con 15% de ruido).</p>
     <figure>
-      <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="barrido de ancho de cuello">
-      <figcaption>Izq: error según el ancho del cuello. Der: % de letras bien recuperadas a 20% de ruido.</figcaption>
+      <img src="figs/ej1b/fig_e9_bottleneck.png" alt="barrido de tamaño del espacio latente">
+      <figcaption>Izq: error según el tamaño del espacio latente. Der: % de letras bien recuperadas a 20% de ruido.</figcaption>
     </figure>
     <div class="tbl"><table>
-      <tr><th class="k">cuello</th><th>error px (a 20% ruido)</th><th>% letras recuperadas (≤1px)</th></tr>
-      <tr><td class="k">2 (el de 1a)</td><td>4.22</td><td>48.4%</td></tr>
-      <tr><td class="k">5</td><td>3.05</td><td>52.9%</td></tr>
-      <tr class="win"><td class="k">10</td><td>2.64</td><td>59.4% ✓</td></tr>
-      <tr><td class="k">20</td><td>2.59</td><td>58.0%</td></tr>
+      <tr><th class="k">espacio latente</th><th>error px (a 20% ruido)</th><th>% letras recuperadas (≤1px)</th></tr>
+      <tr><td class="k">2 (el de 1a)</td><td>4.50</td><td>44.5%</td></tr>
+      <tr><td class="k">5</td><td>3.49</td><td>47.9%</td></tr>
+      <tr class="win"><td class="k">10</td><td>2.86</td><td>53.6% ✓</td></tr>
+      <tr><td class="k">20</td><td>2.88</td><td>53.4%</td></tr>
     </table></div>
-    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El <strong>cuello 2 de 1a limpia mal</strong>: a 20% de
-      ruido solo recupera el 48% de las letras. Ese cuello estaba optimizado para <em>comprimir</em> patrones
+    <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>El <strong>espacio latente de 2 de 1a limpia mal</strong>: a 20% de
+      ruido solo recupera el 44% de las letras. Ese tamaño estaba optimizado para <em>comprimir</em> patrones
       limpios, no para <em>limpiar</em>.</div>
     <div class="box teach"><h4>💡 Qué enseña</h4>Limpiar ruido necesita <strong>más capacidad latente</strong> que
-      comprimir. Ensanchar a <span class="accent">10</span> sube la recuperación a 59%. Pasar de 10 a 20 ya casi no
-      mejora (satura), así que el ganador usa 10 — sin neuronas de más.</div>
+      comprimir. Agrandarlo a <span class="accent">10</span> sube la recuperación a 54%. Pasar de 10 a 20 ya casi no
+      mejora (satura), así que fijamos el espacio latente en 10 — sin neuronas de más.</div>
+  </section>
+
+  <!-- E9b -->
+  <section class="exp" id="e9b">
+    <div class="eyebrow">Parte 1b · Experimento E9b</div>
+    <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
+      <div class="cfg-panel"><div class="cfg-h">E9b · ancho de capa oculta</div><dl>
+        <dt>Variable</dt><dd><code>capa oculta ∈ {20, 30, 35, 40}</code></dd>
+        <dt>Hereda</dt><dd>← espacio latente fijo en <strong>10</strong> (ganador de E9); el resto igual (BCE, Adam(0.01), p_train=0.15)</dd>
+        <dt>Épocas</dt><dd>6000, full-batch, <code>seed=0</code></dd>
+        <dt>Evaluación</dt><dd><strong>30</strong> realizaciones × 32 letras, test <code>p ∈ {0.1, 0.2, 0.3}</code></dd>
+        <dt>Script</dt><dd><code>exp_hidden_sweep.py</code></dd>
+      </dl></div></div>
+    <h3>¿Qué tan ancha la capa oculta?</h3>
+    <p class="lead"><span class="qlabel">La pregunta.</span> Con el espacio latente ya fijado en 10, ¿qué ancho de capa
+      oculta conviene? (En 1a era 20; acá hay que ganárselo, no asumirlo.)</p>
+    <p><span class="qlabel">Qué probamos.</span> Anchos de capa oculta <strong>20, 30, 35 y 40</strong>, espacio
+      latente fijo en 10, mismo ruido de entrenamiento.</p>
+    <figure>
+      <img src="figs/ej1b/fig_e9b_hidden.png" alt="barrido de ancho de capa oculta">
+      <figcaption>Izq: error según el ancho de la capa oculta. Der: % de letras recuperadas (≤1px) a 20% de ruido, con nº de params.</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <tr><th class="k">capa oculta</th><th>params</th><th>error px (a 20% ruido)</th><th>% letras recuperadas (≤1px)</th></tr>
+      <tr><td class="k">20</td><td>1885</td><td>2.86</td><td>53.6%</td></tr>
+      <tr class="win"><td class="k">30</td><td>2805</td><td>2.30</td><td>62.9% ✓</td></tr>
+      <tr><td class="k">35</td><td>3265</td><td>2.45</td><td>61.8%</td></tr>
+      <tr><td class="k">40</td><td>3725</td><td>2.29</td><td>64.6%</td></tr>
+    </table></div>
+    <div class="box teach"><h4>💡 Qué enseña</h4>El salto real es <strong>20→30</strong> (de 54% a 63%). De ahí en
+      más, 30/35/40 forman una <strong>meseta</strong>: 30 empata prácticamente a 40 con <strong>920 params menos</strong>.
+      Por <span class="accent">parsimonia</span> elegimos <strong>30</strong>. Esto justifica el ancho de la capa
+      oculta, que antes estaba fijado en 25 sin barrido que lo respaldara.</div>
   </section>
 
   <!-- E10 -->
@@ -645,7 +678,7 @@
     <p><span class="qlabel">Qué probamos.</span> Tres denoisers entrenados con <strong>5%, 15% y 30%</strong> de
       ruido, cada uno probado contra todos los niveles de ruido.</p>
     <figure>
-      <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="trade-off del ruido de entrenamiento">
+      <img src="figs/ej1b/fig_e10_train_noise.png" alt="trade-off del ruido de entrenamiento">
       <figcaption>Cada curva es un denoiser. Lo importante: <strong>las curvas se cruzan</strong>.</figcaption>
     </figure>
     <div class="box fail"><h4>⚠️ El trade-off (no hay un único "mejor")</h4>
@@ -691,7 +724,7 @@
     <p><span class="qlabel">Qué mostramos.</span> Para 5 letras (<code>a e g r s</code>) y tres niveles de ruido:
       la letra limpia, la sucia, y la que recupera la red.</p>
     <figure>
-      <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="tripletes limpio/sucio/recuperado">
+      <img src="figs/ej1b/fig_e11_triplets.png" alt="tripletes limpio/sucio/recuperado">
       <figcaption>Para cada nivel de ruido: fila limpia, fila con ruido, fila recuperada por el denoiser.</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>Se ve directo el "sucio → limpio": a 10% y 20% recupera muy bien;
@@ -704,8 +737,8 @@
     <div class="eyebrow">Parte 1b · EL GANADOR REFORZADO</div>
     <div class="cfg"><button class="cfg-btn" onclick="toggleCfg(this)">Configuración <span class="car">▸</span></button>
       <div class="cfg-panel"><div class="cfg-h">Ganador 1b</div><dl>
-        <dt>Config</dt><dd>cuello = <strong>10</strong>, <code>p_train = 0.15</code></dd>
-        <dt>Arquitectura</dt><dd><code>35-25-10-25-35</code>, tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8)</dd>
+        <dt>Config</dt><dd>espacio latente = <strong>10</strong>, capa oculta = <strong>30</strong>, <code>p_train = 0.15</code></dd>
+        <dt>Arquitectura</dt><dd><code>35-30-10-30-35</code>, tanh/id/tanh/sigmoid, BCE, Adam(0.01, eps=1e-8)</dd>
         <dt>Épocas</dt><dd><strong>15000</strong> (vs 6000 de los barridos), full-batch, <code>seed=0</code></dd>
         <dt>Evaluación</dt><dd><strong>50</strong> realizaciones × 32 letras, test <code>p ∈ {0.10, 0.15, 0.20}</code></dd>
       </dl></div></div>
@@ -714,21 +747,21 @@
       entrenamiento <strong>15%</strong> (de E10), reentrenado a fondo (<strong>15000 épocas</strong>) para dar un
       número contundente.</p>
     <figure>
-      <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="resultados del denoiser ganador">
+      <img src="figs/ej1b/fig_e_champion.png" alt="resultados del denoiser ganador">
       <figcaption>% de letras recuperadas por el denoiser ganador, según el nivel de ruido.</figcaption>
     </figure>
     <div class="chips">
       <div class="chip hot"><div class="n">92%</div><div class="l">letras recuperadas a 10% de ruido</div></div>
-      <div class="chip hot"><div class="n">81%</div><div class="l">a 15% (su nivel de entrenamiento)</div></div>
+      <div class="chip hot"><div class="n">80%</div><div class="l">a 15% (su nivel de entrenamiento)</div></div>
       <div class="chip"><div class="n">64%</div><div class="l">a 20% de ruido</div></div>
     </div>
     <div class="box teach"><h4>💡 Qué enseña</h4>Con la arquitectura justa y el ruido balanceado, el denoiser
-      limpia muy bien: <strong>~81% de las letras casi perfectas a su nivel de ruido</strong>, degradándose suave
+      limpia muy bien: <strong>~80% de las letras casi perfectas a su nivel de ruido</strong>, degradándose suave
       al subir el ruido. Es el resumen de toda la Parte 1b en un número.</div>
     <details class="tech"><summary>🔬 En detalle (técnico)</summary><div class="body">
       <p>Evaluación robusta: 50 realizaciones de ruido × 32 letras por nivel. Números exactos — a 10%: 0.42 px
-      promedio, 91.9% ≤1px, 85.2% perfectas; a 15%: 1.08 px, 81.1% ≤1px, 71.8% perfectas; a 20%: 2.44 px, 63.8%
-      ≤1px, 53.2% perfectas. El reentrenamiento a 15000 épocas (vs 6000 de los barridos) mejora todos los niveles.
+      promedio, 91.8% ≤1px, 86.6% perfectas; a 15%: 1.11 px, 79.6% ≤1px, 74.4% perfectas; a 20%: 2.46 px, 63.8%
+      ≤1px, 57.6% perfectas. El reentrenamiento a 15000 épocas (vs 6000 de los barridos) mejora todos los niveles.
       Técnica clave del denoising: no usa el <code>fit()</code> estándar porque necesita ruido nuevo cada época y
       un target distinto de la entrada; se orquesta <code>forward</code>/<code>backward</code> a mano pasando la
       entrada sucia pero el target limpio.</p>
@@ -808,7 +841,7 @@
       emoji (el canal de transparencia). Generamos 140 variantes por clase (= 700 imágenes) con rotaciones y
       corrimientos chiquitos, para que la red vea variedad continua.</p>
     <figure>
-      <img src="../ej2_vae/figs/contact_sheet.png" alt="dataset de emojis">
+      <img src="figs/ej2/contact_sheet.png" alt="dataset de emojis">
       <figcaption>Arriba la silueta base de cada clase; abajo una variante aumentada.</figcaption>
     </figure>
     <div class="box fail"><h4>⚠️ La primera versión NO funcionó</h4>Probamos primero los emojis de contorno
@@ -836,7 +869,7 @@
     <p><span class="qlabel">Qué probamos.</span> Cuatro VAEs con <strong>β = 0, 0.5, 1 y 4</strong>, decodificando
       las mismas 10 muestras al azar con cada uno.</p>
     <figure>
-      <img src="../ej2_vae/figs/fig_e12_beta_sampling.png" alt="sampleo según beta">
+      <img src="figs/ej2/fig_e12_beta_sampling.png" alt="sampleo según beta">
       <figcaption>Cada fila es un β. Arriba (β=0, sin el ingrediente KL) sale ruido; con KL salen emojis.</figcaption>
     </figure>
     <div class="box fail"><h4>⚠️ Lo que NO funcionó</h4>Con <strong>β=0 (sin el término KL) salen manchas de
@@ -861,7 +894,7 @@
     <p class="lead"><span class="qlabel">La pregunta.</span> Ver lado a lado el mapa del AE (β=0) y el del VAE
       (β=1) para entender visualmente la diferencia.</p>
     <figure>
-      <img src="../ej2_vae/figs/fig_e16_ae_vs_vae.png" alt="AE vs VAE">
+      <img src="figs/ej2/fig_e16_ae_vs_vae.png" alt="AE vs VAE">
       <figcaption>Izq: el mapa del AE, desparramado. Der: el mapa del VAE, compacto y centrado en 0.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -891,7 +924,7 @@
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿El mapa del VAE (β=1) realmente ordenó las clases y
       quedó con forma de campana?</p>
     <figure>
-      <img src="../ej2_vae/figs/fig_e13_latent.png" alt="latente del VAE por clase">
+      <img src="figs/ej2/fig_e13_latent.png" alt="latente del VAE por clase">
       <figcaption>Cada emoji codificado, coloreado por clase. Los círculos marcan la campana N(0,I) (radio 1 y 2).</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>El KL empuja cada nube q(z|x) hacia N(0,I), pero el agregado
@@ -915,7 +948,7 @@
     <p class="lead"><span class="qlabel">La prueba final.</span> Que el VAE (a) reconstruye fiel, y (b) genera
       muestras <strong>nuevas —no copias—</strong> desde la campana al azar: variaciones continuas de los 5 prototipos.</p>
     <figure>
-      <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="reconstrucción y generación del VAE">
+      <img src="figs/ej2/fig_e14_recon_gen.png" alt="reconstrucción y generación del VAE">
       <figcaption>Fila 1: emojis reales. Fila 2: sus reconstrucciones. Fila 3: muestras nuevas (no copias) generadas desde N(0,I).</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>La reconstrucción es casi idéntica al original, y la última fila
@@ -941,7 +974,7 @@
     <p><span class="qlabel">Qué hicimos.</span> Barrimos el mapa en una grilla y decodificamos cada punto, armando
       un "atlas".</p>
     <figure>
-      <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="atlas del latente del VAE">
+      <img src="figs/ej2/fig_e17_vae_atlas.png" alt="atlas del latente del VAE">
       <figcaption>Grilla del mapa decodificada: los emojis se transforman de a poco uno en otro.</figcaption>
     </figure>
     <div class="box teach"><h4>💡 Qué enseña</h4>El mapa es un <strong>continuo navegable</strong>: los emojis se
@@ -964,7 +997,7 @@
     <p class="lead"><span class="qlabel">La pregunta.</span> ¿Cómo se pelean los dos términos de la pérdida
       (reconstruir bien vs ordenar el mapa) según β?</p>
     <figure>
-      <img src="../ej2_vae/figs/fig_e15_recon_kl.png" alt="curvas recon vs KL">
+      <img src="figs/ej2/fig_e15_recon_kl.png" alt="curvas recon vs KL">
       <figcaption>Izq: error de reconstrucción. Der: el término KL (qué tan ordenado está el mapa) en el tiempo.</figcaption>
     </figure>
     <div class="tbl"><table>
@@ -992,7 +1025,7 @@
         <strong>2 números</strong> guardamos las 32 letras a la perfección (0 px). Un método clásico (PCA) no llega.
         Cada decisión de la receta salió de aislar un experimento.</li>
       <li style="margin:.6em 0"><span class="azul">Parte 1b —</span> el mismo tipo de red, entrenada con
-        <strong>"sucio → limpio"</strong>, aprende a quitar ruido. Limpiar necesita un cuello más ancho que comprimir,
+        <strong>"sucio → limpio"</strong>, aprende a quitar ruido. Limpiar necesita un espacio latente más grande que comprimir,
         y el ruido de entrenamiento es un <strong>compromiso</strong> (ni mucho ni poco).</li>
       <li style="margin:.6em 0"><span class="azul">Parte 2 (VAE) —</span> al hacer que el mapa tenga forma de
         <strong>campana conocida</strong> (el término KL), el modelo pasa de <em>resumir</em> a

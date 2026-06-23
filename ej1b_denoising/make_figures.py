@@ -31,12 +31,12 @@ def e9():
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 5.5))
     for col, lab, c in [("px@0.1", "test 10%", "#2563EB"), ("px@0.2", "test 20%", PRIMARY), ("px@0.3", "test 30%", "#7C3AED")]:
         a1.plot(df["cuello"], df[col], "o-", label=lab, color=c, lw=2, ms=8)
-    a1.set_xlabel("ancho del cuello (dim latente)"); a1.set_ylabel("px incorrectos tras limpiar (prom)")
-    a1.set_title("px de error vs ancho del cuello"); a1.legend(); a1.set_xticks(df["cuello"])
+    a1.set_xlabel("tamaño del espacio latente"); a1.set_ylabel("px incorrectos tras limpiar (prom)")
+    a1.set_title("px de error vs tamaño del espacio latente"); a1.legend(); a1.set_xticks(df["cuello"])
     a2.bar(df["cuello"].astype(str), df["%<=1px@0.2"], color=SECONDARY)
-    a2.set_xlabel("ancho del cuello"); a2.set_ylabel("% letras recuperadas (≤1px) @ test 20%")
-    a2.set_title("% recuperadas vs cuello")
-    fig.suptitle("E9 · El cuello 2D (de 1a) denoisa mal; ensanchar a 10 ayuda (20 ya no mejora)")
+    a2.set_xlabel("tamaño del espacio latente"); a2.set_ylabel("% letras recuperadas (≤1px) @ test 20%")
+    a2.set_title("% recuperadas vs tamaño del espacio latente")
+    fig.suptitle("Espacio latente 2D (de 1a) denoisa mal; agrandarlo a 10 ayuda (20 ya no mejora)")
     fig.subplots_adjust(top=0.85)
     save(fig, "fig_e9_bottleneck.png")
 
@@ -66,7 +66,7 @@ def e_champion():
         ax.text(i + w / 2, b + 1.5, f"{b:.0f}", ha="center", fontsize=12)
     ax.set_xticks(x); ax.set_xticklabels([f"test {int(p * 100)}%" for p in df["test_p"]])
     ax.set_ylabel("% de letras"); ax.set_ylim(0, 105)
-    ax.set_title("Ganador denoising (cuello 10, 15000 ep): % de letras recuperadas")
+    ax.set_title("Ganador denoising (espacio latente 10, 15000 ep): % de letras recuperadas")
     ax.legend()
     save(fig, "fig_e_champion.png")
 
@@ -89,7 +89,7 @@ def e11():
                     ax.set_ylabel(lab, rotation=0, ha="right", va="center", fontsize=11)
             if li == 0:
                 axes[r0, ci].set_title(LABELS[idx], fontsize=13)
-    fig.suptitle("E11 · DAE ganador (cuello=10, p_train=15%): limpio / ruidoso / recuperado")
+    fig.suptitle("DAE ganador (espacio latente=10, p_train=15%): limpio / ruidoso / recuperado")
     save(fig, "fig_e11_triplets.png")
 
 

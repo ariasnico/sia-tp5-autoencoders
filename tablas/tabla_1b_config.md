@@ -5,9 +5,9 @@ juntos. Las comparaciones (barridos) están en `tabla_1b_resultados.png`.
 
 ## Fila por fila
 
-- **Arquitectura `35-25-{cuello}-25-35`** — misma idea que 1a pero con capa oculta de **25** y un cuello más
-  ancho. El `{cuello}` indica que es el parámetro que barrimos en E9; **el ganador usa 10** (no 2, porque limpiar
-  ruido necesita más capacidad). Es una sola red.
+- **Arquitectura `35-30-{cuello}-30-35`** — misma idea que 1a pero con capa oculta de **30** y un cuello más
+  ancho. El `{cuello}` es el parámetro que barrimos en E9 (**ganador 10**, no 2, porque limpiar ruido necesita
+  más capacidad); el ancho de la capa oculta **30** se gana en E9b (parsimonia sobre la meseta 30/35/40). Es una sola red.
 - **Entrenamiento `bit-flip(p) → limpio`** — la **clave** del denoising: la entrada va con ruido (bits volteados
   con probabilidad `p`, fresco cada época) y el target es el patrón **limpio**. La red aprende "sucio → limpio",
   no "x → x".
@@ -21,8 +21,9 @@ juntos. Las comparaciones (barridos) están en `tabla_1b_resultados.png`.
 - **Seed `0`** — semilla fija, reproducible.
 
 ## Qué nos dio
-El ganador (cuello 10, ruido de train 15 %, 15000 épocas) recupera **81 % de las letras con ≤1 px a 15 % de
+El ganador (35-30-10-30-35, ruido de train 15 %, 15000 épocas) recupera **80 % de las letras con ≤1 px a 15 % de
 ruido** (92 % a 10 %).
 
 ## Cómo conecta con los experimentos
-E9 varía el `{cuello}`; E10 varía el `p_train`. El resto de la receta queda fijo. Ver `tabla_1b_resultados.png`.
+E9 varía el `{cuello}` (base 35-20); E9b varía el ancho de la capa oculta (cuello fijo en 10); E10 varía el
+`p_train`. El resto de la receta queda fijo. Ver `tabla_1b_resultados.png`.

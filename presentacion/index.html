@@ -25,6 +25,25 @@
     .reveal table.cfg td.k { color:#64748B; font-weight:bold; white-space:nowrap; width:30%; }
     .reveal .vary { color:var(--naranja); font-weight:bold; }
     .reveal .step { color:#94A3B8; font-size:0.42em; letter-spacing:1px; }
+    /* imágenes clickeables */
+    .reveal .slides img { cursor:zoom-in; }
+    /* lightbox con zoom estilo e-commerce */
+    #lightbox { position:fixed; inset:0; background:rgba(15,23,42,.93); display:none;
+      align-items:center; justify-content:center; z-index:10000; cursor:zoom-out; }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:94vw; max-height:94vh; object-fit:contain; background:#fff;
+      box-shadow:0 10px 50px rgba(0,0,0,.55); cursor:zoom-in; transition:transform .08s ease-out;
+      will-change:transform; }
+    #lightbox img.zoomed { cursor:zoom-out; }
+    #lightbox .lb-close { position:fixed; top:18px; right:26px; width:44px; height:44px;
+      border:none; border-radius:50%; background:rgba(255,255,255,.15); color:#fff;
+      font-size:26px; line-height:44px; text-align:center; cursor:pointer; z-index:10001; }
+    #lightbox .lb-close:hover { background:rgba(255,255,255,.30); }
+    #lightbox .lb-hint { position:fixed; bottom:18px; left:0; right:0; text-align:center;
+      color:rgba(255,255,255,.6); font-size:14px; pointer-events:none; }
+    /* modo captura para exportar a PDF (oculta navegación) */
+    html.pdfshot .reveal .controls, html.pdfshot .reveal .progress,
+    html.pdfshot .reveal .slide-number { display:none !important; }
   </style>
 </head>
 <body>
@@ -38,25 +57,14 @@
     <p class="sub">Nicolás Valentín Arias · Tomás Pinausig · Mateo Pirola · Katia Menshikoff</p>
   </section>
 
-  <!-- 2 -->
-  <section>
-    <h2>¿Qué es un autoencoder?</h2>
-    <p class="big">Una red que <strong>copia la entrada en la salida</strong>, pero obligada a pasar por un <span class="accent">cuello angosto</span>.</p>
-    <ul>
-      <li>Como por el cuello no entra todo, la red tiene que <strong>resumir</strong> la imagen.</li>
-      <li><strong>1a:</strong> ¿se puede resumir muchísimo? · <strong>1b:</strong> ¿sirve para limpiar manchas? · <strong>2:</strong> ¿se puede inventar?</li>
-    </ul>
-  </section>
-
-  <!-- 3 -->
+  <!-- 3 · dataset -->
   <section>
     <span class="tag">EXPLORACIÓN · E0</span>
-    <h2>El dataset: 32 caracteres</h2>
+    <h2>Dataset: 32 caracteres ASCII</h2>
     <div class="duo">
-      <img src="../ej1a_secuencial/figs/fig_e0a_dataset_letters.png" alt="32 letras">
-      <img src="../ej1a_secuencial/figs/fig_e0c_hamming.png" alt="distancias entre letras">
+      <img src="figs/ej1a/fig_e0a_dataset_letters.png" alt="32 letras">
+      <img src="figs/ej1a/fig_e0c_hamming.png" alt="distancias entre letras">
     </div>
-    <ul><li>32 caracteres de 7×5 (casi todos letras), a guardar con <span class="accent">solo 2 números</span>. Difícil: hay pares casi idénticos (<span class="accent">l y | a 2 px</span>) que igual hay que separar.</li></ul>
   </section>
 
   <!-- 4 · CONFIG BASE -->
@@ -71,26 +79,34 @@
       <tr><td class="k">Optimizador</td><td>SGD — arranque naive</td></tr>
       <tr><td class="k">Épocas · batch</td><td>6000 · 32 (full-batch) · semilla 0</td></tr>
     </table>
-    <ul><li>Partimos de acá y, <span class="accent">cambiando un parámetro por vez</span>, llegamos a la receta ganadora. Para cada paso: primero la config, después el resultado.</li></ul>
+    <ul><li>Aprovechamos lo implementado en el <span class="accent">MLP del TP3</span>.</li></ul>
   </section>
 
   <!-- 5 · OPTIMIZADOR (config) -->
   <section>
     <span class="step">PASO 1 · CONFIG</span>
-    <h2>¿Cómo entrenar? (optimizador)</h2>
+    <h2>Elección de optimizador</h2>
     <table class="cfg">
       <tr><td class="k">Variamos</td><td class="vary">SGD(0.5) · Momentum(0.1) · Adam(0.01)</td></tr>
       <tr><td class="k">Config fija</td><td>35-20-2-20-35 · tanh · BCE · latente 2 · 6000 ep</td></tr>
     </table>
-    <ul><li>Con la arquitectura ya capaz, comparamos optimizadores <span class="accent">en igualdad de condiciones</span>.</li></ul>
   </section>
 
   <!-- 6 · OPTIMIZADOR (resultado) -->
   <section>
     <span class="step">PASO 1 · RESULTADO</span>
     <h2>Adam llega a 0 px</h2>
-    <img src="../ej1a_secuencial/figs/fig_exp2_optimizador.png" alt="optimizador">
-    <ul><li>SGD se estanca (5px), Momentum casi (1px), <span class="accent">Adam: 0 px</span>. → adoptamos <span class="accent">Adam(0.01)</span>.</li></ul>
+    <img src="figs/ej1a/fig_exp2_optimizador.png" alt="optimizador">
+    <ul>
+      <li>Vemos sobre las barras del gráfico de error la cantidad de ascii recuperados perfecto / <em>sin error</em>.</li>
+      <li>SGD se estanca (5px), Momentum casi (1px), <span class="accent">Adam: 0 px</span>. → adoptamos <span class="accent">Adam(0.01)</span>.</li>
+      <li>Vemos que usar Adam ya logra <span class="accent">superar la limitación</span> del espacio latente de dimensión 2.</li>
+    </ul>
+  </section>
+
+  <!-- 6b · OPTIMIZADOR (letras reconstruidas) -->
+  <section>
+    <img src="figs/ej1a/fig_exp2_letras.png" alt="reconstrucción de las 32 letras por optimizador" style="max-height:80vh; max-width:96%;">
   </section>
 
   <!-- 7 · LEARNING RATE (config) -->
@@ -101,144 +117,172 @@
       <tr><td class="k">Variamos</td><td class="vary">lr ∈ 0.0003 · 0.01 · 0.3</td></tr>
       <tr><td class="k">Config fija</td><td>35-20-2-20-35 · tanh · BCE · <span class="accent">Adam</span> · latente 2</td></tr>
     </table>
-    <ul><li>El learning rate es propio del optimizador → se barre <span class="accent">después</span> de fijar Adam.</li></ul>
   </section>
 
   <!-- 8 · LEARNING RATE (resultado) -->
   <section>
     <span class="step">PASO 2 · RESULTADO</span>
     <h2>0.01 es el punto justo</h2>
-    <img src="../ej1a_secuencial/figs/fig_exp3_learning_rate.png" alt="learning rate">
-    <ul><li>Chico (0.0003) tarda; grande (0.3) <span class="accent">no aprende (28px)</span>; <span class="accent">0.01</span> llega a 0. → adoptamos <span class="accent">lr=0.01</span>.</li></ul>
+    <img src="figs/ej1a/fig_exp3_learning_rate.png" alt="learning rate">
+    <ul>
+      <li>Vemos sobre las barras del gráfico de error la cantidad de ascii recuperados perfecto / <em>sin error</em>.</li>
+      <li>LR 0.0003 tarda — con más épocas podría llegar al mismo resultado; LR 0.3 <span class="accent">no aprende (error de 28px!)</span>; LR 0.01 llega a 0.</li>
+      <li>Elección final → <span class="accent">LR 0.01</span></li>
+    </ul>
   </section>
 
   <!-- 9 · ARQUITECTURA (config) -->
   <section>
     <span class="step">PASO 3 · CONFIG</span>
-    <h2>¿Qué tan grande la red? (capa oculta)</h2>
+    <h2>Arquitectura → Tamaño de la capa oculta</h2>
     <table class="cfg">
       <tr><td class="k">Variamos</td><td class="vary">() · 10 · 20 · 30 · 20+20 (por lado)</td></tr>
       <tr><td class="k">Config fija</td><td>tanh · BCE · Adam(0.01) · latente 2</td></tr>
       <tr><td class="k">Nota</td><td>(20) = 1 capa de 20 por lado; (20+20) = 2 capas apiladas</td></tr>
     </table>
-    <ul><li>¿Hace falta capa oculta? ¿qué tan ancha? ¿qué tan profunda?</li></ul>
   </section>
 
   <!-- 10 · ARQUITECTURA (resultado) -->
   <section>
     <span class="step">PASO 3 · RESULTADO</span>
     <h2>20 neuronas es el mínimo justo</h2>
-    <img src="../ej1a_secuencial/figs/fig_exp4_arquitectura.png" alt="arquitectura">
+    <img src="figs/ej1a/fig_exp4_arquitectura.png" alt="arquitectura">
     <ul><li>Sin capa oculta = PCA (falla); 10 no alcanza; <span class="accent">20 → 0 px</span>. 30 y 20+20 empatan → por <span class="accent">parsimonia, 20</span>.</li></ul>
   </section>
 
   <!-- 11 · LATENTE (config) -->
   <section>
     <span class="step">PASO 4 · CONFIG</span>
-    <h2>¿Cuántos números por letra? (latente)</h2>
+    <h2>Tamaño del espacio latente</h2>
     <table class="cfg">
       <tr><td class="k">Variamos</td><td class="vary">dimensión latente ∈ 1 · 2 · 3</td></tr>
       <tr><td class="k">Config fija</td><td>35-20-·-20-35 · tanh · BCE · Adam(0.01)</td></tr>
       <tr><td class="k">Nota</td><td>la consigna pide 2D; lo confirmamos</td></tr>
     </table>
-    <ul><li>¿2 dimensiones alcanzan para separar las 32 letras?</li></ul>
   </section>
 
   <!-- 12 · LATENTE (resultado) -->
   <section>
     <span class="step">PASO 4 · RESULTADO</span>
     <h2>Con 1 solo se aprende un subconjunto</h2>
-    <img src="../ej1a_secuencial/figs/fig_exp5_latente.png" alt="latente">
+    <img src="figs/ej1a/fig_exp5_latente.png" alt="latente">
     <ul><li>1D solo recupera un <span class="accent">subconjunto (14/32)</span>: no se pueden separar 32 letras en una recta. <span class="accent">2D → 0 px</span>.</li>
     <li>Confirmamos que el cuello de la consigna alcanza: se mantiene <span class="accent">latente=2</span>.</li></ul>
   </section>
 
   <!-- 13 -->
   <section>
-    <span class="tag">1a · GANADOR</span>
-    <h2>Reconstrucción: sin errores</h2>
-    <img src="../ej1a_secuencial/figs/fig_e8a_reconstructions.png" alt="E8a">
-    <ul><li>Arriba la letra real, abajo la de la red: <span class="accent">0 px de error · 32 de 32 letras perfectas</span>.</li></ul>
+    <img src="figs/ej1a/fig_e8a_reconstructions.png" alt="E8a" style="display:block; max-height:88vh; max-width:96%; margin:0 auto;">
   </section>
 
   <!-- 14 -->
   <section>
     <span class="tag">1a · GANADOR</span>
-    <h2>El mapa de 2 números</h2>
-    <img src="../ej1a_secuencial/figs/fig_e8b_latent2d.png" alt="E8b">
-    <ul><li>Las 32 letras ubicadas en el mapa; el recuadro de la derecha es un <span class="accent">zoom</span> del centro.</li></ul>
+    <h2>Mapa del espacio latente</h2>
+    <img src="figs/ej1a/fig_e8b_latent2d.png" alt="E8b">
   </section>
 
   <!-- 15 -->
   <section>
-    <span class="tag">1a · GANADOR</span>
     <h2>Inventar letras nuevas</h2>
-    <img src="../ej1a_secuencial/figs/fig_e8c_generation_grid.png" alt="E8c">
-    <ul><li>Recorriendo el mapa aparecen <span class="accent">letras que no estaban</span>.</li></ul>
+    <img src="figs/ej1a/fig_e8c_generation_grid.png" alt="E8c" style="display:block; max-height:82vh; max-width:92%; margin:0 auto;">
   </section>
 
   <!-- 16 -->
   <section>
-    <span class="tag">1a · GANADOR</span>
-    <h2>De la 'a' a la 'o'</h2>
-    <img src="../ej1a_secuencial/figs/fig_e8d_interpolation.png" alt="E8d">
-    <ul><li>Caminamos en el mapa de la 'a' a la 'o': los pasos del medio son <span class="accent">mezclas continuas</span>.</li></ul>
+    <img src="figs/ej1a/fig_concept_vector.png" alt="concept vector a→o" style="display:block; max-height:52vh; max-width:80%; margin:0 auto;">
+    <img src="figs/ej1a/fig_e8d_interpolation.png" alt="interpolación a→o" style="display:block; max-height:24vh; max-width:94%; margin:0.3em auto 0;">
   </section>
 
   <!-- 17 -->
+  <!-- 18 · título denoising -->
   <section>
-    <span class="tag">PARTE 2</span>
-    <h2>Limpiar ruido</h2>
-    <p class="big">Le damos la imagen <span class="accent">sucia</span> y le pedimos la <span class="accent">limpia</span>.</p>
-    <ul><li>Misma idea de antes, pero la red aprende a <strong>sacar las manchas</strong>.</li></ul>
+    <h2>Denoising — Limpiar ruido</h2>
   </section>
 
-  <!-- 18 -->
+  <!-- 19 · cómo se genera el ruido -->
   <section>
-    <span class="tag">1b · RESUMEN</span>
-    <h2>Todo lo que probamos</h2>
-    <img src="../tablas/tabla_1b_resultados.png" alt="resumen 1b">
-    <ul><li>Los dos experimentos, <span class="accent">para qué</span> y qué dieron.</li></ul>
+    <span class="tag">1b · EL RUIDO</span>
+    <h2>¿Cómo ensuciamos las letras?</h2>
+    <img src="figs/ej1b/fig_noise_examples.png" alt="ejemplos de ruido" style="max-height:62vh;">
+    <ul><li>Ruido <span class="accent">bit-flip</span>: cada píxel se invierte con probabilidad <code>p</code>, fresco en cada época.</li></ul>
   </section>
 
-  <!-- 19 -->
+  <!-- 20 · AE de 1a sobre ruido (comparativa) -->
   <section>
-    <span class="tag">E9</span>
-    <h2>¿Por qué un cuello más ancho?</h2>
-    <img src="../ej1b_denoising/figs/fig_e9_bottleneck.png" alt="E9">
-    <ul><li>Cuello 2 limpia mal; <span class="accent">cuello 10</span> mucho mejor; más de 10 no suma.</li></ul>
+    <span class="tag">1b · MOTIVACIÓN</span>
+    <h2>¿Y si le damos ruido al AE de 1a?</h2>
+    <img src="figs/ej1b/fig_ae1a_on_noise.png" alt="AE de 1a ante ruido" style="max-height:66vh;">
+    <ul><li>No fue entrenado para limpiar: la salida se <span class="accent">deforma</span> a medida que sube el ruido.</li></ul>
   </section>
 
-  <!-- 20 -->
+  <!-- 21 · AE de 1a px error -->
+  <section>
+    <span class="tag">1b · MOTIVACIÓN</span>
+    <h2>El AE de 1a no limpia</h2>
+    <img src="figs/ej1b/fig_ae1a_pxerror.png" alt="px error del AE de 1a">
+    <ul><li>El error <span class="accent">crece con el ruido de entrada</span>. Hay que entrenar la red <span class="accent">específicamente para limpiar</span>.</li></ul>
+  </section>
+
+  <!-- 22 · cómo entrenar un denoiser -->
+  <section>
+    <span class="tag">1b · LA IDEA</span>
+    <h2>Entrenemos un denoiser</h2>
+    <ul>
+      <li>Generamos las entradas ensuciando cada letra con nuestro <span class="accent">ruido bit-flip</span>; regeneramos los inputs en cada época (la red nunca ve dos veces la misma "mancha").</li>
+      <li>Entrenamos la red con esas entradas sucias, y le exigimos que devuelva la <span class="accent">letra original limpia</span>.</li>
+      <li>Es la <span class="accent">misma red y la misma loss (BCE)</span> que el autoencoder; ahora le pedimos, en vez de <code>x → x</code>, <span class="accent">sucio → limpio</span>.</li>
+    </ul>
+  </section>
+
+  <!-- 23 · nueva arquitectura: espacio latente -->
+  <section>
+    <span class="tag">1b · NUEVA ARQUITECTURA</span>
+    <h2>Nueva arquitectura — Espacio latente</h2>
+    <p class="big">Probamos agrandar la dimensión del espacio latente: <span class="accent">2, 5, 10 y 20</span> neuronas.</p>
+    <img src="figs/ej1b/fig_e9_bottleneck.png" alt="barrido de espacio latente" style="max-height:46vh;">
+    <ul>
+      <li>Medimos el <span class="accent">promedio de px incorrectos</span> en los resultados generados vs el input original sin ruido.</li>
+      <li>Y la cantidad de letras recuperadas <span class="accent">"perfecto"</span> con 20% de ruido (error de px ∈ {0, 1}).</li>
+    </ul>
+  </section>
+
+  <!-- 23 · nueva arquitectura: capas ocultas -->
+  <section>
+    <span class="tag">1b · NUEVA ARQUITECTURA</span>
+    <h2>Nueva arquitectura — Capas ocultas</h2>
+    <img src="figs/ej1b/fig_e9b_hidden.png" alt="barrido de capa oculta" style="max-height:50vh;">
+    <ul><li>Con el latente fijo en 10, barremos el ancho de la capa oculta {20, 30, 35, 40}. El salto real es <span class="accent">20→30</span>; de ahí es meseta → por parsimonia, <span class="accent">30</span>.</li></ul>
+  </section>
+
+  <!-- 24 · E10 ruido de entrenamiento -->
   <section>
     <span class="tag">E10</span>
     <h2>¿Cuánto ruido al entrenar?</h2>
-    <img src="../ej1b_denoising/figs/fig_e10_train_noise.png" alt="E10">
+    <img src="figs/ej1b/fig_e10_train_noise.png" alt="E10">
     <ul><li>El <span class="accent">15 % es el mejor compromiso</span> (anda bien en casi todo el rango); cada extremo solo gana en su zona (5 % en limpio, 30 % en ruido alto).</li></ul>
   </section>
 
-  <!-- 21 -->
+  <!-- 25 · cualitativo: efecto del 30% de ruido -->
   <section>
-    <span class="tag">1b · LA RECETA GANADORA</span>
-    <h2>Juntando lo mejor</h2>
-    <img src="../tablas/tabla_1b_config.png" alt="config 1b">
-    <ul><li>La receta del limpiador: <span class="accent">cuello 10</span> y el ruido de entrenamiento justo.</li></ul>
+    <span class="tag">1b · CUALITATIVO</span>
+    <h2>Cualitativamente, ¿qué efecto tiene 30% de ruido sobre los inputs?</h2>
+    <img src="figs/ej1b/fig_denoise30_all.png" alt="32 letras denoiser 30%" style="display:block; max-height:60vh; max-width:auto; margin:0 auto;">
+    <p style="font-size:0.62em; margin:0.3em auto 0; max-width:90%;">Si medimos la cantidad de píxeles coincidentes, el denoiser entrenado al 30% parece comportarse bien — visualmente vemos que la letra recuperada <span class="accent">no reconstruye la original</span> :(</p>
   </section>
 
-  <!-- 22 -->
+  <!-- 26 · ganador -->
   <section>
     <span class="tag">1b · GANADOR</span>
     <h2>Resultado del limpiador</h2>
-    <img src="../ej1b_denoising/figs/fig_e_champion.png" alt="ganador">
-    <ul><li>Deja <span class="accent">≤1 px de error en el 81% de las letras</span> a 15% de ruido (92% a 10%).</li></ul>
+    <img src="figs/ej1b/fig_e_champion.png" alt="ganador">
+    <ul><li>Deja <span class="accent">≤1 px de error en el 80% de las letras</span> a 15% de ruido (92% a 10%).</li></ul>
   </section>
 
-  <!-- 23 -->
+  <!-- 27 · triplets -->
   <section>
-    <span class="tag">1b · GANADOR</span>
     <h2>Limpio / sucio / recuperado</h2>
-    <img src="../ej1b_denoising/figs/fig_e11_triplets.png" alt="E11">
-    <ul><li>Se ve la letra <span class="accent">limpia, la sucia y la que recupera</span> la red.</li></ul>
+    <img src="figs/ej1b/fig_e11_triplets.png" alt="E11" style="display:block; max-height:84vh; max-width:96%; margin:0 auto;">
   </section>
 
   <!-- 24 -->
@@ -253,7 +297,7 @@
   <section>
     <span class="tag">VAE · DATOS</span>
     <h2>Datos nuevos: emojis</h2>
-    <img src="../ej2_vae/figs/contact_sheet.png" alt="contact sheet">
+    <img src="figs/ej2/contact_sheet.png" alt="contact sheet">
     <ul><li>Elegimos 5 emojis como <span class="accent">siluetas claras</span> (descartamos una versión de contornos que se confundía).</li></ul>
   </section>
 
@@ -261,7 +305,7 @@
   <section>
     <span class="tag">VAE · RESUMEN</span>
     <h2>Todo lo que probamos</h2>
-    <img src="../tablas/tabla_vae_resultados.png" alt="barrido vae">
+    <img src="figs/ej2/tabla_vae_resultados.png" alt="barrido vae">
     <ul><li>Lo único que variamos es <span class="accent">cuánto ordenamos el mapa</span> (beta).</li><li>Todo el VAE en numpy desde cero, con las cuentas de la red <span class="accent">verificadas a mano, una por una</span>.</li></ul>
   </section>
 
@@ -269,7 +313,7 @@
   <section>
     <span class="tag">E12</span>
     <h2>El ingrediente que ordena el mapa</h2>
-    <img src="../ej2_vae/figs/fig_e12_beta_sampling.png" alt="E12">
+    <img src="figs/ej2/fig_e12_beta_sampling.png" alt="E12">
     <ul><li>Sin ese ingrediente sale <span class="accent">mayormente ruido</span>; con él salen emojis de verdad.</li></ul>
   </section>
 
@@ -277,7 +321,7 @@
   <section>
     <span class="tag">E16</span>
     <h2>Por qué uno genera y el otro no</h2>
-    <img src="../ej2_vae/figs/fig_e16_ae_vs_vae.png" alt="E16">
+    <img src="figs/ej2/fig_e16_ae_vs_vae.png" alt="E16">
     <ul><li>Sin ordenar, los puntos quedan <span class="accent">desparramados</span> (escala ±decenas); con orden, mucho más juntos (±2, cerca del 0).</li></ul>
   </section>
 
@@ -285,7 +329,7 @@
   <section>
     <span class="tag">VAE · LA RECETA GANADORA</span>
     <h2>Juntando lo mejor</h2>
-    <img src="../tablas/tabla_vae_config.png" alt="config VAE">
+    <img src="figs/ej2/tabla_vae_config.png" alt="config VAE">
     <ul><li>La receta del VAE ganador: <span class="accent">β=1</span>, el equilibrio entre ordenar el mapa y la calidad de imagen.</li></ul>
   </section>
 
@@ -293,7 +337,7 @@
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa de los emojis</h2>
-    <img src="../ej2_vae/figs/fig_e13_latent.png" alt="E13">
+    <img src="figs/ej2/fig_e13_latent.png" alt="E13">
     <ul><li>Cada tipo de emoji ocupa <span class="accent">su propia zona</span>, separadas por clase (no una sola nube: conserva 5 cúmulos).</li></ul>
   </section>
 
@@ -301,7 +345,7 @@
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>Generar muestras nuevas</h2>
-    <img src="../ej2_vae/figs/fig_e14_recon_gen.png" alt="E14">
+    <img src="figs/ej2/fig_e14_recon_gen.png" alt="E14">
     <ul><li>Reconstruye y además genera <span class="accent">muestras nuevas (no copias)</span>, reconocibles: variaciones continuas de los 5 prototipos.</li></ul>
   </section>
 
@@ -309,7 +353,7 @@
   <section>
     <span class="tag">VAE · CONTROL HONESTO</span>
     <h2>Sampleo honesto del VAE (semilla al azar, sin elegir)</h2>
-    <img src="../ej2_vae/figs/fig_e18_sampleo_honesto.png" alt="E18 sampleo honesto" style="max-height:60vh;">
+    <img src="figs/ej2/fig_e18_sampleo_honesto.png" alt="E18 sampleo honesto" style="max-height:60vh;">
     <ul><li>Semilla 0 fija (no elegida); en promedio aparece <span class="accent">~85 % de las clases (4.3/5)</span> por tirada sobre 200 semillas — el muestreo no siempre cubre las 5.</li></ul>
   </section>
 
@@ -317,7 +361,7 @@
   <section>
     <span class="tag">VAE · GANADOR</span>
     <h2>El mapa completo decodificado</h2>
-    <img src="../ej2_vae/figs/fig_e17_vae_atlas.png" alt="E17">
+    <img src="figs/ej2/fig_e17_vae_atlas.png" alt="E17">
     <ul><li>Los emojis se <span class="accent">transforman de a poco</span> uno en otro: genera mezclas continuas, no copia.</li></ul>
   </section>
 
@@ -325,7 +369,7 @@
   <section>
     <span class="tag">E15</span>
     <h2>El equilibrio</h2>
-    <img src="../ej2_vae/figs/fig_e15_recon_kl.png" alt="E15">
+    <img src="figs/ej2/fig_e15_recon_kl.png" alt="E15">
     <ul><li>Más orden = mapa más prolijo pero imágenes un poco <span class="accent">peores</span>. Hay que equilibrar.</li></ul>
   </section>
 
@@ -334,7 +378,7 @@
     <h2>Conclusiones</h2>
     <ul class="big" style="font-size:0.8em">
       <li><strong>1a:</strong> con curvas y 2 números guardamos las 32 letras perfecto; un método clásico no llega.</li>
-      <li><strong>1b:</strong> limpiar ruido necesita un cuello más ancho, y el ruido de entrenamiento es un equilibrio.</li>
+      <li><strong>1b:</strong> limpiar ruido necesita un espacio latente más grande, y el ruido de entrenamiento es un equilibrio.</li>
       <li><strong>VAE:</strong> ordenando el mapa, el modelo pasa de resumir a <strong>generar</strong> muestras nuevas (no copias) reconocibles.</li>
     </ul>
   </section>
@@ -343,7 +387,71 @@
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
 <script>
-  Reveal.initialize({ hash:true, slideNumber:'c/t', width:1280, height:720, margin:0.04, plugins:[RevealNotes] });
+  if (/[?&]pdf\b/.test(location.search)) document.documentElement.classList.add('pdfshot');
+  Reveal.initialize({ hash:true, slideNumber:'c/t', width:1280, height:720, margin:0.04,
+    plugins:[RevealNotes] });
+</script>
+<script>
+  /* Lightbox con zoom estilo e-commerce (Amazon): click en imagen → vista ampliada;
+     click en la vista → zoom siguiendo el cursor; click afuera / Esc / ✕ → cerrar. */
+  (function(){
+    var SCALE = 2.6;
+    var overlay = document.createElement('div');
+    overlay.id = 'lightbox';
+    overlay.innerHTML =
+      '<button class="lb-close" title="Cerrar (Esc)">&times;</button>' +
+      '<img alt="vista ampliada">' +
+      '<div class="lb-hint">Click para hacer zoom · Esc o click afuera para cerrar</div>';
+    document.body.appendChild(overlay);
+    var lbImg = overlay.querySelector('img');
+    var zoomed = false, baseRect = null;
+
+    function open(src){
+      zoomed = false; lbImg.classList.remove('zoomed');
+      lbImg.style.transform = ''; lbImg.style.transformOrigin = 'center center';
+      lbImg.src = src; overlay.classList.add('open');
+    }
+    function close(){ overlay.classList.remove('open'); lbImg.style.transform=''; zoomed=false; lbImg.classList.remove('zoomed'); }
+
+    function originFromEvent(e){
+      var x = ((e.clientX - baseRect.left) / baseRect.width) * 100;
+      var y = ((e.clientY - baseRect.top) / baseRect.height) * 100;
+      x = Math.max(0, Math.min(100, x)); y = Math.max(0, Math.min(100, y));
+      lbImg.style.transformOrigin = x + '% ' + y + '%';
+    }
+
+    // Abrir: capturamos el click sobre cualquier imagen de slide ANTES que reveal.
+    document.addEventListener('click', function(e){
+      var img = e.target.closest ? e.target.closest('.reveal .slides img') : null;
+      if (img && !overlay.classList.contains('open')) {
+        e.preventDefault(); e.stopPropagation();
+        open(img.currentSrc || img.src);
+      }
+    }, true);
+
+    lbImg.addEventListener('click', function(e){
+      e.stopPropagation();
+      zoomed = !zoomed;
+      if (zoomed) {
+        baseRect = lbImg.getBoundingClientRect();   // rect de layout (sin transform aún)
+        originFromEvent(e);
+        lbImg.style.transform = 'scale(' + SCALE + ')';
+        lbImg.classList.add('zoomed');
+      } else {
+        lbImg.style.transform = ''; lbImg.classList.remove('zoomed');
+      }
+    });
+    lbImg.addEventListener('mousemove', function(e){
+      if (!zoomed) { baseRect = lbImg.getBoundingClientRect(); return; }
+      originFromEvent(e);
+    });
+
+    overlay.addEventListener('click', close);            // click en el fondo
+    overlay.querySelector('.lb-close').addEventListener('click', function(e){ e.stopPropagation(); close(); });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+    });
+  })();
 </script>
 </body>
 </html>
