@@ -338,7 +338,7 @@
     <img src="figs/ej2/contact_sheet.png" alt="contact sheet">
     <ul>
       <li>Elegimos 5 emojis (corazón, estrella, gota, luna, rayo) como <span class="accent">siluetas rellenas</span> a 20×20; descartamos la versión de contornos que se confundía a baja resolución.</li>
-      <li>700 muestras con augmentaciones moderadas y assets cacheados → <span class="accent">reproducible offline</span>.</li>
+      <li>Generamos <span class="accent">700 muestras</span> con aumentaciones propias a partir de los símbolos originales de OpenMoji.</li>
     </ul>
   </section>
 
@@ -362,13 +362,23 @@
     <ul><li>Cada clase ocupa <span class="accent">su propia zona</span> dentro de N(0,I): no es una sola nube uniforme, conserva 5 cúmulos. Las circunferencias marcan 1σ y 2σ.</li></ul>
   </section>
 
-  <!-- 35 · reconstruir y generar -->
+  <!-- 35a · reconstruir -->
   <section>
     <span class="tag">VAE · GANADOR</span>
-    <h2>Reconstruir y generar muestras nuevas</h2>
-    <img src="figs/ej2/fig_e14_recon_gen.png" alt="reconstrucción y generación">
-    <ul><li>Arriba el original, en el medio la reconstrucción, abajo <span class="accent">muestras generadas desde N(0,I)</span>.</li>
-    <li>Las generadas <span class="accent">no copian</span> ningún emoji del train: son variaciones continuas de los 5 prototipos (cumple el Generative Autoencoder).</li></ul>
+    <h2>Reconstruir el original</h2>
+    <img src="figs/ej2/fig_e14_recon.png" alt="reconstrucción">
+    <ul><li>Pasamos cada emoji por el <span class="accent">VAE entero</span> (encoder → media μ → decoder, sin ruido): arriba el original, abajo la reconstrucción.</li></ul>
+  </section>
+
+  <!-- 35b · generar -->
+  <section>
+    <span class="tag">VAE · GANADOR</span>
+    <h2>Generar símbolos nuevos</h2>
+    <img src="figs/ej2/fig_e14_gen.png" alt="generación con z sintético" style="max-height:62vh;">
+    <ul>
+      <li>Sampleamos puntos sintéticos <span class="accent">z ∼ N(0,I)</span> (el (z1, z2) sobre cada símbolo) y los pasamos <span class="accent">sólo por el decoder</span> — sin encoder, sin ningún emoji de entrada.</li>
+      <li>Salen <span class="accent">muestras nuevas (no copias)</span>: variaciones continuas de los 5 prototipos. Cumple el Generative Autoencoder.</li>
+    </ul>
   </section>
 
   <!-- 36 · atlas -->
@@ -390,14 +400,9 @@
     </ul>
   </section>
 
-  <!-- 38 · conclusiones -->
-  <section>
-    <h2>Conclusiones</h2>
-    <ul class="big" style="font-size:0.8em">
-      <li><strong>1a:</strong> con curvas y 2 números guardamos las 32 letras perfecto; un método clásico no llega.</li>
-      <li><strong>1b:</strong> limpiar ruido necesita un espacio latente más grande, y el nivel de ruido de entrenamiento es un equilibrio.</li>
-      <li><strong>VAE:</strong> al hacer que el encoder produzca una distribución y empujar el latente a N(0,I), el modelo pasa de resumir a <strong>generar</strong> muestras nuevas (no copias) reconocibles.</li>
-    </ul>
+  <!-- 38 · cierre -->
+  <section class="cover">
+    <h1>¡Gracias!</h1>
   </section>
 
 </div></div>

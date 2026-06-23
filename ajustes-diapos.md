@@ -1,4 +1,4 @@
-# ej1a autoencoder
+  
 ### eliminar diapo 2 "Que es un autoencoder"
 ### diapo 3 "## El dataset: 32 caracteres"
 Cambiar titulo a "Dataset: 32 caracteres ASCII"

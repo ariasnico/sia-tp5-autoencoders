@@ -243,3 +243,41 @@ Las dos figuras del ej2 son las dos formas de samplear:
 
 - **`fig_e18_sampleo_honesto`** — sampleo honesto: `z ~ N(0,I)` al azar, sin cherry-picking, y decodificás. Demuestra que aún a ciegas salen muestras válidas (lo que el AE simple **no** podía).
 - **`fig_e17_vae_atlas`** — el atlas: recorrés una **grilla** del latente espaciada según la gaussiana (con `norm.ppf`, la inversa de la CDF normal, para que la grilla respete la densidad) y decodificás cada celda → el mapa completo de qué genera cada región.
+
+---
+
+# Cómo se genera el dataset de emojis (ej2)
+
+Las "muestras" del ej2 son el **dataset de entrenamiento** del VAE (700 imágenes), y **no** se generan con la red: se construyen a partir de 5 emojis base con augmentaciones propias. Todo el pipeline está en `ej2_vae/dataset.py`.
+
+## 1. De PNG de OpenMoji a silueta (5 bitmaps base)
+
+Se parte de 5 emojis de **OpenMoji** (corazón, estrella, gota, luna, rayo), variante *color* a 72×72. Para cada uno (`silhouette()`):
+
+- Se toma el **canal alpha** del PNG → da una **silueta rellena monocromática** (en vez del dibujo a color). Es lo clave: a baja resolución la silueta rellena es mucho más distinguible que los contornos line-art.
+- Se **recorta al bounding box** (lo no transparente), se **centra** en un cuadrado y se **reescala a 20×20** (con 2px de margen).
+
+Eso da **5 bitmaps "base"**, uno por clase (la fila de arriba del contact sheet).
+
+**Decisión documentada:** la variante *black* de OpenMoji da contornos line-art que a 20×20 se confunden (1-NN acc **0.45**); el canal alpha de la variante *color* da siluetas rellenas (acc **0.95**). También se descartaron triángulo/rombo/círculo por ser formas convexas compactas confundibles entre sí.
+
+## 2. Augmentación: de 5 bases a 700 muestras
+
+5 imágenes no alcanzan para entrenar, así que se genera **variabilidad intra-clase** aplicando transformaciones aleatorias suaves a cada base, 140 veces (`augment()`):
+
+```python
+img = rotate(base, rng.uniform(-15, 15), ...)        # rotación ±15°
+img = shift(img, rng.uniform(-2, 2, 2), ...)          # traslación ±2px en x e y
+return np.clip(img + rng.normal(0, 0.03, ...), 0, 1)  # ruido gaussiano suave (σ=0.03)
+```
+
+**5 clases × 140 = 700 muestras** (`make_dataset()`).
+
+## 3. Por qué augmentar así (y no más)
+
+Las augmentaciones son **moderadas y seedeadas a propósito**, para que *"el VAE aprenda una variedad continua, no puntos fijos"*. Si solo le dieras las 5 bases, el latente memorizaría 5 puntos y no habría nada continuo entre ellos que generar. Al darle versiones ligeramente rotadas/desplazadas/ruidosas, cada clase ocupa una **pequeña región** del espacio de imágenes → el VAE aprende a interpolar dentro y entre clases (lo que después le permite generar muestras nuevas).
+
+Dos detalles de robustez:
+
+- **Seedeado** (`rng = np.random.default_rng(seed)`): el dataset es **reproducible** bit a bit, y los PNG quedan cacheados en `assets/` → corre offline sin descargar.
+- Se mide **1-NN accuracy** (cada muestra augmentada vs los 5 bitmaps base, `nn_accuracy()`): da **0.95**, confirmando que las clases siguen distinguibles pese al ruido.

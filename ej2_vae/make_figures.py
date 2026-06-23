@@ -92,22 +92,38 @@ def e13():
     save(fig, "fig_e13_latent.png")
 
 
-def e14():
+def e14_recon():
+    """Reconstrucción: original (arriba) vs VAE entero decodificando la media μ (abajo)."""
     vae = load_vae(1.0)
     samp = np.concatenate([np.random.default_rng(3 + ci).choice(np.where(y == ci)[0], 2, replace=False)
                            for ci in range(NC)])  # 2 por clase -> muestra las 5
     rec = vae.reconstruct(X[samp])
-    gen = vae.generate(np.random.default_rng(SEED_SAMPLE).standard_normal((10, 2)))
-    fig, axes = plt.subplots(3, 10, figsize=(12, 4.2))
-    rows = [(0, "original", X[samp]), (1, "reconstruido", rec), (2, "generado\n(nuevo)", gen)]
-    for r, lab, imgs in rows:
+    fig, axes = plt.subplots(2, 10, figsize=(12, 2.9))
+    for r, lab, imgs in [(0, "original", X[samp]), (1, "reconstruido", rec)]:
         for ci in range(10):
             ax = axes[r, ci]; ax.imshow(imgs[ci].reshape(SZ, SZ), vmin=0, vmax=1)
             ax.set_xticks([]); ax.set_yticks([]); ax.grid(False)
         axes[r, 0].set_ylabel(lab, rotation=0, ha="right", va="center", fontsize=12)
-    fig.suptitle(f"VAE: reconstrucción y muestras nuevas desde N(0,I)\n"
-                 f"(interpolan, no recuperan ningún emoji exacto del train; semilla {SEED_SAMPLE}, elegida para mostrar las 5)")
-    save(fig, "fig_e14_recon_gen.png")
+    fig.suptitle("VAE: reconstrucción del original (encoder → media μ → decoder, sin ruido)")
+    save(fig, "fig_e14_recon.png")
+
+
+def e14_gen():
+    """Generación: símbolos nuevos desde el decoder, con el z sintético ~N(0,I) anotado."""
+    vae = load_vae(1.0)
+    z = np.random.default_rng(SEED_SAMPLE).standard_normal((10, 2))  # entradas latentes sintéticas
+    gen = vae.generate(z)
+    fig, axes = plt.subplots(2, 5, figsize=(11, 6.0))
+    for k in range(10):
+        ax = axes[k // 5, k % 5]
+        ax.imshow(gen[k].reshape(SZ, SZ), vmin=0, vmax=1)
+        ax.set_xticks([]); ax.set_yticks([]); ax.grid(False)
+        ax.set_title(f"z = ({z[k, 0]:+.2f}, {z[k, 1]:+.2f})", fontsize=12)
+    fig.suptitle("VAE: símbolos nuevos generados sólo con el decoder, desde z sintético ~ N(0,I)\n"
+                 "(el z=(z1, z2) sobre cada símbolo es la entrada latente usada — no viene de ningún emoji real)",
+                 fontsize=12)
+    fig.tight_layout(rect=(0, 0, 1, 0.9), h_pad=3.0)
+    save(fig, "fig_e14_gen.png")
 
 
 def e15():
@@ -206,5 +222,5 @@ def atlas():
 
 if __name__ == "__main__":
     print("Generando figuras VAE:")
-    e12(); e13(); e14(); e15(); e16(); e18(); atlas()
+    e12(); e13(); e14_recon(); e14_gen(); e15(); e16(); e18(); atlas()
     print("OK figuras VAE en", FIGS)
